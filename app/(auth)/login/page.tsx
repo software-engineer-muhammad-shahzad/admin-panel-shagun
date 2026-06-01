@@ -1,12 +1,13 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image"
-import Input from "../components/elements/Input";
-import Button from "../components/elements/Button";
-import Checkbox from "../components/elements/Checkbox";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import LeftBannerText from "../components/auth/LeftBannerText";
+import Input from "@/app/components/elements/Input";
+import Checkbox from "@/app/components/elements/Checkbox";
+import LeftBannerText from "@/app/components/auth/LeftBannerText";
+import Button from "@/app/components/elements/Button";
+
 
 
 
@@ -69,13 +70,13 @@ export default function SignIn() {
                 Sign In
               </Button>
             </div>
-
+{/* 
             <p className="text-sm text-center  text-[#C5C5C5] mt-6">
               Don’t have an account?
               <Link href="/signup" className=" ps-1 cursor-pointer border-b border-transparent transition-all duration-300 hover:border-white">
                 Sign up
               </Link>
-            </p>
+            </p> */}
           </form>
 
 

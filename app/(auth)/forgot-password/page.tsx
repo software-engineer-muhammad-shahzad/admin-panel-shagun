@@ -1,8 +1,8 @@
 import Image from "next/image"
 import Link from "next/link"
 import { ChevronLeft } from "lucide-react"
-import LeftBannerText from "../components/auth/LeftBannerText"
-import ForgotPasswordform from "../components/auth/forgotpassword/ForgotPasswordForm"
+import LeftBannerText from "@/app/components/auth/LeftBannerText"
+import ForgotPasswordform from "@/app/components/auth/forgotpassword/ForgotPasswordForm"
 
 
 

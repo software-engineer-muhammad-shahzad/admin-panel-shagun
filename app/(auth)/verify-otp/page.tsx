@@ -1,15 +1,14 @@
 "use client"
 import Image from "next/image"
-import LeftBannerText from "../components/auth/LeftBannerText"
-// import VerifyOtpForm from "../components/auth/otp/VerifyOtpForm"
+
 import { useSearchParams } from "next/navigation"
 import { useState, Suspense } from "react"
-// import ModalLayer from "../components/ui/ModalLayer"
-// import PaymentSucessfull from "../components/giftsend/paymentflow/PaymentSucessfull"
-// import PaymentSucessfulModal from "../components/giftsend/paymentflow/PaymentSucessfulModal"
+
 import Link from "next/link"
 import { ChevronLeft } from "lucide-react"
-import VerifyOtpForm from "../components/auth/verify-otp/VerifyOtpForm"
+import LeftBannerText from "@/app/components/auth/LeftBannerText"
+import VerifyOtpForm from "@/app/components/auth/verify-otp/VerifyOtpForm"
+
 
 const page = () => {
   return (

@@ -1,11 +1,10 @@
 "use client"
+import LeftBannerText from "@/app/components/auth/LeftBannerText";
+import SetPasswordForm from "@/app/components/auth/setpassword/SetPasswordForm";
 import Image from "next/image"
 
 import { useState } from "react"
-// import ModalLayer from "../components/ui/ModalLayer"
-import Link from "next/link"
-import LeftBannerText from "../components/auth/LeftBannerText"
-import SetPasswordForm from "../components/auth/setpassword/SetPasswordForm"
+
 
 const page = () => {
 
