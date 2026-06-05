@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
-import Sidebar from "../components/layout/Sidebar"
-import Navbar from "../components/layout/Navbar"
+import Sidebar from "../features/layout/Sidebar"
+import Navbar from "../features/layout/Navbar"
 import { Menu, X } from "lucide-react"
 
 

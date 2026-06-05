@@ -1,6 +1,6 @@
 "use client"
-import LeftBannerText from "@/app/components/auth/LeftBannerText";
-import SetPasswordForm from "@/app/components/auth/setpassword/SetPasswordForm";
+import LeftBannerText from "@/app/features/auth/LeftBannerText";
+import SetPasswordForm from "@/app/features/auth/setpassword/SetPasswordForm";
 import Image from "next/image"
 
 import { useState } from "react"

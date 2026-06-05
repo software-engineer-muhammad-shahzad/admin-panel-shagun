@@ -1,14 +1,16 @@
 "use client"
 
 import { useState } from "react"
-import Table from "@/app/components/elements/Table";
-import Input from "@/app/components/elements/Input";
+// import Table from "@/app/features/elements/Table";
+// import Input from "@/app/features/elements/Input";
 import { filterData } from "@/app/lib/utils/SearchUtils";
-import { coupleData } from "@/app/components/data/MockData";
-import { CirclePlus, Edit, Eye, Trash2 } from "lucide-react";
-import DeleteCouple from "@/app/components/couple/DeleteCouple";
-import AddCouple from "@/app/components/couple/AddCouple";
-import ViewCouple from "@/app/components/couple/ViewCouple";
+import { coupleData } from "@/app/features/data/MockData";
+import { CirclePlus, Edit, Eye,  Trash2 } from "lucide-react";
+import DeleteCouple from "@/app/features/couple/DeleteCouple";
+import AddCouple from "@/app/features/couple/AddCouple";
+import ViewCouple from "@/app/features/couple/ViewCouple";
+import Input from "@/app/shared/components/elements/Input";
+import Table from "@/app/shared/components/elements/Table";
 
 const page = () => {
   const [searchTerm, setSearchTerm] = useState("")

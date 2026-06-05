@@ -1,15 +1,15 @@
 "use client"
 
 import { useState } from "react"
-import Table from "@/app/components/elements/Table";
-import Input from "@/app/components/elements/Input";
-import Button from "@/app/components/elements/Button";
 import { filterData } from "@/app/lib/utils/SearchUtils";
-import { paymentsData, paymentsColumns } from "@/app/components/data/MockData";
+import { paymentsData, paymentsColumns } from "@/app/features/data/MockData";
 import { CirclePlus, MoveLeft, X } from "lucide-react";
-import ModalLayer from "@/app/components/ui/modal/ModalLayer";
-import SuccessModal from "@/app/components/ui/modal/SuccessModal";
+import ModalLayer from "@/app/shared/components/modal/ModalLayer";
+import SuccessModal from "@/app/shared/components/modal/SuccessModal";
 import Image from "next/image";
+import Input from "@/app/shared/components/elements/Input";
+import Table from "@/app/shared/components/elements/Table";
+import Button from "@/app/shared/components/elements/Button";
 
 const Page = () => {
   const [searchTerm, setSearchTerm] = useState("")
@@ -75,8 +75,8 @@ const Page = () => {
         >
           <div className="flex justify-between items-center mb-6">
             <div className="flex items-center gap-2">
-             <MoveLeft  className="text-white"/>
-            <h2 className="text-white text-xl font-semibold">Payment Configuration</h2>
+              <MoveLeft className="text-white" />
+              <h2 className="text-white text-xl font-semibold">Payment Configuration</h2>
             </div>
             <Button
               onClick={() => setIsModalOpen(false)}
@@ -109,26 +109,26 @@ const Page = () => {
             </div>
             <div className="flex flex-col sm:flex-row gap-5">
               {/* Platform Fee */}
-               <div className="flex-1 ">
+              <div className="flex-1 ">
                 <Input
                   type="text"
                   label="Video Price (in £) "
                   labelColor="ms-5 mb-1"
                   placeholder="Enter "
-                    paddingClass="px-0! md:px-5!"
+                  paddingClass="px-0! md:px-5!"
                   className="text-sm outline-0 px-5 py-4  border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text"
                   containerClassName="border-none bg-transparent"
                 />
               </div>
 
               {/* Attachment Fee */}
-               <div className="flex-1">
+              <div className="flex-1">
                 <Input
                   type="text"
                   label="SD Platform Fee (in %)"
                   labelColor="ms-5 mb-1"
                   placeholder="Enter "
-                    paddingClass="px-0! md:px-5!"
+                  paddingClass="px-0! md:px-5!"
                   className="text-sm outline-0 px-5 py-4  border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text"
                   containerClassName="border-none bg-transparent"
                 />

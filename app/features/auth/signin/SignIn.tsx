@@ -3,20 +3,19 @@ import { useState } from "react";
 import Image from "next/image"
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import LeftBannerText from "@/app/features/auth/LeftBannerText";
-import Input from "@/app/shared/components/elements/Input";
-import Checkbox from "@/app/shared/components/elements/Checkbox";
-import Button from "@/app/shared/components/elements/Button";
-
+import LeftBannerText from "../LeftBannerText";
+import Input from "../../../features/elements/Input";
+import Checkbox from "../../../features/elements/Checkbox";
+import Button from "../../../features/elements/Button";
 
 
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const router = useRouter()
+  const router=useRouter()
 
-  const handleLoginResponse = () => {
+  const handleLoginResponse=()=>{
 
     router.push("/verify-otp")
 
@@ -25,7 +24,7 @@ export default function SignIn() {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-[#350366] text-white">
-      <div className="w-full  max-w-7xl p-4 sm:p-6 lg:p-8">
+      <div className="w-full max-w-7xl p-4 sm:p-6 lg:p-8">
         <div className="bg-[#350366] px-1 py-18   sm:p-6 lg:p-8 flex flex-col sm:flex-row  sm:gap-6 lg:gap-8 rounded-lg">
 
           {/* Left */}
@@ -43,7 +42,7 @@ export default function SignIn() {
               type="email"
               placeholder="Enter your email"
               name="email"
-            />
+              />
 
 
             <Input
@@ -51,7 +50,7 @@ export default function SignIn() {
               type="password"
               placeholder="Enter your password"
               name="password"
-
+             
             />
 
 
@@ -66,11 +65,17 @@ export default function SignIn() {
 
 
             <div className="mt-10 w-full z-50">
-              <Button type="button" className="h-12 w-full z-50" onClick={handleLoginResponse}>
+            <Button type="button" className="h-12 w-full z-50" onClick={handleLoginResponse}>
                 Sign In
               </Button>
             </div>
 
+            <p className="text-sm text-center  text-[#C5C5C5] mt-6">
+              Don’t have an account?
+              <Link href="/signup" className=" ps-1 cursor-pointer border-b border-transparent transition-all duration-300 hover:border-white">
+                Sign up
+              </Link>
+            </p>
           </form>
 
 
@@ -79,7 +84,7 @@ export default function SignIn() {
       </div>
       <div className="fixed -top-22.5 right-0 md:top-10 md:left-0 md:right-auto">
         <Image
-          src="/images/auth-images/left-rainbow.png"
+          src="images/auth-images/left-rainbow.png"
           alt="Rainbow"
           width={700}
           height={700}

@@ -6,8 +6,8 @@ import { useState, Suspense } from "react"
 
 import Link from "next/link"
 import { ChevronLeft } from "lucide-react"
-import LeftBannerText from "@/app/components/auth/LeftBannerText"
-import VerifyOtpForm from "@/app/components/auth/verify-otp/VerifyOtpForm"
+import LeftBannerText from "@/app/features/auth/LeftBannerText"
+import VerifyOtpForm from "@/app/features/auth/verify-otp/VerifyOtpForm"
 
 
 const page = () => {

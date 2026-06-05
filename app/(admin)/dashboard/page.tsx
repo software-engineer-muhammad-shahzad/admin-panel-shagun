@@ -1,6 +1,6 @@
-import CompositeChart from "@/app/components/dashboard/CompositeChart"
-import LollipopChart from "@/app/components/dashboard/LollipopChart"
-import SmallCards from "@/app/components/dashboard/SmallCards"
+import CompositeChart from "@/app/features/dashboard/CompositeChart"
+import LollipopChart from "@/app/features/dashboard/LollipopChart"
+import SmallCards from "@/app/features/dashboard/SmallCards"
 
 const page = () => {
   return (
