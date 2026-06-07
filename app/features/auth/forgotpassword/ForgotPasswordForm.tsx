@@ -25,7 +25,7 @@ const ForgotPasswordform = () => {
                 type="email"
                 placeholder="Enter your email"
                 name="email"
-            />s
+            />
             <div className="mt-5 w-full">
                 <Button type="submit" className='py-2! md:py-4!' >
                     Next
