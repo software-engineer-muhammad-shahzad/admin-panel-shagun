@@ -21,14 +21,14 @@ const page = () => {
   return (
     <div className="w-full  flex relative flex-col  h-[calc(100vh-200px)]">
       {/* search - fixed at top */}
-      <div className="flex flex-col lg:flex-row justify-between border-[#C9C9C9] px-4 lg:px-6 py-4 lg:py-6 border-b flex-shrink-0 gap-4">
+      <div className="flex flex-col  lg:flex-row justify-between border-[#C9C9C9] px-4 lg:px-6 py-4 lg:py-6 border-b flex-shrink-0 gap-4">
         <div className="w-full   lg:max-w-[350px]">
           <Input
             type="text"
             placeholder="Quick Search..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="text-sm outline-0  w-full!  placeholder:text-light-text text-light-text"
+            className="text-sm outline-0  font-inter w-full!  placeholder:text-light-text text-light-text"
             containerClassName="border border-[#C9C9C9] w-full!  rounded-lg glass-border bg-transparent"
           />
         </div>

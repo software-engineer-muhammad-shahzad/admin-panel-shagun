@@ -46,14 +46,14 @@ const SuccessModal = ({
           {secondaryButtonText && (
             <Button
               onClick={onSecondaryButtonClick || onClose}
-              className="w-full h-[14px] max-w-[100px] border border-[#C9C9C9] font-light bg-transparent text-white hover:bg-white/5 transition-colors"
+              className="w-full font-inter  h-[14px] max-w-[100px] border border-[#C9C9C9] font-light bg-transparent text-white hover:bg-white/5 transition-colors"
             >
               {secondaryButtonText}
             </Button>
           )}
           <Button
             onClick={onClose}
-            className="w-full h-[14px] max-w-[100px] bg-[#5FDA78] text-white font-light hover:bg-[#4FB860] transition-colors"
+            className="w-full font-inter h-[14px] max-w-[100px] bg-[#5FDA78] text-white font-light  hover:bg-[#4FB860] transition-colors"
           >
             {buttonText}
           </Button>

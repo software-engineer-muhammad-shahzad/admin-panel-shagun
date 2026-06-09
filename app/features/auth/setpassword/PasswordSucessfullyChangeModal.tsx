@@ -26,7 +26,7 @@ const PasswordSucessfullyChangeModal = ({ isModalOpen, setIsModalOpen }: Passwor
                                 href='/login'
                                 type="submit"
                                 onClick={() => setIsModalOpen(false)}
-                                className="px-5 py-2 text-xl text-[#FFFFFF] transition-all duration-300 hover:bg-[#4ecb68] bg-[#5FDA78] rounded-[38px]"
+                                className="px-5 py-2 text-xl text-[#FFFFFF] transition-all font-inter duration-300 hover:bg-[#4ecb68] bg-[#5FDA78] rounded-[38px]"
                             >
                                 Close
                             </Link>

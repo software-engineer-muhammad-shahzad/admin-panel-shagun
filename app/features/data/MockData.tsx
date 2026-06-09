@@ -446,6 +446,7 @@ export const announcementColumns = [
         label: "Announcement Message",
         width: "250px",
         render: (value: any, row: any, index: number) => value
+        
     },
     {
         key: "Action",

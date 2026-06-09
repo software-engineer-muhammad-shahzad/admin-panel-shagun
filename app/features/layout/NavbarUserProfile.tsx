@@ -24,8 +24,8 @@ const NavbarUserProfile = ({ sidebarOpen, setSidebarOpen }: NavbarUserProfilePro
           </div>
         </div>
         <div className="hidden sm:block text-left">
-          <p className="text-white text-sm font-medium">John Doe</p>
-          <p className="text-white/70 text-xs">Administrator</p>
+          <p className="text-white font-poppins text-sm font-medium">John Doe</p>
+          <p className="text-white/70  first-letter:text-xs">Administrator</p>
         </div>
         <ChevronDown 
           size={15} 

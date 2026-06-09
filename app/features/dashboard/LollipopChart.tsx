@@ -26,7 +26,7 @@ const LollipopBarChart = () => {
           <Input 
             type="date" 
             placeholder="Select Date" 
-            className="border text-xs  sm:text-sm rounded-2xl sm:rounded-3xl px-1 sm:px-3 py-1 outline-none text-white border-[#5FDA78] w-full max-w-[150px] xs:w-auto"
+            className="border text-xs font-poppins sm:text-sm rounded-2xl sm:rounded-3xl px-1 sm:px-3 py-1 outline-none text-white border-[#5FDA78] w-full max-w-[150px] xs:w-auto"
             containerClassName="border-none!"
           />
           
@@ -36,7 +36,7 @@ const LollipopBarChart = () => {
             onChange={(month) => setSelectedMonth(month)}
             placeholder="March"
             triggerClassName="max-w-[105px]!  hover:bg-transparent!"
-            containerClassName="w-full  flex justify-end xs:w-auto"
+            containerClassName="w-full font-poppins flex justify-end xs:w-auto"
           />
         </div>
       </div>

@@ -21,14 +21,14 @@ const Page = () => {
   return (
     <div className="w-full flex relative flex-col h-[calc(100vh-200px)]">
       {/* search - fixed at top */}
-      <div className="flex flex-col lg:flex-row justify-between border-[#C9C9C9] px-4 lg:px-6 py-4 lg:py-6 border-b flex-shrink-0 gap-4">
+      <div className="flex flex-col  lg:flex-row justify-between border-[#C9C9C9] px-4 lg:px-6 py-4 lg:py-6 border-b flex-shrink-0 gap-4">
         <div className="w-full lg:max-w-[350px]">
           <Input
             type="text"
             placeholder="Quick Search..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="text-sm outline-0 w-full placeholder:text-light-text text-light-text"
+            className="text-sm font-inter outline-0 w-full placeholder:text-light-text text-light-text"
             containerClassName="border border-[#C9C9C9] w-full rounded-lg glass-border bg-transparent"
           />
         </div>
@@ -38,7 +38,7 @@ const Page = () => {
             <Input
               type="date"
               placeholder="Select Date"
-              className="text-sm outline-0 placeholder:text-light-text text-light-text "
+              className="text-sm  font-poppins outline-0 placeholder:text-light-text text-light-text "
               containerClassName="border border-green-text rounded-lg glass-border bg-transparent"
             />
           </div>
@@ -47,7 +47,7 @@ const Page = () => {
             onClick={() => setIsModalOpen(true)}
           >
             <CirclePlus size={15} />
-            <p className="text-[#360567] text-md font-semibold text-nowrap">Payment Configuration</p>
+            <p className="text-[#360567] font-poppins text-md font-semibold text-nowrap">Payment Configuration</p>
           </div>
         </div>
       </div>
@@ -162,6 +162,7 @@ const Page = () => {
           title="Successful"
           message="Your Configuration successfully added."
           buttonText="Ok"
+         
         />
       )}
     </div>

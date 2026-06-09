@@ -6,6 +6,7 @@ import ModalLayer from "@/app/shared/components/modal/ModalLayer"
 import SuccessModal from "@/app/shared/components/modal/SuccessModal"
 import Button from "@/app/shared/components/elements/Button"
 import Input from "@/app/shared/components/elements/Input"
+import { inter } from "@/app/lib/fonts"
 
 interface AddNewAnnouncementProps {
   onClose: () => void

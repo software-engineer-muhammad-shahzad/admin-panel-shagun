@@ -154,7 +154,7 @@ const EditRole = ({ onClose, editData, mode = "edit" }: EditRoleProps) => {
                         </Button>
                         <Button
                             type="submit"
-                            className="bg-[#5FDA78] text-[#360567] max-w-[110px] md:max-w-[120px] w-full font-semibold px-8! py-2! hover:bg-[#4FB860]"
+                            className="bg-[#5FDA78]  text-[#360567] max-w-[110px] md:max-w-[120px] w-full font-semibold px-8! py-2! hover:bg-[#4FB860]"
                         >
                             {mode === "edit" ? "Update" : "Add"}
                         </Button>
@@ -181,7 +181,7 @@ const EditRole = ({ onClose, editData, mode = "edit" }: EditRoleProps) => {
                         <div className="flex justify-end">
                             <Button
                                 onClick={handleCloseSuccessModal}
-                                className="bg-[#5FDA78] text-[#360567] max-w-[130px] font-semibold px-8! py-2! hover:bg-[#4FB860]"
+                                className="bg-[#5FDA78] font-inter text-[#360567] max-w-[130px] font-semibold px-8! py-2! hover:bg-[#4FB860]"
                             >
                                 Ok
                             </Button>

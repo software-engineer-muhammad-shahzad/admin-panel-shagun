@@ -134,7 +134,7 @@ const page = () => {
                         onClick={() => setAddNewModalOpen(true)}
                     >
                         <CirclePlus size={15} />
-                        <p className="text-[#360567] text-md font-semibold text-nowrap">Add New</p>
+                        <p className="text-[#360567] font-poppins text-md font-semibold text-nowrap">Add New</p>
                     </div>
                 </div>
 

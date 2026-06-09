@@ -26,13 +26,13 @@ const DeleteRoleModal = ({ onClose }: DeleteRoleModalProps) => {
                 <div className="flex  justify-end mt-4 sm:mt-7 gap-2 sm:gap-4">
                     <Button
                         onClick={onClose}
-                        className="border border-text-green font-bold w-full max-w-[120px] sm:w-fit! px-6 sm:px-8! py-2! bg-transparent text-green-text hover:bg-white/5"
+                        className="border first-letter: border-text-green font-bold w-full max-w-[120px] sm:w-fit! px-6 sm:px-8! py-2! bg-transparent text-green-text hover:bg-white/5"
                     >
                         Cancel
                     </Button>
                     <Button
                         onClick={() => setIsConfirmModalOpen(true)}
-                        className="text-white font-bold w-full max-w-[120px] sm:w-fit! px-6 sm:px-8! py-2! hover:bg-[#4FB860]"
+                        className="text-white font-black font-bold w-full max-w-[120px] sm:w-fit! px-6 sm:px-8! py-2! hover:bg-[#4FB860]"
                     >
                         Yes
                     </Button>
@@ -60,7 +60,7 @@ const DeleteRoleModal = ({ onClose }: DeleteRoleModalProps) => {
                         <div className="flex justify-center gap-4">
                             <Button
                                 onClick={onClose}
-                                className="border border-text-green font-bold w-full max-w-[120px] sm:w-fit! px-6 sm:px-8! py-2! bg-text-green mt-3 text-white "
+                                className="border font-inter border-text-green font-bold w-full max-w-[120px] sm:w-fit! px-6 sm:px-8! py-2! bg-text-green mt-3 text-white "
                             >
                                 OK
                             </Button>

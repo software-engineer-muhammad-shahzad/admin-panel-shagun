@@ -30,7 +30,7 @@ const AddedSuccessfully = ({ onClose, mode = "add" }: AddedSuccessfullyProps) =>
                     <Button
                     
                         onClick={onClose}
-                        className="bg-[#5FDA78] text-white font-semibold  max-w-[120px] px-6! py-2! hover:bg-[#4FB860]"
+                        className="bg-[#5FDA78] font-inter text-white font-semibold  max-w-[120px] px-6! py-2! hover:bg-[#4FB860]"
                     >
                         Ok
                     </Button>

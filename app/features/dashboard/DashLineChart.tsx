@@ -20,7 +20,7 @@ const DashLineChart = () => {
 
     <div className="flex flex-col ">
       <div className="flex justify-between items-center mb-8">
-        <p className="text-white text-md font-medium">Transactions Overview</p>
+        <p className="text-white font-poppins text-sm font-medium">Total Users</p>
         {/* dropdown */}
         <Dropdown
           options={months}
@@ -28,7 +28,7 @@ const DashLineChart = () => {
           onChange={(month) => setSelectedMonth(month)}
           placeholder="March"
           triggerClassName="max-w-[105px]!  hover:bg-transparent!"
-          containerClassName="w-full  flex justify-end xs:w-auto"
+          containerClassName="w-full  flex font-poppins justify-end xs:w-auto"
         />
       </div>
       <div className="w-full">
@@ -36,13 +36,13 @@ const DashLineChart = () => {
           {/* Active */}
           <div className="flex items-center gap-2">
             <span className="w-3 h-3 rounded-full bg-[#5FDA78]"></span>
-            <p className="text-white text-sm">Active</p>
+            <p className="text-white font-poppins text-sm">Active</p>
           </div>
 
           {/* Inactive */}
           <div className="flex items-center gap-2">
             <span className="w-3 h-3 rounded-full bg-[#FFCC00]"></span>
-            <p className="text-white text-sm">Inactive</p>
+            <p className="text-white font-poppins text-sm">Inactive</p>
           </div>
         </div>
         <div className="overflow-x-auto overflow-y-hidden scrollbar-hide">

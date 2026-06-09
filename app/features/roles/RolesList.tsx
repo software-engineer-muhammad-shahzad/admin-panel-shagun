@@ -123,7 +123,7 @@ const RolesList = ({ onClose, onParentClose }: RolesListProps) => {
                                     onClose()
                                     onParentClose()
                                 }}
-                                className="text-[#360567] font-semibold w-fit! px-8! py-2! hover:bg-[#4FB860]"
+                                className="text-[#360567] font-inter font-semibold w-fit! px-8! py-2! hover:bg-[#4FB860]"
                             >
                                 Ok
                             </Button>

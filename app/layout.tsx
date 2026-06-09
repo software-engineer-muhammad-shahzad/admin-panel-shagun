@@ -1,6 +1,6 @@
 "use client";
 import type { Metadata } from "next";
-import { manrope, figtree, inter } from "./lib/fonts";
+import { manrope, figtree, inter, poppins, dmSans } from "./lib/fonts";
 import "./styles/globals.css"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -26,8 +26,8 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={` ${manrope.variable} ${figtree.variable} ${inter.variable} h-full antialiased`}
-    >
+          className={` ${manrope.variable} ${figtree.variable} ${inter.variable}  ${poppins.variable} ${dmSans.variable} *: h-full antialiased`}
+        >
 
 
       <body className={`${figtree.className} min-h-full flex flex-col`} suppressHydrationWarning>

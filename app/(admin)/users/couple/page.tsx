@@ -88,7 +88,7 @@ const page = () => {
                     <Edit size={14} />
                 </span>
                 {/* View */}
-                <span className="w-8 h-8 flex items-center justify-center border border-white/10 rounded-full glass-border cursor-pointer hover:bg-white/5"
+                <span className="w-8 h-8 flex items-center justify-center  border border-white/10 rounded-full glass-border cursor-pointer hover:bg-white/5"
                     onClick={(e) => {
                         e.stopPropagation()
                         setEditData(row)

@@ -72,7 +72,7 @@ const ViewRole = ({ onClose, roleData }: ViewRoleProps) => {
                         placeholder="Enter Last Active"
                         value={roleData.lastActive}
                         disabled={true}
-                        className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
+                        className="text-sm outline-0  px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
                         containerClassName="border-none bg-transparent"
                     />
                 </div>
@@ -85,7 +85,7 @@ const ViewRole = ({ onClose, roleData }: ViewRoleProps) => {
                         placeholder="Enter Modules"
                         value={roleData.modules}
                         disabled={true}
-                        className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
+                        className="text-sm  outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
                         containerClassName="border-none bg-transparent"
                     />
                 </div>

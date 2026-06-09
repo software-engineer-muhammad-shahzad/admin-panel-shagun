@@ -29,7 +29,7 @@ const DonutChart = () => {
           onChange={(month) => setSelectedMonth(month)}
           placeholder="March"
           triggerClassName="max-w-[105px]! hover:bg-transparent!"
-          containerClassName="w-full  flex justify-end xs:w-auto   mt-4 sm:mt-0"
+          containerClassName="w-full font-poppins  flex justify-end xs:w-auto   mt-4 sm:mt-0"
         />
       </div>
       {/* chart */}
