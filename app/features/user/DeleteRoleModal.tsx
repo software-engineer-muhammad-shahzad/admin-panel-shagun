@@ -4,9 +4,11 @@ import Button from "@/app/shared/components/elements/Button"
 
 interface DeleteRoleModalProps {
     onClose: () => void
+    onConfirm?: () => void
+    isLoading?: boolean
 }
 
-const DeleteRoleModal = ({ onClose }: DeleteRoleModalProps) => {
+const DeleteRoleModal = ({ onClose, onConfirm, isLoading }: DeleteRoleModalProps) => {
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false)
 
     return (
@@ -31,10 +33,11 @@ const DeleteRoleModal = ({ onClose }: DeleteRoleModalProps) => {
                         Cancel
                     </Button>
                     <Button
-                        onClick={() => setIsConfirmModalOpen(true)}
-                        className="text-white font-bold w-full max-w-[120px] sm:w-fit! px-6 sm:px-8! py-2! hover:bg-[#4FB860]"
+                        onClick={() => onConfirm ? onConfirm() : setIsConfirmModalOpen(true)}
+                        disabled={isLoading}
+                        className="text-white font-bold w-full max-w-[120px] sm:w-fit! px-6 sm:px-8! py-2! hover:bg-[#4FB860] disabled:opacity-50"
                     >
-                        Yes
+                        {isLoading ? "Deleting..." : "Yes"}
                     </Button>
                 </div>
             </div>

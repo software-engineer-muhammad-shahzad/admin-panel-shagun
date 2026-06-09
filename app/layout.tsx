@@ -4,6 +4,7 @@ import { manrope, figtree, inter } from "./lib/fonts";
 import "./styles/globals.css"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { Toaster } from "sonner";
 import { useState } from "react";
 
 
@@ -34,8 +35,8 @@ export default function RootLayout({
 
         <QueryClientProvider client={queryClient}>
           {children}
+          <Toaster position="top-right" richColors />
           <ReactQueryDevtools />
-
         </QueryClientProvider>
       </body>
     </html>

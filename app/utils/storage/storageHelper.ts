@@ -104,6 +104,27 @@ export const removeData = (
   getStorage(type)!.removeItem(key);
 };
 
+export const clearStorage = (type: StorageType): void => {
+  if (typeof window === "undefined") return;
+
+  if (type === "local") {
+    localStorage.clear();
+    return;
+  }
+  if (type === "session") {
+    sessionStorage.clear();
+    return;
+  }
+  if (type === "cookie") {
+    const cookies = document.cookie.split(";");
+    for (let cookie of cookies) {
+      const eqPos = cookie.indexOf("=");
+      const name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie;
+      document.cookie = name.trim() + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+    }
+  }
+};
+
 // clear everything
 export const clearAllData = (): void => {
   if (typeof window === "undefined") return;

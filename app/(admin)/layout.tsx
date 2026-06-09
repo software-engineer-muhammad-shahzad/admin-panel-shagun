@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import Sidebar from "../features/layout/Sidebar"
 import Navbar from "../features/layout/Navbar"
+import AuthGuard from "../features/auth/AuthGuard"
 import { Menu, X } from "lucide-react"
 
 
@@ -33,6 +34,7 @@ const layout = ({ children }: { children: React.ReactNode }) => {
     }, [pathname])
 
     return (
+        <AuthGuard>
         <div className="h-screen flex bg-[#350366] overflow-hidden">
             {/* Mobile sidebar overlay */}
             {sidebarOpen && (
@@ -81,6 +83,7 @@ const layout = ({ children }: { children: React.ReactNode }) => {
                 </main>
             </div>
         </div>
+        </AuthGuard>
     )
 }
 

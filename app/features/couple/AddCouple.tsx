@@ -7,9 +7,12 @@ import { MoveLeft, X } from "lucide-react"
 import Button from "@/app/shared/components/elements/Button"
 import Input from "@/app/shared/components/elements/Input"
 import Dropdown from "@/app/shared/components/elements/Dropdown"
+import { UpdateCouplePayload } from "./types/coupleUser"
 
 interface AddCoupleProps {
     onClose: () => void
+    onSubmit?: (data: UpdateCouplePayload) => void
+    isSubmitting?: boolean
     editData?: {
         id: string;
         fullName: string;
@@ -22,7 +25,7 @@ interface AddCoupleProps {
     mode?: "add" | "edit"
 }
 
-const AddCouple = ({ onClose, editData, mode = "add" }: AddCoupleProps) => {
+const AddCouple = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }: AddCoupleProps) => {
     const [formData, setFormData] = useState({
         id: editData?.id || "",
         fullName: editData?.fullName || "",
@@ -42,11 +45,22 @@ const AddCouple = ({ onClose, editData, mode = "add" }: AddCoupleProps) => {
         }))
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
-        // Handle form submission logic here
-        console.log("Form submitted:", formData)
-        setShowSuccessModal(true)
+        if (onSubmit) {
+            onSubmit({
+                fullName: formData.fullName,
+                partnerName: formData.partnerName,
+                contactNumber: formData.contactNo,
+                email: formData.email,
+                isActive: formData.status === "Active",
+                eventDate: formData.dateTime
+                    ? new Date(formData.dateTime).toISOString()
+                    : new Date().toISOString(),
+            })
+        } else {
+            setShowSuccessModal(true)
+        }
     }
 
     const handleCloseSuccessModal = () => {
@@ -187,9 +201,10 @@ const AddCouple = ({ onClose, editData, mode = "add" }: AddCoupleProps) => {
                         </Button>
                         <Button
                             type="submit"
-                            className="bg-[#5FDA78] text-[#360567] max-w-[130px] w-full font-semibold px-8! py-2! hover:bg-[#4FB860]"
+                            disabled={isSubmitting}
+                            className="bg-[#5FDA78] text-[#360567] max-w-[130px] w-full font-semibold px-8! py-2! hover:bg-[#4FB860] disabled:opacity-50"
                         >
-                            {mode === "edit" ? "Update" : "Add"}
+                            {isSubmitting ? "Saving..." : mode === "edit" ? "Update" : "Add"}
                         </Button>
                     </div>
                 </form>

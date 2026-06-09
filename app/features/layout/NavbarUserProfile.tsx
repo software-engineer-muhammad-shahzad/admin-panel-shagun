@@ -1,7 +1,9 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { ChevronDown, LogOut, Settings, User } from "lucide-react"
+import { clearStorage } from "@/app/utils/storage/storageHelper"
 
 interface NavbarUserProfileProps {
   sidebarOpen?: boolean
@@ -10,6 +12,12 @@ interface NavbarUserProfileProps {
 
 const NavbarUserProfile = ({ sidebarOpen, setSidebarOpen }: NavbarUserProfileProps = {}) => {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
+  const router = useRouter()
+
+  const handleLogout = () => {
+    clearStorage("local")
+    router.replace("/login")
+  }
 
   return (
     <div className="relative">
@@ -49,7 +57,10 @@ const NavbarUserProfile = ({ sidebarOpen, setSidebarOpen }: NavbarUserProfilePro
               <Settings size={15} />
               <span className="text-xs sm:text-sm">Settings</span>
             </button>
-            <button className="w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 text-white hover:bg-[#5FDA78]/20 transition-colors">
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 text-white hover:bg-[#5FDA78]/20 transition-colors"
+            >
               <LogOut size={15} />
               <span className="text-xs sm:text-sm">Logout</span>
             </button>

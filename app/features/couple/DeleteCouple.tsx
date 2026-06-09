@@ -6,10 +6,11 @@ import Button from "@/app/shared/components/elements/Button"
 
 interface DeleteCoupleProps {
     onClose: () => void
-    coupleName?: string
+    onConfirm?: () => void
+    isLoading?: boolean
 }
 
-const DeleteCouple = ({ onClose, coupleName = "Couple" }: DeleteCoupleProps) => {
+const DeleteCouple = ({ onClose, onConfirm, isLoading }: DeleteCoupleProps) => {
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false)
 
     return (
@@ -33,10 +34,11 @@ const DeleteCouple = ({ onClose, coupleName = "Couple" }: DeleteCoupleProps) => 
                         Cancel
                     </Button>
                     <Button
-                        onClick={() => setIsConfirmModalOpen(true)}
-                        className="text-white font-bold w-fit! px-8! py-2! hover:bg-[#4FB860]"
+                        onClick={() => onConfirm ? onConfirm() : setIsConfirmModalOpen(true)}
+                        disabled={isLoading}
+                        className="text-white font-bold w-fit! px-8! py-2! hover:bg-[#4FB860] disabled:opacity-50"
                     >
-                        Delete
+                        {isLoading ? "Deleting..." : "Delete"}
                     </Button>
                 </div>
             </div>

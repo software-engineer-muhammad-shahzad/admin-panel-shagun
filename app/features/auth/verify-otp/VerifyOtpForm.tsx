@@ -4,6 +4,9 @@ import { useRouter } from "next/navigation"
 import { Delete } from "lucide-react"
 import Input from '@/app/shared/components/elements/Input'
 import Button from '@/app/shared/components/elements/Button'
+import { useVerifyOtp } from '../hooks/useVerifyOtp'
+import { getData } from '@/app/utils/storage/storageHelper'
+import { FORGOT_PASSWORD_EMAIL_KEY } from '../hooks/useForgotPassword'
 
 interface VerifyOtpFormProps {
 
@@ -12,26 +15,31 @@ interface VerifyOtpFormProps {
     setShowPaymentSuccess: (value: boolean) => void
 
 }
-const VerifyOtpForm = ({ source, showPaymentSuccess, setShowPaymentSuccess }: VerifyOtpFormProps) => {
+const VerifyOtpForm = ({ source, showPaymentSuccess: _showPaymentSuccess, setShowPaymentSuccess }: VerifyOtpFormProps) => {
     const [otp, setOtp] = useState(['', '', '', '', '', ''])
-    const [timeLeft, setTimeLeft] = useState(58) // 58 seconds as shown in image
+    const [timeLeft, setTimeLeft] = useState(58)
+    const router = useRouter()
+    const { mutate: verifyOtp, isPending } = useVerifyOtp()
 
     const handleVerifyOtp = () => {
-
-
         if (source === "payment") {
             setShowPaymentSuccess(true)
-        }else if(source==="forgot-password"){
-            router.push("/set-password")
+            return
         }
-        
-        else {
-            router.push("/dashboard")
 
+        if (source === "forgot-password") {
+            const email = getData<string>(FORGOT_PASSWORD_EMAIL_KEY, "local")
+            if (!email) return
+
+            verifyOtp(
+                { email, otp: otp.join("") },
+                { onSuccess: () => router.push("/set-password") }
+            )
+            return
         }
+
+        router.push("/dashboard")
     }
-
-    const router = useRouter()
     useEffect(() => {
         if (timeLeft > 0) {
             const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000)
@@ -180,7 +188,7 @@ const VerifyOtpForm = ({ source, showPaymentSuccess, setShowPaymentSuccess }: Ve
 
                 {/* Continue Button */}
                 <div className="mb-8  ">
-                    <Button type="submit" onClick={handleVerifyOtp} className="px-10 py-3!   ">
+                    <Button type="submit" onClick={handleVerifyOtp} disabled={isPending} className="px-10 py-3! disabled:opacity-60">
                         Continue
                     </Button>
                 </div>
