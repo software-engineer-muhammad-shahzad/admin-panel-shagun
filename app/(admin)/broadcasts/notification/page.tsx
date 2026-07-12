@@ -51,7 +51,7 @@ const page = () => {
   return (
     <div className="w-full  flex relative flex-col  h-[calc(100vh-200px)]">
       {/* search - fixed at top */}
-      <div className="flex flex-col lg:flex-row justify-between border-[#C9C9C9] px-4 lg:px-6 py-4 lg:py-6 border-b flex-shrink-0 gap-4">
+      <div className="flex flex-col  lg:flex-row justify-between border-[#C9C9C9] px-4 lg:px-6 py-4 lg:py-6 border-b flex-shrink-0 gap-4">
         <div className="w-full   lg:max-w-[350px]">
           <Input
             type="text"

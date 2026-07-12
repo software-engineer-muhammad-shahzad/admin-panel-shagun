@@ -99,6 +99,7 @@ const NotificationModal = ({ onClose }: NotificationModalProps) => {
           title="Successful"
           message="Your message has been sent successfully."
           buttonText="Close"
+         
           // showIcon={true}
         />
       )}

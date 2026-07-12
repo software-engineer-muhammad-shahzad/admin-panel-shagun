@@ -50,11 +50,11 @@ const page = () => {
             label: "Status",
             width: "120px",
             render: (value: any, row: any, index: number) => (
-                <span className={`px-3 py-1 flex items-center w-fit gap-2 rounded  glass-border text-xs ${value === "Active" ? " text-[#30B052]" :
+                <span className={`px-3 py-1 flex items-center w-fit gap-2 rounded  font-dm-sans glass-border text-xs ${value === "Active" ? " text-[#30B052]" :
                     value === "Inactive" ? " text-[#FF0000]" :
                         ""
                     }`}>
-                    <div className={`w-2 h-2 rounded-full ${value === "Active" ? "bg-[#30B052]" :
+                    <div className={`w-2 h-2 font-dm-sans rounded-full ${value === "Active" ? "bg-[#30B052]" :
                         value === "Inactive" ? "bg-[#FF0000]" : "bg-gray-600"
                         }`}></div>
                     {value}

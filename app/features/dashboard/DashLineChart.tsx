@@ -61,11 +61,11 @@ const DashLineChart = () => {
         <div className="flex items-center justify-end gap-6 mb-4">
           <div className="flex items-center gap-2">
             <span className="w-3 h-3 rounded-full bg-[#5FDA78]"></span>
-            <p className="text-white text-sm">Active</p>
+            <p className="text-white font-poppins text-sm">Active</p>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-3 h-3 rounded-full bg-[#FFCC00]"></span>
-            <p className="text-white text-sm">Inactive</p>
+            <p className="text-white font-poppins text-sm">Inactive</p>
           </div>
         </div>
 

@@ -228,7 +228,7 @@ const AddCouple = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }: 
                         </p>
                         <Button
                             onClick={handleCloseSuccessModal}
-                            className="bg-[#5FDA78] text-[#360567] max-w-[130px] font-semibold px-8! py-2! hover:bg-[#4FB860]"
+                            className="bg-[#5FDA78] font-inter  text-[#360567] max-w-[130px] font-semibold px-8! py-2! hover:bg-[#4FB860]"
                         >
                             Ok
                         </Button>

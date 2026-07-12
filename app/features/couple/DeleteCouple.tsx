@@ -29,7 +29,7 @@ const DeleteCouple = ({ onClose, onConfirm, isLoading }: DeleteCoupleProps) => {
                 <div className="flex justify-end mt-7 gap-2">
                     <Button
                         onClick={onClose}
-                        className="border border-text-green font-bold w-fit! px-8! py-2! bg-transparent text-green-text hover:bg-white/5"
+                        className="border font-inter border-text-green font-bold w-fit! px-8! py-2! bg-transparent text-green-text hover:bg-white/5"
                     >
                         Cancel
                     </Button>
@@ -67,7 +67,7 @@ const DeleteCouple = ({ onClose, onConfirm, isLoading }: DeleteCoupleProps) => {
                                     setIsConfirmModalOpen(false)
                                     onClose()
                                 }}
-                                className="text-[#360567] font-semibold w-fit! px-8! py-2! hover:bg-[#4FB860]"
+                                className="text-[#360567] font-inter font-semibold w-fit! px-8! py-2! hover:bg-[#4FB860]"
                             >
                                 Ok
                             </Button>

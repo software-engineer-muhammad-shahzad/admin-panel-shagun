@@ -45,7 +45,7 @@ const AssignRoles = ({ onClose }: AssignRolesProps) => {
           </div>
           <button
             onClick={() => setIsRolesListOpen(true)}
-            className="glass-card text-sm  text-[#30B052] py-1 px-3 rounded-2xl"
+            className="glass-card text-sm font-dm-sans text-[#30B052] py-1 px-3 rounded-2xl"
           >
             Assign Now
           </button>
@@ -59,7 +59,7 @@ const AssignRoles = ({ onClose }: AssignRolesProps) => {
           </div>
           <button
             onClick={() => setIsRolesListOpen(true)}
-            className="glass-card text-sm  text-[#30B052] py-1 px-3 rounded-2xl"
+            className="glass-card  font-dm-sans text-sm  text-[#30B052] py-1 px-3 rounded-2xl"
           >
             Assign Now
           </button>
@@ -73,7 +73,7 @@ const AssignRoles = ({ onClose }: AssignRolesProps) => {
           </div>
           <button
             onClick={() => setIsRolesListOpen(true)}
-            className="glass-card text-sm  text-[#30B052] py-1 px-3 rounded-2xl"
+            className="glass-card text-sm font-dm-sans text-[#30B052] py-1 px-3 rounded-2xl"
           >
             Assign Now
           </button>
@@ -82,7 +82,7 @@ const AssignRoles = ({ onClose }: AssignRolesProps) => {
         <div className="flex justify-end gap-4 mt-5">
           <Button
             onClick={onClose}
-            className="text-white font-light w-fit! px-8! py-2! hover:bg-[#4FB860]"
+            className="text-white font-inter font-light w-fit! px-8! py-2! hover:bg-[#4FB860]"
           >
             Close
           </Button>

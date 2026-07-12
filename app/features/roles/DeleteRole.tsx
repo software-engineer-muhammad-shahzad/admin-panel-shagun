@@ -39,7 +39,7 @@ const DeleteRole = ({ onClose, roleName = "Admin" }: DeleteRoleProps) => {
                     </Button>
                     <Button
                         onClick={() => setIsConfirmModalOpen(true)}
-                        className="text-white font-bold w-fit! px-8! py-2! hover:bg-[#4FB860]"
+                        className="text-white font-bold font-inter w-fit! px-8! py-2! hover:bg-[#4FB860]"
                     >
                         Yes
                     </Button>
@@ -52,7 +52,7 @@ const DeleteRole = ({ onClose, roleName = "Admin" }: DeleteRoleProps) => {
                     onClose={() => setIsConfirmModalOpen(false)}
                     modalWidth="40% sm:90%"
                     modalHeight="auto"
-                    className="glass-card border border-[#5FDA78] p-6"
+                    className="glass-card border  border-[#5FDA78] p-6"
                     overlayColor="bg-[#330065CC] backdrop-blur-[34px]"
                     position="center"
                 >
@@ -70,7 +70,7 @@ const DeleteRole = ({ onClose, roleName = "Admin" }: DeleteRoleProps) => {
                                     setIsConfirmModalOpen(false)
                                     onClose()
                                 }}
-                                className="text-[#360567] font-semibold w-fit! px-8! py-2! hover:bg-[#4FB860]"
+                                className="text-[#360567] font-inter font-semibold w-fit! px-8! py-2! hover:bg-[#4FB860]"
                             >
                                 Ok
                             </Button>

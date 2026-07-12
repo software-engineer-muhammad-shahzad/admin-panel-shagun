@@ -74,7 +74,7 @@ const ViewAnnouncement = ({ onClose, announcementData }: ViewAnnouncementProps) 
                     />
                 </div>
 
-                <div className="w-full md:col-span-2">
+                <div className="w-full  md:col-span-2">
                     <Input
                         type="text"
                         label="Message"
