@@ -1,21 +1,23 @@
 import Button from "@/app/shared/components/elements/Button"
 import Input from "@/app/shared/components/elements/Input"
 import ModalLayer from "@/app/shared/components/modal/ModalLayer"
+import { BroadcastCouple } from "@/app/features/broadcasts/types/broadcastUser"
 import { MoveLeft, X } from "lucide-react"
 
 interface ViewNotificationProps {
     onClose: () => void
-    notificationData: {
-        id: string
-        adminName: string
-        coupleId: string
-        coupleName: string
-        lastActive: string
-        message: string
-    }
+    notificationData: BroadcastCouple | null
 }
 
+const inputClass = "text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
+const containerClass = "border-none bg-transparent"
+
 const ViewNotification = ({ onClose, notificationData }: ViewNotificationProps) => {
+    if (!notificationData) return null
+
+    const status = notificationData.resourceMetadata?.recordStatus === 1 ? "Active" : "Inactive"
+    const updatedOn = notificationData.resourceMetadata?.updatedOn ?? "—"
+
     return (
         <ModalLayer
             onClose={onClose}
@@ -28,7 +30,7 @@ const ViewNotification = ({ onClose, notificationData }: ViewNotificationProps) 
             <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-2">
                     <MoveLeft className="text-white" />
-                    <h2 className="text-white text-xl font-semibold">Notification Details</h2>
+                    <h2 className="text-white text-xl font-semibold">Couple Details</h2>
                 </div>
                 <Button
                     onClick={onClose}
@@ -42,80 +44,100 @@ const ViewNotification = ({ onClose, notificationData }: ViewNotificationProps) 
                 <div className="w-full">
                     <Input
                         type="text"
-                        label="Admin ID"
+                        label="Display ID"
                         labelColor="ms-5 mb-1"
-                        placeholder="Enter Admin ID"
-                        value={notificationData.id}
+                        value={notificationData.displayId}
                         disabled={true}
-                        className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
-                        containerClassName="border-none bg-transparent"
+                        className={inputClass}
+                        containerClassName={containerClass}
                     />
                 </div>
 
                 <div className="w-full">
                     <Input
                         type="text"
-                        label="Admin Full Name"
+                        label="Full Name"
                         labelColor="ms-5 mb-1"
-                        placeholder="Enter Admin Full Name"
-                        value={notificationData.adminName}
+                        value={notificationData.fullName}
                         disabled={true}
-                        className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
-                        containerClassName="border-none bg-transparent"
+                        className={inputClass}
+                        containerClassName={containerClass}
                     />
                 </div>
 
                 <div className="w-full">
                     <Input
                         type="text"
-                        label="Couple ID"
+                        label="Partner Name"
                         labelColor="ms-5 mb-1"
-                        placeholder="Enter Couple ID"
-                        value={notificationData.coupleId}
+                        value={notificationData.partnerName}
                         disabled={true}
-                        className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
-                        containerClassName="border-none bg-transparent"
+                        className={inputClass}
+                        containerClassName={containerClass}
                     />
                 </div>
 
                 <div className="w-full">
                     <Input
                         type="text"
-                        label="Name"
+                        label="Email"
                         labelColor="ms-5 mb-1"
-                        placeholder="Enter Name"
-                        value={notificationData.coupleName}
+                        value={notificationData.email}
                         disabled={true}
-                        className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
-                        containerClassName="border-none bg-transparent"
+                        className={inputClass}
+                        containerClassName={containerClass}
                     />
                 </div>
 
                 <div className="w-full">
                     <Input
                         type="text"
-                        label="Last Active"
+                        label="Contact Number"
                         labelColor="ms-5 mb-1"
-                        placeholder="Enter Last Active"
-                        value={notificationData.lastActive}
+                        value={notificationData.contactNumber}
                         disabled={true}
-                        className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
-                        containerClassName="border-none bg-transparent"
+                        className={inputClass}
+                        containerClassName={containerClass}
                     />
                 </div>
 
-                <div className="w-full md:col-span-2">
+                <div className="w-full">
                     <Input
                         type="text"
-                        label="Announcement Message"
+                        label="Status"
                         labelColor="ms-5 mb-1"
-                        placeholder="Enter Announcement Message"
-                        value={notificationData.message}
+                        value={status}
                         disabled={true}
-                        className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
-                        containerClassName="border-none bg-transparent"
+                        className={inputClass}
+                        containerClassName={containerClass}
                     />
                 </div>
+
+                <div className="w-full">
+                    <Input
+                        type="text"
+                        label="Last Updated"
+                        labelColor="ms-5 mb-1"
+                        value={updatedOn}
+                        disabled={true}
+                        className={inputClass}
+                        containerClassName={containerClass}
+                    />
+                </div>
+
+                {notificationData.stripeCustomerId && (
+                    <div className="w-full">
+                        <Input
+                            type="text"
+                            label="Stripe Customer ID"
+                            labelColor="ms-5 mb-1"
+                            value={notificationData.stripeCustomerId}
+                            disabled={true}
+                            className={inputClass}
+                            containerClassName={containerClass}
+                        />
+                    </div>
+                )}
             </div>
 
             <div className="flex justify-center gap-4 mt-8">

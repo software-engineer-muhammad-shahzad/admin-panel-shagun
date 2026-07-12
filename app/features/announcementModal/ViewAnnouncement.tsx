@@ -1,21 +1,20 @@
 import Button from "@/app/shared/components/elements/Button"
 import Input from "@/app/shared/components/elements/Input"
 import ModalLayer from "@/app/shared/components/modal/ModalLayer"
+import { Announcement } from "@/app/features/broadcasts/types/announcement"
 import { MoveLeft, X } from "lucide-react"
 
 interface ViewAnnouncementProps {
     onClose: () => void
-    announcementData: {
-        id: string
-        adminName: string
-        coupleId: string
-        coupleName: string
-        lastActive: string
-        message: string
-    }
+    announcementData: Announcement | null
 }
 
+const inputClass = "text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
+const containerClass = "border-none bg-transparent"
+
 const ViewAnnouncement = ({ onClose, announcementData }: ViewAnnouncementProps) => {
+    if (!announcementData) return null
+
     return (
         <ModalLayer
             onClose={onClose}
@@ -42,78 +41,48 @@ const ViewAnnouncement = ({ onClose, announcementData }: ViewAnnouncementProps) 
                 <div className="w-full">
                     <Input
                         type="text"
-                        label="Admin ID"
+                        label="ID"
                         labelColor="ms-5 mb-1"
-                        placeholder="Enter Admin ID"
-                        value={announcementData.id}
+                        value={String(announcementData.id)}
                         disabled={true}
-                        className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
-                        containerClassName="border-none bg-transparent"
+                        className={inputClass}
+                        containerClassName={containerClass}
                     />
                 </div>
 
                 <div className="w-full">
                     <Input
                         type="text"
-                        label="Admin Full Name"
+                        label="Created By"
                         labelColor="ms-5 mb-1"
-                        placeholder="Enter Admin Full Name"
-                        value={announcementData.adminName}
+                        value={announcementData.createdBy ?? "—"}
                         disabled={true}
-                        className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
-                        containerClassName="border-none bg-transparent"
+                        className={inputClass}
+                        containerClassName={containerClass}
                     />
                 </div>
 
                 <div className="w-full">
                     <Input
                         type="text"
-                        label="Couple ID"
+                        label="Created On"
                         labelColor="ms-5 mb-1"
-                        placeholder="Enter Couple ID"
-                        value={announcementData.coupleId}
+                        value={announcementData.createdOnUtc ? new Date(announcementData.createdOnUtc).toLocaleString() : "—"}
                         disabled={true}
-                        className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
-                        containerClassName="border-none bg-transparent"
-                    />
-                </div>
-
-                <div className="w-full">
-                    <Input
-                        type="text"
-                        label="Name"
-                        labelColor="ms-5 mb-1"
-                        placeholder="Enter Name"
-                        value={announcementData.coupleName}
-                        disabled={true}
-                        className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
-                        containerClassName="border-none bg-transparent"
-                    />
-                </div>
-
-                <div className="w-full">
-                    <Input
-                        type="text"
-                        label="Last Active"
-                        labelColor="ms-5 mb-1"
-                        placeholder="Enter Last Active"
-                        value={announcementData.lastActive}
-                        disabled={true}
-                        className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
-                        containerClassName="border-none bg-transparent"
+                        className={inputClass}
+                        containerClassName={containerClass}
                     />
                 </div>
 
                 <div className="w-full md:col-span-2">
                     <Input
                         type="text"
-                        label="Announcement Message"
+                        label="Message"
                         labelColor="ms-5 mb-1"
-                        placeholder="Enter Announcement Message"
-                        value={announcementData.message}
+                        value={announcementData.content}
                         disabled={true}
-                        className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
-                        containerClassName="border-none bg-transparent"
+                        className={inputClass}
+                        containerClassName={containerClass}
                     />
                 </div>
             </div>

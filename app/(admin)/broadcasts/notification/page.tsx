@@ -1,22 +1,52 @@
 "use client"
 
-import { useState } from "react"
-import { filterData } from "@/app/lib/utils/SearchUtils";
-import { announcementData, announcementColumns } from "@/app/features/data/MockData";
-import { CirclePlus, Eye } from "lucide-react";
-import NotificationModal from "@/app/features/notifications/NotificationModal";
-import ViewNotification from "@/app/features/notifications/ViewNotification";
-import Input from "@/app/shared/components/elements/Input";
-import Table from "@/app/shared/components/elements/Table";
+import { useState, useEffect } from "react"
+
+import { useBroadcastCouples } from "@/app/features/broadcasts/hooks/useBroadcastCouples"
+import { BroadcastCouple } from "@/app/features/broadcasts/types/broadcastUser"
+import ViewNotification from "@/app/features/notifications/ViewNotification"
+import Input from "@/app/shared/components/elements/Input"
+import Table from "@/app/shared/components/elements/Table"
+
+const broadcastColumns = [
+  { key: "displayId", label: "ID" },
+  { key: "fullName", label: "Full Name" },
+  { key: "partnerName", label: "Partner Name" },
+  { key: "contactNumber", label: "Contact" },
+  { key: "email", label: "Email" },
+  {
+    key: "resourceMetadata",
+    label: "Status",
+    render: (value: any) => {
+      const status = value?.recordStatus
+      return (
+        <span
+          className={`px-2 py-1 rounded-full text-xs font-medium ${status === 1
+              ? "bg-green-500/20 text-green-400"
+              : "bg-red-500/20 text-red-400"
+            }`}
+        >
+          {status === 1 ? "Active" : "Inactive"}
+        </span>
+      )
+    },
+  },
+]
 
 const page = () => {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [emailInput, setEmailInput] = useState("")
+  const [debouncedEmail, setDebouncedEmail] = useState("")
   const [isViewModalOpen, setIsViewModalOpen] = useState(false)
-  const [notificationData, setNotificationData] = useState<any>(null)
+  const [selectedCouple, setSelectedCouple] = useState<BroadcastCouple | null>(null)
 
-  // Filter payments based on search term using SearchUtils
-  const filteredPayments = filterData(announcementData, searchTerm);
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedEmail(emailInput), 400)
+    return () => clearTimeout(timer)
+  }, [emailInput])
+
+  const { data, isLoading } = useBroadcastCouples({ search: debouncedEmail || undefined })
+
+  const couples = data?.items ?? []
 
   return (
     <div className="w-full  flex relative flex-col  h-[calc(100vh-200px)]">
@@ -25,63 +55,36 @@ const page = () => {
         <div className="w-full   lg:max-w-[350px]">
           <Input
             type="text"
-            placeholder="Quick Search..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search by email..."
+            value={emailInput}
+            onChange={(e) => setEmailInput(e.target.value)}
             className="text-sm outline-0  w-full!  placeholder:text-light-text text-light-text"
             containerClassName="border border-[#C9C9C9] w-full!  rounded-lg glass-border bg-transparent"
           />
         </div>
-        {/* calendar and  payment configuration */}
-        <div className="flex flex-col sm:flex-row gap-3 lg:gap-4 items-center">
-          <div
-            className="flex gap-2 bg-[#5FDA78] rounded-[56px] py-[10px] px-3 cursor-pointer items-center w-full sm:w-auto justify-center"
-            onClick={() => setIsModalOpen(true)}
-          >
-            <CirclePlus size={15} />
-            <p className="text-[#360567] text-md font-semibold text-nowrap">Add New</p>
-          </div>
-        </div>
-
       </div>
+
       {/* table - scrollable */}
       <div className="flex-1 h-[calc(100vh-200px)] overflow-auto scrollbar-hide ">
         <Table
-          data={filteredPayments}
-          columns={announcementColumns.map(col =>
-            col.key === "Action"
-              ? {
-                ...col,
-                render: (value: any, row: any, index: number) => (
-                  <span
-                    className="w-8 h-8 p-1 py-1 flex items-center justify-center border border-white/10  gap-2 rounded-full glass-border text-xs cursor-pointer hover:bg-white/5"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setNotificationData(row)
-                      setIsViewModalOpen(true)
-                    }}
-                  >
-                    <Eye size={14} />
-                  </span>
-                )
-              }
-              : col
-          )}
-          onRowClick={(row, index) => console.log("Row clicked:", row, index)}
+          data={couples}
+          columns={broadcastColumns}
+          onRowClick={(row) => {
+            setSelectedCouple(row as BroadcastCouple)
+            setIsViewModalOpen(true)
+          }}
           className="rounded-lg"
-          emptyMessage="No payments found"
+          emptyMessage={isLoading ? "Loading..." : "No couples found"}
         />
       </div>
 
-      {/* Notification Modal */}
-      {isModalOpen && (
-        <NotificationModal
-          onClose={() => setIsModalOpen(false)}
+      {/* View Notification Modal */}
+      {isViewModalOpen && (
+        <ViewNotification
+          onClose={() => setIsViewModalOpen(false)}
+          notificationData={selectedCouple}
         />
       )}
-
-      {/* View Notification Modal */}
-      {isViewModalOpen && <ViewNotification onClose={() => setIsViewModalOpen(false)} notificationData={notificationData} />}
     </div>
   )
 }

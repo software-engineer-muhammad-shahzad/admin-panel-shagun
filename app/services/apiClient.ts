@@ -40,14 +40,16 @@ apiClient.interceptors.request.use(
     const requestConfig = config as AxiosRequestConfigWithSkipAuth
 
     if (typeof window !== "undefined") {
-      const token = localStorage.getItem("token")
       const skipAuth = requestConfig.skipAuth === true
 
-      // ✅ default: attach token
-      // ❌ only skip if skipAuth is true
-      if (!skipAuth && token) {
-        requestConfig.headers = requestConfig.headers || {}
-        requestConfig.headers.Authorization = `Bearer ${token}`
+      if (!skipAuth) {
+        const raw = localStorage.getItem("authData")
+        const token = raw ? JSON.parse(raw)?.token : null
+
+        if (token) {
+          requestConfig.headers = requestConfig.headers || {}
+          requestConfig.headers.Authorization = `Bearer ${token}`
+        }
       }
     }
 
@@ -65,7 +67,7 @@ apiClient.interceptors.response.use(
 
     // 🔐 unauthorized handling
     if (status === 401 && typeof window !== "undefined") {
-      localStorage.removeItem("token");
+      localStorage.removeItem("authData");
       window.location.href = "/login";
     }
 

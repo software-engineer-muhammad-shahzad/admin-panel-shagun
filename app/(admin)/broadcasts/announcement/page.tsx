@@ -1,23 +1,38 @@
 "use client"
 
 import { useState } from "react"
-import { filterData } from "@/app/lib/utils/SearchUtils";
-import { announcementData, announcementColumns } from "@/app/features/data/MockData";
-import { CirclePlus, Eye } from "lucide-react";
-import AddNewAnnouncement from "@/app/features/announcementModal/AddNewAnnouncement";
-import ViewAnnouncement from "@/app/features/announcementModal/ViewAnnouncement";
-import Table from "@/app/shared/components/elements/Table";
-import Input from "@/app/shared/components/elements/Input";
+import { CirclePlus, Eye } from "lucide-react"
+import { useGetAnnouncements } from "@/app/features/broadcasts/hooks/useGetAnnouncements"
+import { Announcement } from "@/app/features/broadcasts/types/announcement"
+import AddNewAnnouncement from "@/app/features/announcementModal/AddNewAnnouncement"
+import ViewAnnouncement from "@/app/features/announcementModal/ViewAnnouncement"
+import Table from "@/app/shared/components/elements/Table"
+import Input from "@/app/shared/components/elements/Input"
 
+const announcementColumns = [
+  { key: "id", label: "ID" },
+  { key: "content", label: "Message" },
+  {
+    key: "createdOnUtc",
+    label: "Created On",
+    render: (value: any) =>
+      value ? new Date(value).toLocaleDateString() : "—",
+  },
+  { key: "createdBy", label: "Created By", render: (value: any) => value ?? "—" },
+  { key: "Action", label: "Action" },
+]
 
 const page = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isViewModalOpen, setIsViewModalOpen] = useState(false)
-  const [selectedAnnouncement, setSelectedAnnouncement] = useState<any>(null)
+  const [selectedAnnouncement, setSelectedAnnouncement] = useState<Announcement | null>(null)
 
-  // Filter payments based on search term using SearchUtils
-  const filteredPayments = filterData(announcementData, searchTerm);
+  const { data: announcements, isLoading, refetch } = useGetAnnouncements()
+
+  const filtered = (announcements ?? []).filter((a) =>
+    a.content.toLowerCase().includes(searchTerm.toLowerCase())
+  )
 
   return (
     <>
@@ -34,9 +49,7 @@ const page = () => {
               containerClassName="border border-[#C9C9C9] w-full!  rounded-lg glass-border bg-transparent"
             />
           </div>
-          {/* calendar and  payment configuration */}
           <div className="flex flex-col sm:flex-row gap-3 lg:gap-4 items-center">
-
             <div
               className="flex gap-2 bg-[#5FDA78] rounded-[56px] py-[10px] px-3 cursor-pointer items-center w-full sm:w-auto justify-center"
               onClick={() => setIsModalOpen(true)}
@@ -45,42 +58,58 @@ const page = () => {
               <p className="text-[#360567] text-md font-semibold text-nowrap">Add New</p>
             </div>
           </div>
-
         </div>
+
         {/* table - scrollable */}
         <div className="flex-1 h-[calc(100vh-200px)] overflow-auto scrollbar-hide ">
           <Table
-            data={filteredPayments}
-            columns={announcementColumns.map(col =>
+            data={filtered}
+            columns={announcementColumns.map((col) =>
               col.key === "Action"
                 ? {
-                  ...col,
-                  render: (value: any, row: any, index: number) => (
-                    <span
-                      className="w-8 h-8 p-1 py-1 flex items-center justify-center border border-white/10  gap-2 rounded-full glass-border text-xs cursor-pointer hover:bg-white/5"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setSelectedAnnouncement(row)
-                        setIsViewModalOpen(true)
-                      }}
-                    >
-                      <Eye size={14} />
-                    </span>
-                  )
-                }
+                    ...col,
+                    render: (_value: any, row: any) => (
+                      <span
+                        className="w-8 h-8 p-1 py-1 flex items-center justify-center border border-white/10 gap-2 rounded-full glass-border text-xs cursor-pointer hover:bg-white/5"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setSelectedAnnouncement(row as Announcement)
+                          setIsViewModalOpen(true)
+                        }}
+                      >
+                        <Eye size={14} />
+                      </span>
+                    ),
+                  }
                 : col
             )}
-            onRowClick={(row, index) => console.log("Row clicked:", row, index)}
+            onRowClick={(row) => {
+              setSelectedAnnouncement(row as Announcement)
+              setIsViewModalOpen(true)
+            }}
             className="rounded-lg"
-            emptyMessage="No payments found"
+            emptyMessage={isLoading ? "Loading..." : "No announcements found"}
           />
         </div>
       </div>
 
       {/* Add New Announcement Modal */}
-      {isModalOpen && <AddNewAnnouncement onClose={() => setIsModalOpen(false)} />}
+      {isModalOpen && (
+        <AddNewAnnouncement
+          onClose={() => {
+            setIsModalOpen(false)
+            refetch()
+          }}
+        />
+      )}
+
       {/* View Announcement Modal */}
-      {isViewModalOpen && <ViewAnnouncement announcementData={selectedAnnouncement} onClose={() => setIsViewModalOpen(false)} />}
+      {isViewModalOpen && (
+        <ViewAnnouncement
+          announcementData={selectedAnnouncement}
+          onClose={() => setIsViewModalOpen(false)}
+        />
+      )}
     </>
   )
 }
