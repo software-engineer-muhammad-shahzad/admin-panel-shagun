@@ -4,9 +4,9 @@ import Image from "next/image"
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import LeftBannerText from "../LeftBannerText";
-import Input from "../../../features/elements/Input";
-import Checkbox from "../../../features/elements/Checkbox";
-import Button from "../../../features/elements/Button";
+import Input from "@/app/shared/components/elements/Input";
+import Checkbox from "@/app/shared/components/elements/Checkbox";
+import Button from "@/app/shared/components/elements/Button";
 
 
 

@@ -1,7 +1,6 @@
 "use client"
 
-import { Check } from "lucide-react"
-import Button from "@/app/features/elements/Button"
+import Button from "@/app/shared/components/elements/Button"
 import ModalLayer from "@/app/shared/components/modal/ModalLayer"
 
 interface SuccessfullModalProps {

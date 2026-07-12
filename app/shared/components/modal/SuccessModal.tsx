@@ -1,7 +1,7 @@
 "use client"
 
 import ModalLayer from "./ModalLayer"
-import Button from "../elements/Button"
+import Button from "@/app/shared/components/elements/Button"
 
 interface SuccessModalProps {
   onClose: () => void

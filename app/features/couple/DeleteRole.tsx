@@ -1,6 +1,6 @@
 import { useState } from "react"
 import ModalLayer from "@/app/shared/components/modal/ModalLayer"
-import Button from "../elements/Button"
+import Button from "@/app/shared/components/elements/Button"
 
 interface DeleteRoleProps {
     onClose: () => void

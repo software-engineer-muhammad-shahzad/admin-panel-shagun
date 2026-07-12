@@ -1,7 +1,6 @@
-import axios, { AxiosRequestConfig } from "axios"
+import axios, { InternalAxiosRequestConfig } from "axios"
 
-
-interface AxiosRequestConfigWithSkipAuth extends AxiosRequestConfig {
+interface AxiosRequestConfigWithSkipAuth extends InternalAxiosRequestConfig {
   skipAuth?: boolean
 }
 
@@ -47,7 +46,6 @@ apiClient.interceptors.request.use(
         const token = raw ? JSON.parse(raw)?.token : null
 
         if (token) {
-          requestConfig.headers = requestConfig.headers || {}
           requestConfig.headers.Authorization = `Bearer ${token}`
         }
       }

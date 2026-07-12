@@ -1,4 +1,4 @@
-import { handleError } from "@/app/utils/errorHandler"
+import { handleError } from "@/app/utils/storage/errorHandler"
 
 /**
  * Wrapper for async operations with error handling
