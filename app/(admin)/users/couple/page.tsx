@@ -13,16 +13,20 @@ import { useDeleteCouple } from "@/app/features/couple/hooks/useDeleteCouple"
 import { useUpdateCouple } from "@/app/features/couple/hooks/useUpdateCouple"
 import { CoupleUser } from "@/app/features/couple/types/coupleUser"
 
-const STATUS_OPTIONS = ["All", "Active", "Inactive"]
+const STATUS_OPTIONS = ["All", "Active", "Inactive", "Deleted"]
 
 const statusToRecordStatus = (status: string): number | undefined => {
   if (status === "Active") return 1
   if (status === "Inactive") return 2
+  if (status === "Deleted") return 3
   return undefined
 }
 
-const recordStatusLabel = (status: number) =>
-  status === 1 ? "Active" : "Inactive"
+const recordStatusLabel = (status: string | null | undefined): string => {
+  if (status === "Active") return "Active"
+  if (status === "Inactive") return "Inactive"
+  return "Deleted"
+}
 
 const page = () => {
   const [searchTerm, setSearchTerm] = useState("")
@@ -82,25 +86,27 @@ const page = () => {
       render: (value: any) => value || "N/A",
     },
     {
-      key: "createdOnUtc",
+      key: "createdOn",
       label: "Date & Time",
       width: "160px",
-      render: (value: any) =>
-        value ? new Date(value).toLocaleString() : "N/A",
+      render: (_value: any, row: any) =>
+        row?.resourceMetadata?.createdOn
+          ? new Date(row.resourceMetadata.createdOn).toLocaleString()
+          : "N/A",
     },
     {
-      key: "recordStatus",
+      key: "resourceMetadata",
       label: "Status",
       width: "120px",
       render: (value: any) => {
-        const label = recordStatusLabel(value)
+        const label = recordStatusLabel(value?.recordStatus)
+        const color =
+          label === "Active" ? "#30B052" :
+          label === "Deleted" ? "#FF6B6B" :
+          "#FF0000"
         return (
-          <span
-            className={`px-3 py-1 flex items-center w-fit gap-2 rounded glass-border text-xs ${label === "Active" ? "text-[#30B052]" : "text-[#FF0000]"}`}
-          >
-            <div
-              className={`w-2 h-2 rounded-full ${label === "Active" ? "bg-[#30B052]" : "bg-[#FF0000]"}`}
-            />
+          <span className="px-3 py-1 flex items-center w-fit gap-2 rounded glass-border text-xs" style={{ color }}>
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
             {label}
           </span>
         )
@@ -165,9 +171,6 @@ const page = () => {
             onChange={(value) => setStatusFilter(value)}
             placeholder="Filter by Status"
             containerClassName="min-w-[160px]"
-            triggerClassName="text-sm outline-0 px-4 glass-card py-2.5 border border-[#C9C9C9] rounded-lg text-white placeholder:text-light-text w-full"
-            dropdownClassName="bg-[#350564] z-50"
-            optionClassName="text-white border hover:bg-[#5FDA78]/20"
           />
         </div>
       </div>
@@ -193,28 +196,17 @@ const page = () => {
         )}
       </div>
 
-      {deleteModalOpen && selectedCouple && (
-        <DeleteCouple
-          onClose={() => setDeleteModalOpen(false)}
-          onConfirm={() =>
-            deleteCouple(selectedCouple.userId, {
-              onSuccess: () => setDeleteModalOpen(false),
-            })
-          }
-          isLoading={isDeleting}
-        />
-      )}
       {editModalOpen && selectedCouple && (
         <AddCouple
           onClose={() => setEditModalOpen(false)}
           editData={{
-            id: selectedCouple.displayId,
+            id: selectedCouple.displayId ?? "",
             fullName: selectedCouple.fullName,
             partnerName: selectedCouple.partnerName,
             email: selectedCouple.email,
             contactNo: selectedCouple.contactNumber,
-            dateTime: selectedCouple.createdOnUtc,
-            status: recordStatusLabel(selectedCouple.recordStatus),
+            dateTime: selectedCouple.resourceMetadata?.createdOn ?? "",
+            status: recordStatusLabel(selectedCouple.resourceMetadata?.recordStatus),
           }}
           onSubmit={(payload) =>
             updateCouple(
@@ -226,17 +218,28 @@ const page = () => {
           mode="edit"
         />
       )}
+      {deleteModalOpen && selectedCouple && (
+        <DeleteCouple
+          onClose={() => setDeleteModalOpen(false)}
+          onConfirm={() =>
+            deleteCouple(selectedCouple.userId, {
+              onSuccess: () => setDeleteModalOpen(false),
+            })
+          }
+          isLoading={isDeleting}
+        />
+      )}
       {viewModalOpen && selectedCouple && (
         <ViewCouple
           onClose={() => setViewModalOpen(false)}
           coupleData={{
-            id: selectedCouple.displayId,
+            id: selectedCouple.displayId ?? "",
             fullName: selectedCouple.fullName,
             partnerName: selectedCouple.partnerName,
             email: selectedCouple.email,
             contactNo: selectedCouple.contactNumber,
-            dateTime: selectedCouple.createdOnUtc,
-            status: recordStatusLabel(selectedCouple.recordStatus),
+            dateTime: selectedCouple.resourceMetadata?.createdOn ?? "",
+            status: recordStatusLabel(selectedCouple.resourceMetadata?.recordStatus),
           }}
         />
       )}

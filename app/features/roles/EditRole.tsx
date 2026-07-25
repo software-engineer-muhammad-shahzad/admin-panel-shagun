@@ -1,34 +1,57 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import ModalLayer from "@/app/shared/components/modal/ModalLayer"
 import { MoveLeft, X } from "lucide-react"
 import Button from "@/app/shared/components/elements/Button"
 import Input from "@/app/shared/components/elements/Input"
 import Dropdown from "@/app/shared/components/elements/Dropdown"
+import { AdminUser, RecordStatus } from "@/app/features/user/types/adminUser"
+import { useAdminUsers } from "@/app/features/user/hooks/useAdminUsers"
+import { useUpdateAdmin } from "@/app/features/user/hooks/useUpdateAdmin"
 
 interface EditRoleProps {
     onClose: () => void
-    editData?: {
-        id: string;
-        adminName: string;
-        lastActive: string;
-        modules: string;
-        status: string;
-    }
+    editData?: AdminUser | null
     mode?: "add" | "edit"
+}
+
+const STATUS_LABEL_MAP: Record<string, number> = {
+    Active: RecordStatus.Active,
+    Inactive: RecordStatus.Inactive,
+    Deleted: RecordStatus.Deleted,
 }
 
 const EditRole = ({ onClose, editData, mode = "edit" }: EditRoleProps) => {
     const [formData, setFormData] = useState({
-        id: editData?.id || "",
-        adminName: editData?.adminName || "",
-        lastActive: editData?.lastActive || "",
-        modules: editData?.modules || "",
-        status: editData?.status || "Active",
+        id: editData?.displayId || "",
+        adminName: editData?.fullName || "",
+        email: editData?.email || "",
+        modules: editData?.moduleAccess || "",
+        status: editData?.resourceMetadata?.recordStatus ?? "Inactive",
     })
 
     const [showSuccessModal, setShowSuccessModal] = useState(false)
+
+    const { mutate: updateAdmin, isPending } = useUpdateAdmin()
+
+    const { data: freshData } = useAdminUsers(
+        editData?.userId
+            ? { userId: editData.userId, recordStatus: editData.resourceMetadata?.recordStatus ?? undefined }
+            : undefined
+    )
+
+    useEffect(() => {
+        const user = freshData?.items?.[0]
+        if (!user) return
+        setFormData({
+            id: user.displayId || "",
+            adminName: user.fullName || "",
+            email: user.email || "",
+            modules: user.moduleAccess || "",
+            status: user.resourceMetadata?.recordStatus ?? "Inactive",
+        })
+    }, [freshData])
 
     const handleInputChange = (field: string, value: string) => {
         setFormData(prev => ({
@@ -39,9 +62,26 @@ const EditRole = ({ onClose, editData, mode = "edit" }: EditRoleProps) => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        // Handle form submission logic here
-        console.log("Form submitted:", formData)
-        setShowSuccessModal(true)
+        if (!editData?.userId) return
+        updateAdmin(
+            {
+                userId: editData.userId,
+                payload: {
+                    fullName: formData.adminName,
+                    contactNumber: editData.contactNumber || "",
+                    email: formData.email,
+                    password: "",
+                    userRole: "Admin",
+                    moduleAccess: formData.modules,
+                    isActive: formData.status === "Active",
+                    recordStatus: STATUS_LABEL_MAP[formData.status] ?? RecordStatus.Inactive,
+                    eventDate: new Date().toISOString(),
+                },
+            },
+            {
+                onSuccess: () => setShowSuccessModal(true),
+            }
+        )
     }
 
     const handleCloseSuccessModal = () => {
@@ -105,11 +145,11 @@ const EditRole = ({ onClose, editData, mode = "edit" }: EditRoleProps) => {
                         <div className="w-full">
                             <Input
                                 type="text"
-                                label="Last Active"
+                                label="Email"
                                 labelColor="ms-5 mb-1"
-                                placeholder="Enter Last Active"
-                                value={formData.lastActive}
-                                onChange={(e) => handleInputChange("lastActive", e.target.value)}
+                                placeholder="Enter Email"
+                                value={formData.email}
+                                onChange={(e) => handleInputChange("email", e.target.value)}
                                 className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
                                 containerClassName="border-none bg-transparent"
                             />
@@ -118,9 +158,9 @@ const EditRole = ({ onClose, editData, mode = "edit" }: EditRoleProps) => {
                         <div className="w-full">
                             <Input
                                 type="text"
-                                label="Modules"
+                                label="Module Access"
                                 labelColor="ms-5 mb-1"
-                                placeholder="Enter Modules"
+                                placeholder="Enter Module Access"
                                 value={formData.modules}
                                 onChange={(e) => handleInputChange("modules", e.target.value)}
                                 className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
@@ -131,7 +171,7 @@ const EditRole = ({ onClose, editData, mode = "edit" }: EditRoleProps) => {
                         <div className="w-full px-5 mt-3">
                             <Dropdown
                                 label="Status"
-                                options={["Active", "Inactive"]}
+                                options={["Active", "Inactive", "Deleted"]}
                                 value={formData.status}
                                 onChange={(value) => handleInputChange("status", value)}
                                 placeholder="Select status"
@@ -148,15 +188,17 @@ const EditRole = ({ onClose, editData, mode = "edit" }: EditRoleProps) => {
                         <Button
                             type="button"
                             onClick={onClose}
+                            disabled={isPending}
                             className="border border-text-border max-w-[110px] md:max-w-[120px] font-semibold w-fit! px-8! py-2! bg-transparent text-white hover:bg-white/5"
                         >
                             Cancel
                         </Button>
                         <Button
                             type="submit"
-                            className="bg-[#5FDA78]  text-[#360567] max-w-[110px] md:max-w-[120px] w-full font-semibold px-8! py-2! hover:bg-[#4FB860]"
+                            disabled={isPending}
+                            className="bg-[#5FDA78] text-[#360567] max-w-[110px] md:max-w-[120px] w-full font-semibold px-8! py-2! hover:bg-[#4FB860]"
                         >
-                            {mode === "edit" ? "Update" : "Add"}
+                            {isPending ? "Saving..." : mode === "edit" ? "Update" : "Add"}
                         </Button>
                     </div>
                 </form>

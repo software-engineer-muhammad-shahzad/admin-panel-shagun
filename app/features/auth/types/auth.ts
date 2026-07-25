@@ -19,6 +19,7 @@ export interface AuthData {
   eventDate: string
   phoneNumber: string
   role: string
+  adminModuleAccess: string | null
   profileImageUrl: string | null
   defaultCurrency: string
 }

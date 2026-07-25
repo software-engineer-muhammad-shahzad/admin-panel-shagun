@@ -7,5 +7,6 @@ export const useTotalUsersChart = (usersRole: number) => {
   return useQuery({
     queryKey: ["totalUsersChart", usersRole, year],
     queryFn: () => dashboardService.getTotalUsersChart(usersRole, year),
+    retry: false,
   })
 }

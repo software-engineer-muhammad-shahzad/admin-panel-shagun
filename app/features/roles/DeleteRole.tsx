@@ -3,14 +3,24 @@
 import { useState } from "react"
 import ModalLayer from "@/app/shared/components/modal/ModalLayer"
 import Button from "@/app/shared/components/elements/Button"
+import { useDeleteAdmin } from "@/app/features/user/hooks/useDeleteAdmin"
 
 interface DeleteRoleProps {
     onClose: () => void
+    userId?: number
     roleName?: string
 }
 
-const DeleteRole = ({ onClose, roleName = "Admin" }: DeleteRoleProps) => {
+const DeleteRole = ({ onClose, userId, roleName = "Admin" }: DeleteRoleProps) => {
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false)
+    const { mutate: deleteAdmin, isPending } = useDeleteAdmin()
+
+    const handleDelete = () => {
+        if (!userId) return
+        deleteAdmin(userId, {
+            onSuccess: () => setIsConfirmModalOpen(true),
+        })
+    }
 
     return (
         <ModalLayer
@@ -38,10 +48,11 @@ const DeleteRole = ({ onClose, roleName = "Admin" }: DeleteRoleProps) => {
                         Cancel
                     </Button>
                     <Button
-                        onClick={() => setIsConfirmModalOpen(true)}
+                        onClick={handleDelete}
+                        disabled={isPending}
                         className="text-white font-bold font-inter w-fit! px-8! py-2! hover:bg-[#4FB860]"
                     >
-                        Yes
+                        {isPending ? "Deleting..." : "Yes"}
                     </Button>
                 </div>
             </div>

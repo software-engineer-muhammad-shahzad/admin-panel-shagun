@@ -61,22 +61,19 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    const status = error?.response?.status;
+    const status = error?.response?.status
+    const url = error?.config?.url ?? ""
+    const isLoginEndpoint = url.includes("/Auth/login") || url.includes("/auth/login")
 
-    // 🔐 unauthorized handling
-    if (status === 401 && typeof window !== "undefined") {
-      localStorage.removeItem("authData");
-      window.location.href = "/login";
+    // Redirect to login on 401 only for authenticated requests, not login itself
+    if (status === 401 && !isLoginEndpoint && typeof window !== "undefined") {
+      localStorage.removeItem("authData")
+      window.location.href = "/login"
     }
 
-    console.error(
-      "API Error:",
-      error?.response?.data || error.message
-    );
-
-    return Promise.reject(error);
+    return Promise.reject(error)
   }
-);
+)
 
 
 export default apiClient;

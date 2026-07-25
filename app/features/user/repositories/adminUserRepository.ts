@@ -1,4 +1,4 @@
-import { AdminUsersParams, CreateAdminPayload } from "../types/adminUser"
+import { AdminUsersParams, AssignModulesPayload, CreateAdminPayload } from "../types/adminUser"
 import { adminUserService } from "../services/adminUserService"
 
 export const adminUserQueryKeys = {
@@ -12,4 +12,5 @@ export const adminUserRepository = {
   deleteAdmin: (userId: number) => adminUserService.deleteAdmin(userId),
   createAdmin: (payload: CreateAdminPayload) => adminUserService.createAdmin(payload),
   updateAdmin: (userId: number, payload: CreateAdminPayload) => adminUserService.updateAdmin(userId, payload),
+  assignModules: (userId: number, payload: AssignModulesPayload) => adminUserService.assignModules(userId, payload),
 }

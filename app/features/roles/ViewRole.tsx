@@ -2,19 +2,15 @@ import Button from "@/app/shared/components/elements/Button"
 import Input from "@/app/shared/components/elements/Input"
 import ModalLayer from "@/app/shared/components/modal/ModalLayer"
 import { MoveLeft, X } from "lucide-react"
+import { AdminUser } from "@/app/features/user/types/adminUser"
 
 interface ViewRoleProps {
     onClose: () => void
-    roleData: {
-        id: string
-        adminName: string
-        lastActive: string
-        modules: string
-        status: string
-    }
+    roleData: AdminUser | null
 }
 
 const ViewRole = ({ onClose, roleData }: ViewRoleProps) => {
+    if (!roleData) return null
     return (
         <ModalLayer
             onClose={onClose}
@@ -43,8 +39,7 @@ const ViewRole = ({ onClose, roleData }: ViewRoleProps) => {
                         type="text"
                         label="Admin ID"
                         labelColor="ms-5 mb-1"
-                        placeholder="Enter Admin ID"
-                        value={roleData.id}
+                        value={roleData.displayId}
                         disabled={true}
                         className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
                         containerClassName="border-none bg-transparent"
@@ -56,8 +51,7 @@ const ViewRole = ({ onClose, roleData }: ViewRoleProps) => {
                         type="text"
                         label="Admin Full Name"
                         labelColor="ms-5 mb-1"
-                        placeholder="Enter Admin Full Name"
-                        value={roleData.adminName}
+                        value={roleData.fullName}
                         disabled={true}
                         className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
                         containerClassName="border-none bg-transparent"
@@ -67,12 +61,11 @@ const ViewRole = ({ onClose, roleData }: ViewRoleProps) => {
                 <div className="w-full">
                     <Input
                         type="text"
-                        label="Last Active"
+                        label="Email"
                         labelColor="ms-5 mb-1"
-                        placeholder="Enter Last Active"
-                        value={roleData.lastActive}
+                        value={roleData.email}
                         disabled={true}
-                        className="text-sm outline-0  px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
+                        className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
                         containerClassName="border-none bg-transparent"
                     />
                 </div>
@@ -80,12 +73,11 @@ const ViewRole = ({ onClose, roleData }: ViewRoleProps) => {
                 <div className="w-full">
                     <Input
                         type="text"
-                        label="Modules"
+                        label="Module Access"
                         labelColor="ms-5 mb-1"
-                        placeholder="Enter Modules"
-                        value={roleData.modules}
+                        value={roleData.moduleAccess ?? "—"}
                         disabled={true}
-                        className="text-sm  outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
+                        className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
                         containerClassName="border-none bg-transparent"
                     />
                 </div>
@@ -95,8 +87,19 @@ const ViewRole = ({ onClose, roleData }: ViewRoleProps) => {
                         type="text"
                         label="Status"
                         labelColor="ms-5 mb-1"
-                        placeholder="Status"
-                        value={roleData.status}
+                        value={roleData.resourceMetadata?.recordStatus ?? "Inactive"}
+                        disabled={true}
+                        className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
+                        containerClassName="border-none bg-transparent"
+                    />
+                </div>
+
+                <div className="w-full">
+                    <Input
+                        type="text"
+                        label="Contact Number"
+                        labelColor="ms-5 mb-1"
+                        value={roleData.contactNumber}
                         disabled={true}
                         className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
                         containerClassName="border-none bg-transparent"

@@ -4,34 +4,59 @@ export enum UserRole {
   Couple = 3,
 }
 
-export interface CreateAdminPayload {
+export interface AssignModulesPayload {
+  userId: number
   fullName: string
   contactNumber: string
   email: string
   password: string
-  userRole: UserRole
+  userRole: string
   moduleAccess: string
   isActive: boolean
   eventDate: string
 }
 
+export enum RecordStatus {
+  Active = 1,
+  Inactive = 2,
+  Deleted = 3,
+}
+
+export interface CreateAdminPayload {
+  fullName: string
+  contactNumber: string
+  email: string
+  password: string
+  userRole: string | number
+  moduleAccess: string
+  isActive: boolean
+  recordStatus: number
+  eventDate: string
+}
+
 export interface AdminUsersParams {
   search?: string
-  userRole?: number
-  recordStatus?: number
+  userId?: number
+  userRole?: string | number
+  recordStatus?: string | number
+}
+
+export interface ResourceMetadata {
+  createdOn: string
+  updatedOn: string | null
+  deletedOn: string | null
+  recordStatus: string | null
 }
 
 export interface AdminUser {
-  displayId: string
+  displayId: string | null
   userId: number
   fullName: string
   partnerName: string
   contactNumber: string
   email: string
-  createdOnUtc: string
-  updatedOnUtc: string | null
   moduleAccess: string | null
-  recordStatus: number
+  resourceMetadata: ResourceMetadata
 }
 
 export interface PaginatedData<T> {

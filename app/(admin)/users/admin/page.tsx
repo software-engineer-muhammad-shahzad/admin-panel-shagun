@@ -13,8 +13,11 @@ import { useCreateAdmin } from "@/app/features/user/hooks/useCreateAdmin"
 import { useUpdateAdmin } from "@/app/features/user/hooks/useUpdateAdmin"
 import { AdminUser } from "@/app/features/user/types/adminUser"
 
-const recordStatusLabel = (status: number) =>
-    status === 1 ? "Active" : "Inactive"
+const recordStatusLabel = (status: string | null | undefined): string => {
+    if (status === "Active") return "Active"
+    if (status === "Inactive") return "Inactive"
+    return "Deleted"
+}
 
 const page = () => {
     const [searchTerm, setSearchTerm] = useState("")
@@ -65,11 +68,13 @@ const page = () => {
             render: (value: any) => value || "N/A",
         },
         {
-            key: "createdOnUtc",
+            key: "createdOn",
             label: "Date & Time",
             width: "160px",
-            render: (value: any) =>
-                value ? new Date(value).toLocaleString() : "N/A",
+            render: (_value: any, row: any) =>
+                row?.resourceMetadata?.createdOn
+                    ? new Date(row.resourceMetadata.createdOn).toLocaleString()
+                    : "N/A",
         },
         {
             key: "moduleAccess",
@@ -78,18 +83,18 @@ const page = () => {
             render: (value: any) => value ?? "—",
         },
         {
-            key: "recordStatus",
+            key: "resourceMetadata",
             label: "Status",
             width: "120px",
             render: (value: any) => {
-                const label = recordStatusLabel(value)
+                const label = recordStatusLabel(value?.recordStatus)
+                const color =
+                    label === "Active" ? "#30B052" :
+                    label === "Deleted" ? "#FF6B6B" :
+                    "#FF0000"
                 return (
-                    <span
-                        className={`px-3 py-1 flex items-center w-fit gap-2 rounded glass-border text-xs ${label === "Active" ? "text-[#30B052]" : "text-[#FF0000]"}`}
-                    >
-                        <div
-                            className={`w-2 h-2 rounded-full ${label === "Active" ? "bg-[#30B052]" : "bg-[#FF0000]"}`}
-                        />
+                    <span className="px-3 py-1 flex items-center w-fit gap-2 rounded glass-border text-xs" style={{ color }}>
+                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
                         {label}
                     </span>
                 )
@@ -205,12 +210,12 @@ const page = () => {
                 <AddNewForm
                     onClose={() => setEditModalOpen(false)}
                     editData={{
-                        id: selectedUser.displayId,
+                        id: selectedUser.displayId ?? "",
                         fullName: selectedUser.fullName,
                         email: selectedUser.email,
                         contactNo: selectedUser.contactNumber,
                         moduleAccess: selectedUser.moduleAccess ?? "",
-                        status: recordStatusLabel(selectedUser.recordStatus),
+                        status: recordStatusLabel(selectedUser.resourceMetadata?.recordStatus),
                     }}
                     onSubmit={(payload) =>
                         updateAdmin(
@@ -226,12 +231,12 @@ const page = () => {
                 <ViewUser
                     onClose={() => setViewModalOpen(false)}
                     userData={{
-                        id: selectedUser.displayId,
+                        id: selectedUser.displayId ?? "",
                         fullName: selectedUser.fullName,
                         email: selectedUser.email,
                         contactNo: selectedUser.contactNumber,
                         moduleAccess: selectedUser.moduleAccess ?? "",
-                        status: recordStatusLabel(selectedUser.recordStatus),
+                        status: recordStatusLabel(selectedUser.resourceMetadata?.recordStatus),
                     }}
                 />
             )}

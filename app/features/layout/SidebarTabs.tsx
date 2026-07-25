@@ -18,11 +18,28 @@ const iconComponents: { [key: string]: IconComponent } = {
     PaymentTab,
 };
 
+const getVisibleLinks = () => {
+    try {
+        const raw = localStorage.getItem("authData")
+        if (!raw) return sidebarLinks
+        const auth = JSON.parse(raw)
+        const role: string = auth?.role ?? ""
+        const moduleAccess: string = auth?.adminModuleAccess ?? ""
+        if (role === "SuperAdmin") return sidebarLinks
+        return sidebarLinks.filter(
+            (item) => item.name === "Dashboard" || item.name === moduleAccess
+        )
+    } catch {
+        return sidebarLinks
+    }
+}
+
 const SidebarTabs = () => {
     const pathname = usePathname();
     const router = useRouter();
     const [openMenu, setOpenMenu] = useState<string | null>(null);
     const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+    const visibleLinks = getVisibleLinks();
 
     // Close dropdown when route changes, but keep dropdowns open if on their respective routes
     useEffect(() => {
@@ -40,7 +57,7 @@ const SidebarTabs = () => {
 
     return (
         <ul className="mt-8 sm:mt-12 w-full">
-            {sidebarLinks.map((item) => {
+            {visibleLinks.map((item) => {
                 // If has children (dropdown)
                 if (item.children) {
                     return (
@@ -55,7 +72,7 @@ const SidebarTabs = () => {
                                 onMouseEnter={() => setHoveredItem(item.name)}
                                 onMouseLeave={() => setHoveredItem(null)}
                                 className={`flex items-center mt-2 justify-between w-full px-3 sm:px-4 py-2 sm:py-2 rounded-2xl sm:rounded-4xl transition-all duration-300 ease-in-out
-    hover:bg-[#8FE8A8] ${openMenu === item.name ? "bg-[#8FE8A8] text-dark-text" : hoveredItem === item.name ? "text-dark-text" : "text-light-text"}`}
+    hover:bg-[#8FE8A8] ${openMenu === item.name ? "bg-green-500 text-dark-text" : hoveredItem === item.name ? "text-dark-text" : "text-light-text"}`}
                             >
                                 <div
                                     className={`flex items-center gap-2 sm:gap-3 transition-all duration-300

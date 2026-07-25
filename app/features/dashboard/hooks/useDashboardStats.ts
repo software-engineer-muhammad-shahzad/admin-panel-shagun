@@ -9,5 +9,6 @@ export const useDashboardStats = () => {
   return useQuery({
     queryKey: ["dashboardStats", month, year],
     queryFn: () => dashboardService.getCardsDetails(month, year),
+    retry: false,
   })
 }

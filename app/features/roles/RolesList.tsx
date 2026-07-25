@@ -1,142 +1,156 @@
 "use client"
 
 import { useState } from "react"
-import { X, ChevronDown, Trash2 } from "lucide-react"
+import { X } from "lucide-react"
 import ModalLayer from "@/app/shared/components/modal/ModalLayer"
-import DeleteRole from "./DeleteRole"
 import Button from "@/app/shared/components/elements/Button"
 import Input from "@/app/shared/components/elements/Input"
-
+import { useAssignModules } from "@/app/features/user/hooks/useAssignModules"
+import { AdminUser } from "@/app/features/user/types/adminUser"
 
 interface RolesListProps {
     onClose: () => void
     onParentClose: () => void
+    user: AdminUser
 }
 
-const RolesList = ({ onClose, onParentClose }: RolesListProps) => {
-    const [selectedRole, setSelectedRole] = useState("Select Role")
-    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false)
-    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+const MODULES = ["Dashboard", "User Management", "Broadcasts", "Payments", "Roles and rights"]
 
+const RolesList = ({ onClose, onParentClose, user }: RolesListProps) => {
+    const [checkedModules, setCheckedModules] = useState<string[]>([])
+    const [showSuccess, setShowSuccess] = useState(false)
+    const [errorMsg, setErrorMsg] = useState<string | null>(null)
+
+    const { mutate: assignModules, isPending } = useAssignModules()
+
+    const toggleModule = (module: string) => {
+        setCheckedModules((prev) =>
+            prev.includes(module) ? prev.filter((m) => m !== module) : [...prev, module]
+        )
+    }
+
+    const handleAssign = () => {
+        setErrorMsg(null)
+        assignModules(
+            {
+                userId: user.userId,
+                payload: {
+                    userId: user.userId,
+                    fullName: user.fullName,
+                    contactNumber: user.contactNumber,
+                    email: user.email,
+                    password: "",
+                    userRole: "Admin",
+                    moduleAccess: checkedModules.join(", "),
+                    isActive: user.resourceMetadata?.recordStatus === "Active",
+                    eventDate: new Date().toISOString(),
+                },
+            },
+            {
+                onSuccess: () => setShowSuccess(true),
+                onError: () => setErrorMsg("Failed to assign role. Please try again."),
+            }
+        )
+    }
 
     return (
         <ModalLayer
             onClose={onClose}
-            modalWidth="80%"
-            modalHeight="60vh"
-            className="glass-card border border-[#5FDA78] p-6"
+            modalWidth="min(95%, 680px)"
+            modalHeight="auto"
+            className="glass-card border border-[#5FDA78] p-4 sm:p-6"
             overlayColor="bg-[#330065CC] backdrop-blur-[34px]"
             position="center"
         >
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="text-white text-xl font-semibold">Assign Role</h2>
+            {/* Header */}
+            <div className="flex justify-between items-center mb-5">
+                <h2 className="text-white text-lg sm:text-xl font-semibold">
+                    Assign Role{user.fullName ? <span className="text-[#5FDA78]"> — {user.fullName}</span> : ""}
+                </h2>
                 <Button
                     onClick={onClose}
-                    className="text-white w-8! h-8! p-2! group rounded-full! hover:text-[#5FDA78] transition-colors bg-transparent border-none"
+                    className="text-white w-8! h-8! p-2! group rounded-full! hover:text-[#5FDA78] transition-colors bg-transparent border-none shrink-0"
                 >
-                    <X size={20} className="group-hover:text-white" />
+                    <X size={18} className="group-hover:text-white" />
                 </Button>
             </div>
-            {/* form */}
 
-            <div className="p-4">
-                <div className="flex items-center gap-4">
-                    <div className=" flex-1">
-                        <Input
-                            type="text"
-                            placeholder="Quick Search..."
+            {/* Search + Module checkboxes */}
+            <div className="flex flex-col gap-4">
+                <Input
+                    type="text"
+                    placeholder="Quick Search..."
+                    className="text-sm outline-0 w-full! placeholder:text-light-text text-light-text"
+                    containerClassName="border border-[#C9C9C9] w-full! rounded-lg glass-border bg-transparent"
+                />
 
-                            className="text-sm outline-0  w-full!  placeholder:text-light-text text-light-text"
-                        />
+                <div>
+                    <p className="text-white/70 text-xs mb-2 ms-1">Module Access</p>
+                    <div className="flex flex-wrap gap-3 sm:gap-5">
+                        {MODULES.map((module) => (
+                            <label key={module} className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={checkedModules.includes(module)}
+                                    onChange={() => toggleModule(module)}
+                                    className="w-4 h-4 accent-[#5FDA78] shrink-0"
+                                />
+                                <span className="text-white text-xs sm:text-sm whitespace-nowrap">{module}</span>
+                            </label>
+                        ))}
                     </div>
-                    {/* checkbox div */}
-                    <div className="flex gap-5 ">
-                        <Input
-                            type="checkbox"
-                            label="Dashboard"
-                            className="w-4 h-4 accent-[#5FDA78] "
-
-                            containerClassName="p-0!  px-0! "
-                            paddingClass="flex-row  items-center px-0!  gap-2"
-                        />
-                        <Input
-                            type="checkbox"
-                            label="User Management"
-                            className="w-4 h-4 accent-[#5FDA78]"
-                            containerClassName="border-none!"
-                            paddingClass="flex-row  items-center  px-0! gap-2"
-                        />
-                        <Input
-                            type="checkbox"
-                            label="Broadcasts"
-                            className="w-4 h-4 accent-[#5FDA78]"
-                            containerClassName="border-none! flex! flex-row! "
-                            paddingClass="flex-row  items-center  px-0! gap-2"
-                        />
-                        <Input
-                            type="checkbox"
-                            label="Payments"
-                            className="w-4 h-4 accent-[#5FDA78]"
-                            containerClassName="border-none! flex! flex-row! "
-                            paddingClass="flex-row  items-center  px-0! gap-2"
-                        />
-                    </div>
-
-
                 </div>
-                {/* Button Cancel and Assign */}
-                <div className="flex justify-center  gap-4 mt-10">
-                    <Button
-                        onClick={onClose}
-                        className="border border-[#C9C9C9] font-bold w-fit! px-8! py-2! bg-transparent text-white hover:bg-white/5"
-                    >
-                        Cancel
-                    </Button>
-                    <Button
-                        onClick={() => setIsConfirmModalOpen(true)}
-                        className="text-[#360567] font-bold w-fit! px-8! py-2! hover:bg-[#4FB860]"
-                    >
-                        Assign
-                    </Button>
-                </div>
+
+                {errorMsg && (
+                    <p className="text-red-400 text-sm text-center">{errorMsg}</p>
+                )}
             </div>
-            {/* Confirmation Modal */}
-            {isConfirmModalOpen && (
+
+            {/* Buttons */}
+            <div className="flex flex-col sm:flex-row justify-center gap-3 mt-8">
+                <Button
+                    onClick={onClose}
+                    className="border border-[#C9C9C9] font-bold w-full sm:w-fit! px-8! py-2! bg-transparent text-white hover:bg-white/5"
+                    disabled={isPending}
+                >
+                    Cancel
+                </Button>
+                <Button
+                    onClick={handleAssign}
+                    className="text-[#360567] font-bold w-full sm:w-fit! px-8! py-2! hover:bg-[#4FB860]"
+                    disabled={isPending || checkedModules.length === 0}
+                >
+                    {isPending ? "Assigning..." : "Assign"}
+                </Button>
+            </div>
+
+            {/* Success Modal */}
+            {showSuccess && (
                 <ModalLayer
-                    onClose={() => setIsConfirmModalOpen(false)}
-                    modalWidth="30%"
+                    onClose={() => setShowSuccess(false)}
+                    modalWidth="min(90%, 360px)"
                     modalHeight="auto"
                     className="glass-card border border-[#5FDA78] p-6"
                     overlayColor="bg-[#330065CC] backdrop-blur-[34px]"
                     position="center"
                 >
                     <div className="text-center">
-                        <h3 className="text-white text-lg font-semibold mb-4">Successful
-                        </h3>
-                        <p className="text-white/80 text-sm mb-6">Your role successfully added.
-                        </p>
-                        <div className="flex justify-center gap-4">
-
+                        <h3 className="text-white text-lg font-semibold mb-3">Successful</h3>
+                        <p className="text-white/80 text-sm mb-6">Role has been successfully assigned.</p>
+                        <div className="flex justify-center">
                             <Button
                                 onClick={() => {
-                                    setIsConfirmModalOpen(false)
+                                    setShowSuccess(false)
                                     onClose()
                                     onParentClose()
                                 }}
-                                className="text-[#360567] font-inter font-semibold w-fit! px-8! py-2! hover:bg-[#4FB860]"
+                                className="text-[#360567] font-semibold w-full sm:w-fit! px-8! py-2! hover:bg-[#4FB860]"
                             >
                                 Ok
                             </Button>
                         </div>
                     </div>
                 </ModalLayer>
-            )}
-            {/* Delete Role Modal */}
-            {isDeleteModalOpen && (
-                <DeleteRole
-                    onClose={() => setIsDeleteModalOpen(false)}
-                    roleName="Admin"
-                />
             )}
         </ModalLayer>
     )

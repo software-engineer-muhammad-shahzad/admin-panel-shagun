@@ -7,5 +7,6 @@ export const useTransactionsOverview = (month: number) => {
   return useQuery({
     queryKey: ["transactionsOverview", month, year],
     queryFn: () => dashboardService.getTransactionsOverview(month, year),
+    retry: false,
   })
 }

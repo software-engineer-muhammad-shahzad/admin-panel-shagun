@@ -48,12 +48,14 @@ const AddCouple = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }: 
     const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
         if (onSubmit) {
+            const statusMap: Record<string, number> = { Active: 1, Inactive: 2, Deleted: 3 }
             onSubmit({
                 fullName: formData.fullName,
                 partnerName: formData.partnerName,
                 contactNumber: formData.contactNo,
                 email: formData.email,
                 isActive: formData.status === "Active",
+                recordStatus: statusMap[formData.status] ?? 2,
                 eventDate: formData.dateTime
                     ? new Date(formData.dateTime).toISOString()
                     : new Date().toISOString(),
@@ -178,7 +180,7 @@ const AddCouple = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }: 
                         <div className="w-full px-5 mt-3">
                             <Dropdown
                                 label="Status"
-                                options={["Active", "Inactive"]}
+                                options={["Active", "Inactive", "Deleted"]}
                                 value={formData.status}
                                 onChange={(value) => handleInputChange("status", value)}
                                 placeholder="Select status"

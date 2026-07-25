@@ -13,6 +13,11 @@ const nextConfig: NextConfig = {
         hostname: "shagundirect.somee.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "adminapis.shagundirect.com",
+        pathname: "/**",
+      },
     ],
   },
 };

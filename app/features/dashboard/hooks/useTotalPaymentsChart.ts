@@ -7,5 +7,6 @@ export const useTotalPaymentsChart = (month: number) => {
   return useQuery({
     queryKey: ["totalPaymentsChart", month, year],
     queryFn: () => dashboardService.getTotalPaymentsChart(month, year),
+    retry: false,
   })
 }
