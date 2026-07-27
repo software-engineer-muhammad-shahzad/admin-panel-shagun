@@ -53,8 +53,8 @@ const DashLineChart = () => {
           value={selectedRole}
           onChange={(role) => setSelectedRole(role)}
           placeholder={selectedRole}
-          triggerClassName="hover:bg-transparent!"
-          containerClassName="w-[120px] shrink-0"
+          triggerClassName="hover:bg-transparent! px-4!"
+          containerClassName="w-[130px] shrink-0"
           dropdownClassName="max-h-[140px]!"
         />
       </div>

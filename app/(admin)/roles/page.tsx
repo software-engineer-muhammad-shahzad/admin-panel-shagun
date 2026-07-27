@@ -19,10 +19,13 @@ const STATUS_OPTIONS = [
     { label: "Deleted", value: "3" },
 ]
 
+const PAGE_SIZE = 10
+
 const page = () => {
     const [searchTerm, setSearchTerm] = useState("")
     const [debouncedSearch, setDebouncedSearch] = useState("")
     const [statusFilter, setStatusFilter] = useState("")
+    const [currentPage, setCurrentPage] = useState(1)
     const [isAssignRolesModalOpen, setIsAssignRolesModalOpen] = useState(false)
     const [isDeleteRoleModalOpen, setIsDeleteRoleModalOpen] = useState(false)
     const [isViewRoleModalOpen, setIsViewRoleModalOpen] = useState(false)
@@ -30,18 +33,26 @@ const page = () => {
     const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null)
 
     useEffect(() => {
-        const timer = setTimeout(() => setDebouncedSearch(searchTerm), 400)
+        const timer = setTimeout(() => {
+            setDebouncedSearch(searchTerm)
+            setCurrentPage(1)
+        }, 400)
         return () => clearTimeout(timer)
     }, [searchTerm])
 
-    const queryParams = {
+    useEffect(() => { setCurrentPage(1) }, [statusFilter])
+
+    const offset = (currentPage - 1) * PAGE_SIZE
+
+    const { data, isLoading } = useAdminUsers({
         ...(debouncedSearch ? { search: debouncedSearch } : {}),
         ...(statusFilter ? { recordStatus: Number(statusFilter) } : {}),
-    }
-    const { data, isLoading } = useAdminUsers(
-        Object.keys(queryParams).length > 0 ? queryParams : undefined
-    )
+        offset,
+        length: PAGE_SIZE,
+    })
     const admins = data?.items ?? []
+    const totalOverall = data?.totalOverall ?? 0
+    const totalPages = Math.ceil(totalOverall / PAGE_SIZE)
 
     const customRolesColumns = [
         {
@@ -151,7 +162,7 @@ const page = () => {
                 </div>
 
                 {/* Table */}
-                <div className="flex-1 h-[calc(100vh-200px)] overflow-auto scrollbar-hide">
+                <div className="flex-1 overflow-auto scrollbar-hide">
                     <Table
                         data={admins}
                         columns={customRolesColumns}
@@ -159,6 +170,57 @@ const page = () => {
                         emptyMessage={isLoading ? "Loading..." : "No admins found"}
                     />
                 </div>
+
+                {totalPages > 1 && (
+                    <div className="flex items-center justify-between px-4 lg:px-6 py-4 border-t border-white/10 shrink-0">
+                        <p className="text-white/40 text-xs font-medium">
+                            Showing <span className="text-white/70">{offset + 1}–{Math.min(offset + PAGE_SIZE, totalOverall)}</span> of <span className="text-white/70">{totalOverall}</span> results
+                        </p>
+                        <div className="flex items-center gap-1">
+                            <button
+                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                disabled={currentPage === 1}
+                                className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg border border-white/20 bg-white/10 text-white/70 disabled:opacity-25 hover:bg-[#5FDA78]/20 hover:border-[#5FDA78] hover:text-[#5FDA78] transition-all duration-200 cursor-pointer disabled:cursor-not-allowed"
+                            >
+                                ‹ Prev
+                            </button>
+
+                            {Array.from({ length: totalPages }, (_, i) => i + 1)
+                                .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+                                .reduce<(number | "...")[]>((acc, p, idx, arr) => {
+                                    if (idx > 0 && p - (arr[idx - 1] as number) > 1) acc.push("...")
+                                    acc.push(p)
+                                    return acc
+                                }, [])
+                                .map((item, idx) =>
+                                    item === "..." ? (
+                                        <span key={`ellipsis-${idx}`} className="w-8 text-center text-white/30 text-sm">…</span>
+                                    ) : (
+                                        <button
+                                            key={item}
+                                            onClick={() => setCurrentPage(item as number)}
+                                            className={`w-8 h-8 text-xs font-semibold rounded-lg transition-all duration-200 cursor-pointer ${
+                                                currentPage === item
+                                                    ? "bg-[#5FDA78] text-[#360567] shadow-[0_0_12px_rgba(95,218,120,0.4)]"
+                                                    : "text-white/60 hover:bg-white/10 hover:text-white"
+                                            }`}
+                                        >
+                                            {item}
+                                        </button>
+                                    )
+                                )
+                            }
+
+                            <button
+                                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                disabled={currentPage === totalPages}
+                                className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg border border-white/20 bg-white/10 text-white/70 disabled:opacity-25 hover:bg-[#5FDA78]/20 hover:border-[#5FDA78] hover:text-[#5FDA78] transition-all duration-200 cursor-pointer disabled:cursor-not-allowed"
+                            >
+                                Next ›
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {isAssignRolesModalOpen && (

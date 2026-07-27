@@ -50,6 +50,12 @@ export interface TotalPaymentsChart {
   points: PaymentPoint[]
 }
 
+export interface PaymentCardsData {
+  month: number
+  year: number
+  cards: DashboardCard[]
+}
+
 export interface ApiResponse<T> {
   statusCode: number
   statusMessage: string

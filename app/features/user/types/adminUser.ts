@@ -39,6 +39,8 @@ export interface AdminUsersParams {
   userId?: number
   userRole?: string | number
   recordStatus?: string | number
+  offset?: number
+  length?: number
 }
 
 export interface ResourceMetadata {

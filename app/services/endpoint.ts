@@ -32,6 +32,7 @@ const endpoints = {
   },
   dashboard: {
     getCardsDetails: "/usermanagement/dashboard/cards",
+    getPaymentCards: "/payments/dashboard/cards",
     getTotalTransactionsOverview: "/payments/dashboard/transactionsoverview",
     getTotalUsersChartsDetails: "/usermanagement/dashboard/totaluserschart",
     getTotalPaymentCharts: "/payments/dashboard/totalpaymentschart",

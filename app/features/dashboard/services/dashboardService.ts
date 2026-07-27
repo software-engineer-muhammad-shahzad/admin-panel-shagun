@@ -1,6 +1,6 @@
 import { getRequest } from "@/app/services/http"
 import endpoints from "@/app/services/endpoint"
-import { ApiResponse, DashboardStats, TotalUsersChartData, TransactionsOverview, TotalPaymentsChart } from "../types/dashboard"
+import { ApiResponse, DashboardStats, TotalUsersChartData, TransactionsOverview, TotalPaymentsChart, PaymentCardsData } from "../types/dashboard"
 
 export const dashboardService = {
   getCardsDetails: async (month: number, year: number): Promise<DashboardStats> => {
@@ -12,7 +12,7 @@ export const dashboardService = {
 
   getTotalUsersChart: async (usersRole: string, year: number): Promise<TotalUsersChartData> => {
     const response = await getRequest<ApiResponse<TotalUsersChartData>>(
-      `${endpoints.dashboard.getTotalUsersChartsDetails}?usersRole=${usersRole}&year=${year}`
+      `${endpoints.dashboard.getTotalUsersChartsDetails}?userRole=${usersRole}&year=${year}`
     )
     return response.data
   },
@@ -20,6 +20,13 @@ export const dashboardService = {
   getTransactionsOverview: async (month: number, year: number): Promise<TransactionsOverview> => {
     const response = await getRequest<ApiResponse<TransactionsOverview>>(
       `${endpoints.dashboard.getTotalTransactionsOverview}?month=${month}&year=${year}`
+    )
+    return response.data
+  },
+
+  getPaymentCards: async (month: number, year: number): Promise<PaymentCardsData> => {
+    const response = await getRequest<ApiResponse<PaymentCardsData>>(
+      `${endpoints.dashboard.getPaymentCards}?month=${month}&year=${year}`
     )
     return response.data
   },

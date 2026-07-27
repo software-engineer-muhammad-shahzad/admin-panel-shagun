@@ -73,7 +73,7 @@ const layout = ({ children }: { children: React.ReactNode }) => {
                     </div>
 
                     {/* Desktop navbar - fixed */}
-                    <div className="hidden h-[80px] lg:block shrink-0 glass-card rounded-[30px] border-[0.5px] border-[#5FDA78] mx-4 mt-4">
+                    <div className="hidden h-20 lg:block shrink-0 glass-card rounded-[30px] border-[0.5px] border-[#5FDA78] mx-4 mt-4">
                         <Navbar />
                     </div>
 

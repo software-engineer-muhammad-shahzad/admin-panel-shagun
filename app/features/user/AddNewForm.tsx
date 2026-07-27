@@ -22,8 +22,6 @@ interface AddNewFormProps {
     mode?: "add" | "edit"
 }
 
-const MODULE_OPTIONS = ["Dashboard", "User Management", "Payments", "Roles", "Broadcasts"]
-
 
 const AddNewForm = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }: AddNewFormProps) => {
     const [formData, setFormData] = useState({
@@ -31,21 +29,47 @@ const AddNewForm = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }:
         email: editData?.email || "",
         contactNumber: editData?.contactNo || "",
         password: "",
-        moduleAccess: editData?.moduleAccess || "",
         userRole: 2,
         status: editData?.status || "Active",
-        eventDate: "",
     })
     const [showSuccessModal, setShowSuccessModal] = useState(false)
+    const [errors, setErrors] = useState<Record<string, string>>({})
 
     const handleInputChange = (field: string, value: string | boolean) => {
         setFormData(prev => ({ ...prev, [field]: value }))
+        setErrors(prev => ({ ...prev, [field]: "" }))
+    }
+
+    const handleFullNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value.replace(/[^a-zA-Z\s]/g, "")
+        handleInputChange("fullName", value)
+    }
+
+    const handleContactChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value.replace(/\D/g, "")
+        handleInputChange("contactNumber", value)
+    }
+
+    const validate = (): boolean => {
+        const newErrors: Record<string, string> = {}
+        if (!formData.fullName.trim()) newErrors.fullName = "Full name is required"
+        if (!formData.email.trim()) newErrors.email = "Email is required"
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = "Enter a valid email address"
+        if (!formData.contactNumber.trim()) newErrors.contactNumber = "Contact number is required"
+        else if (formData.contactNumber.length < 7) newErrors.contactNumber = "Enter a valid contact number"
+        if (mode === "add") {
+            if (!formData.password) newErrors.password = "Password is required"
+            else if (formData.password.length < 8) newErrors.password = "Password must be at least 8 characters"
+        }
+        setErrors(newErrors)
+        return Object.keys(newErrors).length === 0
     }
 
     const STATUS_MAP: Record<string, number> = { Active: 1, Inactive: 2, Deleted: 3 }
 
     const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
+        if (!validate()) return
         if (onSubmit) {
             onSubmit({
                 fullName: formData.fullName,
@@ -53,12 +77,10 @@ const AddNewForm = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }:
                 email: formData.email,
                 password: formData.password,
                 userRole: formData.userRole,
-                moduleAccess: formData.moduleAccess,
+                moduleAccess: "",
                 isActive: formData.status === "Active",
                 recordStatus: STATUS_MAP[formData.status] ?? 2,
-                eventDate: formData.eventDate
-                    ? new Date(formData.eventDate).toISOString()
-                    : new Date().toISOString(),
+                eventDate: new Date().toISOString(),
             })
         } else {
             setShowSuccessModal(true)
@@ -92,76 +114,64 @@ const AddNewForm = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }:
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <Input
-                            type="text"
-                            label="Full Name"
-                            labelColor="ms-5 mb-1"
-                            placeholder="Enter Full Name"
-                            value={formData.fullName}
-                            onChange={(e) => handleInputChange("fullName", e.target.value)}
-                            className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text"
-                            containerClassName="border-none bg-transparent"
-                        />
-
-                        <Input
-                            type="email"
-                            label="Email"
-                            labelColor="ms-5 mb-1"
-                            placeholder="Enter Email"
-                            value={formData.email}
-                            onChange={(e) => handleInputChange("email", e.target.value)}
-                            className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text"
-                            containerClassName="border-none bg-transparent"
-                        />
-
-                        <Input
-                            type="text"
-                            label="Contact Number"
-                            labelColor="ms-5 mb-1"
-                            placeholder="Enter Contact Number"
-                            value={formData.contactNumber}
-                            onChange={(e) => handleInputChange("contactNumber", e.target.value)}
-                            className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text"
-                            containerClassName="border-none bg-transparent"
-                        />
-
-                        {mode === "add" && (
+                        <div>
                             <Input
-                                type="password"
-                                label="Password"
+                                type="text"
+                                label="Full Name"
                                 labelColor="ms-5 mb-1"
-                                placeholder="Enter Password"
-                                value={formData.password}
-                                onChange={(e) => handleInputChange("password", e.target.value)}
+                                placeholder="Enter Full Name"
+                                value={formData.fullName}
+                                onChange={handleFullNameChange}
                                 className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text"
                                 containerClassName="border-none bg-transparent"
                             />
+                            {errors.fullName && <p className="text-red-400 text-xs mt-1 ms-5">{errors.fullName}</p>}
+                        </div>
+
+                        <div>
+                            <Input
+                                type="email"
+                                label="Email"
+                                labelColor="ms-5 mb-1"
+                                placeholder="Enter Email"
+                                value={formData.email}
+                                onChange={(e) => handleInputChange("email", e.target.value)}
+                                className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text"
+                                containerClassName="border-none bg-transparent"
+                            />
+                            {errors.email && <p className="text-red-400 text-xs mt-1 ms-5">{errors.email}</p>}
+                        </div>
+
+                        <div>
+                            <Input
+                                type="text"
+                                label="Contact Number"
+                                labelColor="ms-5 mb-1"
+                                placeholder="Enter Contact Number"
+                                value={formData.contactNumber}
+                                onChange={handleContactChange}
+                                className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text"
+                                containerClassName="border-none bg-transparent"
+                            />
+                            {errors.contactNumber && <p className="text-red-400 text-xs mt-1 ms-5">{errors.contactNumber}</p>}
+                        </div>
+
+                        {mode === "add" && (
+                            <div>
+                                <Input
+                                    type="password"
+                                    label="Password"
+                                    labelColor="ms-5 mb-1"
+                                    placeholder="Enter Password"
+                                    value={formData.password}
+                                    onChange={(e) => handleInputChange("password", e.target.value)}
+                                    className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text"
+                                    containerClassName="border-none bg-transparent"
+                                />
+                                {errors.password && <p className="text-red-400 text-xs mt-1 ms-5">{errors.password}</p>}
+                            </div>
                         )}
 
-                        <Input
-                            type="datetime-local"
-                            label="Event Date"
-                            labelColor="ms-5 mb-1"
-                            value={formData.eventDate}
-                            onChange={(e) => handleInputChange("eventDate", e.target.value)}
-                            className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card text-light-text"
-                            containerClassName="border-none bg-transparent"
-                        />
-
-                        <div className="w-full px-5 mt-3">
-                            <Dropdown
-                                label="Module Access"
-                                options={MODULE_OPTIONS}
-                                value={formData.moduleAccess}
-                                onChange={(value) => handleInputChange("moduleAccess", value)}
-                                placeholder="Select Module"
-                                containerClassName="w-full"
-                                labelClassName="text-white text-sm ms-5 mb-2 block"
-                                triggerClassName="text-sm outline-0 max-w-[700px]! px-5 glass-card py-5! border border-text-green rounded-[70px] glass-card text-white placeholder:text-light-text w-full"
-                                dropdownClassName="bg-[#350564] z-999 ml-[-10px]! md:ml-[-51px]"
-                                optionClassName="text-white border hover:bg-[#5FDA78]/20"
-                            />
-                        </div>
 
                         {mode === "edit" && (
                             <div className="w-full px-5 mt-3">

@@ -12,6 +12,8 @@ export interface CoupleUsersParams {
   search?: string
   userRole?: number
   recordStatus?: number
+  offset?: number
+  length?: number
 }
 
 export interface CoupleResourceMetadata {

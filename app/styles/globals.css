@@ -21,8 +21,10 @@
    --color-light-text: var(--color-light-text);
    --color-dark-text: var(--color-dark-text);
    --color-green-text: var(--color-green-text);
-   
-   
+   --breakpoint-3xl: 1920px;
+   --breakpoint-4xl: 2560px;
+
+
 }
 
 @media (prefers-color-scheme: dark) {
