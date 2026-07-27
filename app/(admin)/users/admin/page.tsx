@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { CirclePlus, Edit, Eye, Trash2 } from "lucide-react"
 import Input from "@/app/shared/components/elements/Input"
 import Table from "@/app/shared/components/elements/Table"
+import Dropdown from "@/app/shared/components/elements/Dropdown"
 import DeleteRoleModal from "@/app/features/user/DeleteRoleModal"
 import AddNewForm from "@/app/features/user/AddNewForm"
 import ViewUser from "@/app/features/user/ViewUser"
@@ -19,11 +20,21 @@ const recordStatusLabel = (status: string | null | undefined): string => {
     return "Deleted"
 }
 
+const STATUS_OPTIONS = ["All", "Active", "Inactive", "Deleted"]
+
+const statusToRecordStatus = (status: string): number | undefined => {
+    if (status === "Active") return 1
+    if (status === "Inactive") return 2
+    if (status === "Deleted") return 3
+    return undefined
+}
+
 const PAGE_SIZE = 10
 
 const page = () => {
     const [searchTerm, setSearchTerm] = useState("")
     const [debouncedSearch, setDebouncedSearch] = useState("")
+    const [statusFilter, setStatusFilter] = useState("All")
     const [currentPage, setCurrentPage] = useState(1)
     const [deleteModalOpen, setDeleteModalOpen] = useState(false)
     const [addNewModalOpen, setAddNewModalOpen] = useState(false)
@@ -39,10 +50,14 @@ const page = () => {
         return () => clearTimeout(timer)
     }, [searchTerm])
 
+    useEffect(() => { setCurrentPage(1) }, [statusFilter])
+
     const offset = (currentPage - 1) * PAGE_SIZE
+    const recordStatus = statusToRecordStatus(statusFilter)
 
     const { data, isLoading, isError } = useAdminUsers({
         ...(debouncedSearch ? { search: debouncedSearch } : {}),
+        ...(recordStatus !== undefined ? { recordStatus } : {}),
         offset,
         length: PAGE_SIZE,
     })
@@ -155,7 +170,7 @@ const page = () => {
     return (
         <div className="w-full flex relative flex-col h-[calc(100vh-200px)]">
             <div className="flex flex-col lg:flex-row justify-between border-[#C9C9C9] px-4 lg:px-6 py-4 lg:py-6 border-b flex-shrink-0 gap-4">
-                <div className="w-full lg:max-w-[350px]">
+                <div className="flex flex-col sm:flex-row gap-3 w-full lg:max-w-[550px]">
                     <Input
                         type="text"
                         placeholder="Quick Search..."
@@ -163,6 +178,13 @@ const page = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="text-sm outline-0 w-full! placeholder:text-light-text text-light-text"
                         containerClassName="border border-[#C9C9C9] w-full! rounded-lg glass-border bg-transparent"
+                    />
+                    <Dropdown
+                        options={STATUS_OPTIONS}
+                        value={statusFilter}
+                        onChange={(value) => setStatusFilter(value)}
+                        placeholder="Filter by Status"
+                        containerClassName="min-w-[160px]"
                     />
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3 lg:gap-4 items-center">
