@@ -29,6 +29,7 @@ const endpoints = {
   payments: {
     addGift: "/payments/pricing",
     showGift: "/payments/pricing",
+    getTransactions: "/payments/getpaymentslist",
   },
   dashboard: {
     getCardsDetails: "/usermanagement/dashboard/cards",

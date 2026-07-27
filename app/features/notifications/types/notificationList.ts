@@ -1,5 +1,8 @@
 export interface NotificationItem {
   id: number
+  adminId: number | null
+  adminFullName: string | null
+  coupleId: number | null
   fullName: string | null
   email: string | null
   message: string | null

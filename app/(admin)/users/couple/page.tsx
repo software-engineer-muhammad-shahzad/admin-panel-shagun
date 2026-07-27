@@ -71,7 +71,7 @@ const page = () => {
 
   const customCoupleColumns = [
     {
-      key: "displayId",
+      key: "userId",
       label: "ID",
       width: "100px",
       render: (value: any) => `#${value}`,
@@ -117,8 +117,8 @@ const page = () => {
         const label = recordStatusLabel(value?.recordStatus)
         const color =
           label === "Active" ? "#30B052" :
-          label === "Deleted" ? "#FF6B6B" :
-          "#FF0000"
+            label === "Deleted" ? "#FF6B6B" :
+              "#FF0000"
         return (
           <span className="px-3 py-1 flex items-center w-fit gap-2 rounded glass-border text-xs" style={{ color }}>
             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
@@ -212,17 +212,14 @@ const page = () => {
       </div>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-between px-4 lg:px-6 py-4 border-t border-white/10 shrink-0">
-          <p className="text-white/40 text-xs font-medium">
-            Showing <span className="text-white/70">{offset + 1}–{Math.min(offset + PAGE_SIZE, totalOverall)}</span> of <span className="text-white/70">{totalOverall}</span> results
-          </p>
+        <div className="flex items-center justify-center px-4 lg:px-6 py-4 border-t border-white/10 shrink-0">
           <div className="flex items-center gap-1">
             <button
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg border border-white/20 bg-white/10 text-white/70 disabled:opacity-25 hover:bg-[#5FDA78]/20 hover:border-[#5FDA78] hover:text-[#5FDA78] transition-all duration-200 cursor-pointer disabled:cursor-not-allowed"
+              className="flex items-center gap-1.5 px-2 py-1.5 text-sm text-[#5FDA78] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
             >
-              ‹ Prev
+              ← Previous
             </button>
 
             {Array.from({ length: totalPages }, (_, i) => i + 1)
@@ -234,16 +231,15 @@ const page = () => {
               }, [])
               .map((item, idx) =>
                 item === "..." ? (
-                  <span key={`ellipsis-${idx}`} className="w-8 text-center text-white/30 text-sm">…</span>
+                  <span key={`ellipsis-${idx}`} className="w-8 text-center text-white/30 text-sm">...</span>
                 ) : (
                   <button
                     key={item}
                     onClick={() => setCurrentPage(item as number)}
-                    className={`w-8 h-8 text-xs font-semibold rounded-lg transition-all duration-200 cursor-pointer ${
-                      currentPage === item
-                        ? "bg-[#5FDA78] text-[#360567] shadow-[0_0_12px_rgba(95,218,120,0.4)]"
-                        : "text-white/60 hover:bg-white/10 hover:text-white"
-                    }`}
+                    className={`w-8 h-8 text-xs font-semibold rounded-full transition-all duration-200 cursor-pointer ${currentPage === item
+                      ? "bg-white text-[#360567]"
+                      : "text-[#999999] hover:text-white"
+                      }`}
                   >
                     {item}
                   </button>
@@ -254,9 +250,9 @@ const page = () => {
             <button
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg border border-white/20 bg-white/10 text-white/70 disabled:opacity-25 hover:bg-[#5FDA78]/20 hover:border-[#5FDA78] hover:text-[#5FDA78] transition-all duration-200 cursor-pointer disabled:cursor-not-allowed"
+              className="flex items-center gap-1.5 px-2 py-1.5 text-sm text-[#5FDA78] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
             >
-              Next ›
+              Next →
             </button>
           </div>
         </div>
@@ -266,7 +262,7 @@ const page = () => {
         <AddCouple
           onClose={() => setEditModalOpen(false)}
           editData={{
-            id: selectedCouple.displayId ?? "",
+            id: String(selectedCouple.userId),
             fullName: selectedCouple.fullName,
             partnerName: selectedCouple.partnerName,
             email: selectedCouple.email,

@@ -37,16 +37,38 @@ const AddCouple = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }: 
     })
 
     const [showSuccessModal, setShowSuccessModal] = useState(false)
+    const [errors, setErrors] = useState<Record<string, string>>({})
 
     const handleInputChange = (field: string, value: string) => {
-        setFormData(prev => ({
-            ...prev,
-            [field]: value
-        }))
+        setFormData(prev => ({ ...prev, [field]: value }))
+        setErrors(prev => ({ ...prev, [field]: "" }))
+    }
+
+    const handleNameChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value.replace(/[^a-zA-Z\s]/g, "")
+        handleInputChange(field, value)
+    }
+
+    const handleContactChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value.replace(/\D/g, "")
+        handleInputChange("contactNo", value)
+    }
+
+    const validate = (): boolean => {
+        const newErrors: Record<string, string> = {}
+        if (!formData.fullName.trim()) newErrors.fullName = "Full name is required"
+        if (!formData.partnerName.trim()) newErrors.partnerName = "Partner name is required"
+        if (!formData.contactNo.trim()) newErrors.contactNo = "Contact number is required"
+        else if (formData.contactNo.length < 7) newErrors.contactNo = "Enter a valid contact number"
+        if (!formData.email.trim()) newErrors.email = "Email is required"
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = "Enter a valid email address"
+        setErrors(newErrors)
+        return Object.keys(newErrors).length === 0
     }
 
     const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
+        if (!validate()) return
         if (onSubmit) {
             const statusMap: Record<string, number> = { Active: 1, Inactive: 2, Deleted: 3 }
             onSubmit({
@@ -106,8 +128,8 @@ const AddCouple = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }: 
                                 labelColor="ms-5 mb-1"
                                 placeholder="Enter ID"
                                 value={formData.id}
-                                onChange={(e) => handleInputChange("id", e.target.value)}
-                                className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
+                                disabled={mode === "edit"}
+                                className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50 disabled:opacity-60 disabled:cursor-not-allowed"
                                 containerClassName="border-none bg-transparent"
                             />
                         </div>
@@ -119,10 +141,11 @@ const AddCouple = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }: 
                                 labelColor="ms-5 mb-1"
                                 placeholder="Enter Full Name"
                                 value={formData.fullName}
-                                onChange={(e) => handleInputChange("fullName", e.target.value)}
+                                onChange={handleNameChange("fullName")}
                                 className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
                                 containerClassName="border-none bg-transparent"
                             />
+                            {errors.fullName && <p className="text-red-400 text-xs mt-1 ms-5">{errors.fullName}</p>}
                         </div>
 
                         <div className="w-full">
@@ -132,10 +155,11 @@ const AddCouple = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }: 
                                 labelColor="ms-5 mb-1"
                                 placeholder="Enter Partner Name"
                                 value={formData.partnerName}
-                                onChange={(e) => handleInputChange("partnerName", e.target.value)}
+                                onChange={handleNameChange("partnerName")}
                                 className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
                                 containerClassName="border-none bg-transparent"
                             />
+                            {errors.partnerName && <p className="text-red-400 text-xs mt-1 ms-5">{errors.partnerName}</p>}
                         </div>
 
                         <div className="w-full">
@@ -145,10 +169,11 @@ const AddCouple = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }: 
                                 labelColor="ms-5 mb-1"
                                 placeholder="Enter Contact Number"
                                 value={formData.contactNo}
-                                onChange={(e) => handleInputChange("contactNo", e.target.value)}
+                                onChange={handleContactChange}
                                 className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
                                 containerClassName="border-none bg-transparent"
                             />
+                            {errors.contactNo && <p className="text-red-400 text-xs mt-1 ms-5">{errors.contactNo}</p>}
                         </div>
 
                         <div className="w-full">
@@ -162,6 +187,7 @@ const AddCouple = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }: 
                                 className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
                                 containerClassName="border-none bg-transparent"
                             />
+                            {errors.email && <p className="text-red-400 text-xs mt-1 ms-5">{errors.email}</p>}
                         </div>
 
                         <div className="w-full">

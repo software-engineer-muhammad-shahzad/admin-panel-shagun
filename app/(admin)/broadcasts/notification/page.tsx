@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { Eye } from "lucide-react"
 import { useNotificationList } from "@/app/features/notifications/hooks/useNotificationList"
 import { NotificationItem } from "@/app/features/notifications/types/notificationList"
 import ViewNotificationItem from "@/app/features/notifications/ViewNotificationItem"
@@ -9,49 +10,41 @@ import Table from "@/app/shared/components/elements/Table"
 
 const notificationColumns = [
   {
-    key: "id",
-    label: "ID",
-    width: "80px",
-    render: (value: any) => `#${value}`,
+    key: "adminId",
+    label: "Admin ID",
+    width: "100px",
+    render: (value: any) => value ? `#${value}` : "N/A",
+  },
+  {
+    key: "adminFullName",
+    label: "Admin Full Name",
+    width: "160px",
+    render: (value: any) => value || "N/A",
+  },
+  {
+    key: "coupleId",
+    label: "Couple ID",
+    width: "100px",
+    render: (value: any) => value ? `#${value}` : "N/A",
   },
   {
     key: "fullName",
-    label: "Full Name",
-    width: "180px",
-    render: (value: any) => value || "N/A",
-  },
-  {
-    key: "email",
-    label: "Email",
-    width: "200px",
-    render: (value: any) => value || "N/A",
-  },
-  {
-    key: "message",
-    label: "Message",
-    width: "260px",
+    label: "Name",
+    width: "140px",
     render: (value: any) => value || "N/A",
   },
   {
     key: "sentAt",
-    label: "Sent At",
-    width: "160px",
+    label: "Date",
+    width: "140px",
     render: (value: any) =>
-      value ? new Date(value).toLocaleString() : "N/A",
+      value ? new Date(value).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "N/A",
   },
   {
-    key: "isRead",
-    label: "Status",
-    width: "100px",
-    render: (value: any) => {
-      const color = value ? "#30B052" : "#FF9900"
-      return (
-        <span className="px-3 py-1 flex items-center w-fit gap-2 rounded glass-border text-xs" style={{ color }}>
-          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
-          {value ? "Read" : "Unread"}
-        </span>
-      )
-    },
+    key: "message",
+    label: "Notification Message",
+    width: "280px",
+    render: (value: any) => value || "N/A",
   },
 ]
 
@@ -111,7 +104,26 @@ const page = () => {
         ) : (
           <Table
             data={notifications}
-            columns={notificationColumns}
+            columns={[
+              ...notificationColumns,
+              {
+                key: "Action",
+                label: "Action",
+                width: "80px",
+                render: (_value: any, row: any) => (
+                  <span
+                    className="w-8 h-8 flex items-center justify-center border border-white/10 rounded-full glass-border cursor-pointer hover:bg-white/5"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setSelectedItem(row as NotificationItem)
+                      setViewModalOpen(true)
+                    }}
+                  >
+                    <Eye size={14} />
+                  </span>
+                ),
+              },
+            ]}
             onRowClick={(row) => {
               setSelectedItem(row as NotificationItem)
               setViewModalOpen(true)
@@ -123,17 +135,14 @@ const page = () => {
       </div>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-between px-4 lg:px-6 py-4 border-t border-white/10 shrink-0">
-          <p className="text-white/40 text-xs font-medium">
-            Showing <span className="text-white/70">{offset + 1}–{Math.min(offset + PAGE_SIZE, totalOverall)}</span> of <span className="text-white/70">{totalOverall}</span> results
-          </p>
+        <div className="flex items-center justify-center px-4 lg:px-6 py-4 border-t border-white/10 shrink-0">
           <div className="flex items-center gap-1">
             <button
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg border border-white/20 bg-white/10 text-white/70 disabled:opacity-25 hover:bg-[#5FDA78]/20 hover:border-[#5FDA78] hover:text-[#5FDA78] transition-all duration-200 cursor-pointer disabled:cursor-not-allowed"
+              className="flex items-center gap-1.5 px-2 py-1.5 text-sm text-[#5FDA78] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
             >
-              ‹ Prev
+              ← Previous
             </button>
 
             {Array.from({ length: totalPages }, (_, i) => i + 1)
@@ -145,15 +154,15 @@ const page = () => {
               }, [])
               .map((item, idx) =>
                 item === "..." ? (
-                  <span key={`ellipsis-${idx}`} className="w-8 text-center text-white/30 text-sm">…</span>
+                  <span key={`ellipsis-${idx}`} className="w-8 text-center text-white/30 text-sm">...</span>
                 ) : (
                   <button
                     key={item}
                     onClick={() => setCurrentPage(item as number)}
-                    className={`w-8 h-8 text-xs font-semibold rounded-lg transition-all duration-200 cursor-pointer ${
+                    className={`w-8 h-8 text-xs font-semibold rounded-full transition-all duration-200 cursor-pointer ${
                       currentPage === item
-                        ? "bg-[#5FDA78] text-[#360567] shadow-[0_0_12px_rgba(95,218,120,0.4)]"
-                        : "text-white/60 hover:bg-white/10 hover:text-white"
+                        ? "bg-white text-[#360567]"
+                        : "text-[#999999] hover:text-white"
                     }`}
                   >
                     {item}
@@ -165,9 +174,9 @@ const page = () => {
             <button
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg border border-white/20 bg-white/10 text-white/70 disabled:opacity-25 hover:bg-[#5FDA78]/20 hover:border-[#5FDA78] hover:text-[#5FDA78] transition-all duration-200 cursor-pointer disabled:cursor-not-allowed"
+              className="flex items-center gap-1.5 px-2 py-1.5 text-sm text-[#5FDA78] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
             >
-              Next ›
+              Next →
             </button>
           </div>
         </div>
