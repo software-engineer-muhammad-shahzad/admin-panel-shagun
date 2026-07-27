@@ -1,11 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { ChevronDown, LogOut, Settings, User } from "lucide-react"
+import { ChevronDown, LogOut } from "lucide-react"
 import Image from "next/image"
-import { clearStorage } from "@/app/utils/storage/storageHelper"
+import { clearStorage, getData } from "@/app/utils/storage/storageHelper"
+import Button from "@/app/shared/components/elements/Button"
 import { useUserProfile } from "@/app/features/user/hooks/useUserProfile"
+import { AuthData } from "@/app/features/auth/types/auth"
 import { baseURL } from "@/app/services/apiClient"
 
 interface NavbarUserProfileProps {
@@ -15,12 +17,25 @@ interface NavbarUserProfileProps {
 
 const NavbarUserProfile = ({ sidebarOpen, setSidebarOpen }: NavbarUserProfileProps = {}) => {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
-  const { data: profile } = useUserProfile()
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setProfileDropdownOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleOutsideClick)
+    return () => document.removeEventListener("mousedown", handleOutsideClick)
+  }, [])
 
-  const fullName = profile?.fullName ?? "Admin"
-  const email = profile?.email ?? ""
+  const { data: profile } = useUserProfile()
+  const authData = getData<AuthData>("authData", "local")
+
+  const fullName = profile?.fullName ?? authData?.fullName ?? "Admin"
+  const email = profile?.email ?? authData?.email ?? ""
+  const role = authData?.role ?? ""
   const profileImageUrl = profile?.profileImageUrl
     ? `${baseURL}/${profile.profileImageUrl}`
     : null
@@ -38,12 +53,12 @@ const NavbarUserProfile = ({ sidebarOpen, setSidebarOpen }: NavbarUserProfilePro
   }
 
   return (
-    <div className="relative">
-      <button
+    <div ref={containerRef} className="relative flex items-center self-center">
+      <Button
         onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-        className="flex items-center gap-2 cursor-pointer sm:gap-3 p-2 rounded-xl hover:bg-[#5FDA78]/20 transition-colors"
+        className="flex! items-center gap-2 cursor-pointer sm:gap-3 p-2! rounded-xl! hover:bg-[#5FDA78]/20! transition-colors bg-transparent! border-none! text-white w-auto!"
       >
-        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden border-2 border-[#5FDA78] shrink-0">
+        <div className="w-10 h-10  sm:w-14 sm:h-14  rounded-full overflow-hidden border border-[#5FDA78] shrink-0">
           {profileImageUrl ? (
             <Image
               src={profileImageUrl}
@@ -59,18 +74,18 @@ const NavbarUserProfile = ({ sidebarOpen, setSidebarOpen }: NavbarUserProfilePro
           )}
         </div>
         <div className="hidden sm:block text-left">
-          <p className="text-white text-sm font-medium">{fullName}</p>
-          <p className="text-white/70 text-xs">Administrator</p>
+          <p className="text-white text-base font-medium font-poppins">{fullName}</p>
+          <p className="text-white text-[14px] font-poppins">{role}</p>
         </div>
         <ChevronDown
-          size={15}
-          className={`text-white transition-transform ${profileDropdownOpen ? "rotate-180" : ""}`}
+          size={17}
+          className={`text-white font-bold transition-transform ${profileDropdownOpen ? "rotate-180" : ""}`}
         />
-      </button>
+      </Button>
 
       {/* Dropdown menu */}
       {profileDropdownOpen && (
-        <div className="absolute right-0 mt-2 w-44 sm:w-56 bg-[#391F68] rounded-xl border border-[#5FDA78] shadow-lg z-[100]">
+        <div className="absolute right-0 top-full mt-2 w-44 sm:w-56 bg-[#391F68] rounded-xl border border-[#5FDA78] shadow-lg z-[100]">
           <div className="p-3 sm:p-4 border-b border-[#5FDA78]/30">
             <p className="text-white font-medium text-sm truncate">{fullName}</p>
             <p className="text-white/70 text-xs sm:text-sm truncate">{email}</p>
@@ -79,25 +94,17 @@ const NavbarUserProfile = ({ sidebarOpen, setSidebarOpen }: NavbarUserProfilePro
             )}
           </div>
           <div className="py-2">
-            <button className="w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 text-white hover:bg-[#5FDA78]/20 transition-colors">
-              <User size={15} />
-              <span className="text-xs sm:text-sm">Profile</span>
-            </button>
-            <button className="w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 text-white hover:bg-[#5FDA78]/20 transition-colors">
-              <Settings size={15} />
-              <span className="text-xs sm:text-sm">Settings</span>
-            </button>
-            <button
+            <Button
               onClick={handleLogout}
-              className="w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 text-white hover:bg-[#5FDA78]/20 transition-colors"
+              className="w-[calc(100%-16px)]! mx-2 flex! items-center gap-2 sm:gap-3 px-3! py-2! bg-transparent! border-none! text-white! hover:bg-[#5FDA78]/20! rounded-lg! justify-start!"
             >
               <LogOut size={15} />
               <span className="text-xs sm:text-sm">Logout</span>
-            </button>
+            </Button>
           </div>
         </div>
       )}
-    </div>
+    </div >
   )
 }
 

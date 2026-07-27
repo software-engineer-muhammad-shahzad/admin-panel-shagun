@@ -48,8 +48,9 @@ const DonutChart = () => {
           value={selectedMonth}
           onChange={(month) => setSelectedMonth(month)}
           placeholder={ALL_MONTHS[currentMonth - 1]}
-          triggerClassName="max-w-[105px]! hover:bg-transparent!"
-          containerClassName="w-full flex justify-end xs:w-auto mt-4 sm:mt-0"
+          triggerClassName="hover:bg-transparent!"
+          containerClassName="w-[120px] shrink-0 mt-4 sm:mt-0"
+          dropdownClassName="max-h-[140px]!"
         />
       </div>
 

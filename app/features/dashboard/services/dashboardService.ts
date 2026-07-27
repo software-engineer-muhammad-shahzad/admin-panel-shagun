@@ -10,7 +10,7 @@ export const dashboardService = {
     return response.data
   },
 
-  getTotalUsersChart: async (usersRole: number, year: number): Promise<TotalUsersChartData> => {
+  getTotalUsersChart: async (usersRole: string, year: number): Promise<TotalUsersChartData> => {
     const response = await getRequest<ApiResponse<TotalUsersChartData>>(
       `${endpoints.dashboard.getTotalUsersChartsDetails}?usersRole=${usersRole}&year=${year}`
     )
