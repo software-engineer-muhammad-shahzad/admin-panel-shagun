@@ -77,7 +77,7 @@ const Table = <T extends Record<string, any>>({
                   <td
                     key={column.key}
                     className={`py-3 px-6 font-medium text-nowrap text-white ${column.className || ""}`}
-                    // style={{ color: '#8E8E8E' }}
+                  // style={{ color: '#8E8E8E' }}
                   >
                     {column.render ? column.render(row[column.key], row, index) : row[column.key]}
                   </td>
@@ -89,9 +89,8 @@ const Table = <T extends Record<string, any>>({
                         <button
                           key={actionIndex}
                           onClick={() => action.onClick(row, index)}
-                          className={`flex items-center gap-2 border px-3 py-1.5 rounded text-xs transition-colors ${
-                            action.className || "bg-blue-600 hover:bg-blue-700 text-white"
-                          }`}
+                          className={`flex items-center gap-2 border px-3 py-1.5 rounded text-xs transition-colors ${action.className || "bg-blue-600 hover:bg-blue-700 text-white"
+                            }`}
                         >
                           {action.icon}
                           <span>{action.label}</span>

@@ -26,8 +26,9 @@ const getVisibleLinks = () => {
         const role: string = auth?.role ?? ""
         const moduleAccess: string = auth?.adminModuleAccess ?? ""
         if (role === "SuperAdmin") return sidebarLinks
+        const allowed = moduleAccess.split(",").map((m: string) => m.trim()).filter(Boolean)
         return sidebarLinks.filter(
-            (item) => item.name === "Dashboard" || item.name === moduleAccess
+            (item) => item.name === "Dashboard" || allowed.includes(item.name)
         )
     } catch {
         return sidebarLinks

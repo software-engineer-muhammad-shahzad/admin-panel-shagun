@@ -26,7 +26,7 @@ export const paymentService = {
     return response.data.data
   },
 
-  getTransactions: async (params: Omit<TransactionListParams, "isIncludeGuestUser" | "isIncludeCoupleUser" | "isIncludePayment">): Promise<Transaction[]> => {
+  getTransactions: async (params: Omit<TransactionListParams, "isIncludeGuestUser" | "isIncludeCoupleUser" | "isIncludePayment">): Promise<{ items: Transaction[]; totalOverall: number }> => {
     const response = await apiClient.post<ApiResponse<any>>(
       endpoints.payments.getTransactions,
       {
@@ -37,9 +37,12 @@ export const paymentService = {
       }
     )
     const data = response.data.data
-    if (Array.isArray(data)) return data
-    if (data?.items && Array.isArray(data.items)) return data.items
-    if (data?.payments && Array.isArray(data.payments)) return data.payments
-    return []
+    if (data?.items && Array.isArray(data.items)) {
+      return { items: data.items, totalOverall: data.totalOverall ?? data.items.length }
+    }
+    if (Array.isArray(data)) {
+      return { items: data, totalOverall: data.length }
+    }
+    return { items: [], totalOverall: 0 }
   },
 }

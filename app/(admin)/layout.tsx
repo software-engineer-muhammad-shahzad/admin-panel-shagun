@@ -1,16 +1,41 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import Sidebar from "../features/layout/Sidebar"
 import Navbar from "../features/layout/Navbar"
 import AuthGuard from "../features/auth/AuthGuard"
 import { Menu, X } from "lucide-react"
 
 
+const ROUTE_MODULE_MAP: { prefix: string; module: string }[] = [
+    { prefix: "/users", module: "User Management" },
+    { prefix: "/roles", module: "Role & Rights" },
+    { prefix: "/broadcasts", module: "Broadcasts" },
+    { prefix: "/payments", module: "Payments" },
+]
+
 const layout = ({ children }: { children: React.ReactNode }) => {
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const pathname = usePathname()
+    const router = useRouter()
+
+    useEffect(() => {
+        try {
+            const raw = localStorage.getItem("authData")
+            if (!raw) return
+            const auth = JSON.parse(raw)
+            if (auth?.role === "SuperAdmin") return
+            const moduleAccess: string = auth?.adminModuleAccess ?? ""
+            const allowed = moduleAccess.split(",").map((m: string) => m.trim()).filter(Boolean)
+            const matched = ROUTE_MODULE_MAP.find(({ prefix }) => pathname?.startsWith(prefix))
+            if (matched && !allowed.includes(matched.module)) {
+                router.replace("/dashboard")
+            }
+        } catch {
+            // ignore
+        }
+    }, [pathname])
 
     // Auto-hide sidebar on responsive screens when route changes
     useEffect(() => {

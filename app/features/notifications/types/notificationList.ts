@@ -1,13 +1,24 @@
 export interface NotificationItem {
   id: number
-  adminId: number | null
+  senderUserId: number | null
   adminFullName: string | null
-  coupleId: number | null
-  fullName: string | null
-  email: string | null
+  recieverUserId: number | null
+  coupleName: string | null
+  notificationDate: string | null
   message: string | null
-  sentAt: string | null
+  subject: string | null
+  notificationPurpose: string | null
+  amount: number | null
   isRead: boolean
+  resourceMetadata?: {
+    createdOn: string
+    createdBy: number
+    updatedOn: string | null
+    updatedBy: number | null
+    deletedOn: string | null
+    deletedBy: number | null
+    recordStatus: string
+  }
 }
 
 export interface NotificationListParams {
