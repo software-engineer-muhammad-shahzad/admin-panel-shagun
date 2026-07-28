@@ -1,16 +1,17 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Eye } from "lucide-react"
+import { CirclePlus, Eye } from "lucide-react"
 import { useNotificationList } from "@/app/features/notifications/hooks/useNotificationList"
 import { NotificationItem } from "@/app/features/notifications/types/notificationList"
 import ViewNotificationItem from "@/app/features/notifications/ViewNotificationItem"
+import NotificationModal from "@/app/features/notifications/NotificationModal"
 import Input from "@/app/shared/components/elements/Input"
 import Table from "@/app/shared/components/elements/Table"
 
 const notificationColumns = [
   {
-    key: "adminId",
+    key: "id",
     label: "Admin ID",
     width: "100px",
     render: (value: any) => value ? `#${value}` : "N/A",
@@ -22,19 +23,19 @@ const notificationColumns = [
     render: (value: any) => value || "N/A",
   },
   {
-    key: "coupleId",
+    key: "recieverUserId",
     label: "Couple ID",
     width: "100px",
     render: (value: any) => value ? `#${value}` : "N/A",
   },
   {
-    key: "fullName",
+    key: "coupleName",
     label: "Name",
     width: "140px",
     render: (value: any) => value || "N/A",
   },
   {
-    key: "sentAt",
+    key: "notificationDate",
     label: "Date",
     width: "140px",
     render: (value: any) =>
@@ -56,6 +57,7 @@ const page = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedItem, setSelectedItem] = useState<NotificationItem | null>(null)
   const [viewModalOpen, setViewModalOpen] = useState(false)
+  const [addModalOpen, setAddModalOpen] = useState(false)
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -89,6 +91,13 @@ const page = () => {
             className="text-sm outline-0 w-full! placeholder:text-light-text text-light-text"
             containerClassName="border border-[#C9C9C9] w-full! rounded-lg glass-border bg-transparent"
           />
+        </div>
+        <div
+          className="flex gap-2 bg-[#5FDA78] rounded-[56px] py-2.5 px-3 cursor-pointer items-center w-full sm:w-auto justify-center"
+          onClick={() => setAddModalOpen(true)}
+        >
+          <CirclePlus size={15} />
+          <p className="text-[#360567] text-md font-semibold text-nowrap">Add New</p>
         </div>
       </div>
 
@@ -187,6 +196,10 @@ const page = () => {
           onClose={() => setViewModalOpen(false)}
           data={selectedItem}
         />
+      )}
+
+      {addModalOpen && (
+        <NotificationModal onClose={() => setAddModalOpen(false)} />
       )}
     </div>
   )

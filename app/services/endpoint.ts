@@ -40,6 +40,7 @@ const endpoints = {
   },
   notification: {
     getNotificationList: "/notifications/notificationslist",
+    createNotification: "/notifications/createnotification",
   },
 };
 
