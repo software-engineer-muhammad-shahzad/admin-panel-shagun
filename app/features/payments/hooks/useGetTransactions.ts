@@ -6,6 +6,8 @@ interface TransactionFilters {
   startDate?: string
   endDate?: string
   status?: string
+  offset?: number
+  length?: number
 }
 
 export const useGetTransactions = (params: TransactionFilters = {}) =>

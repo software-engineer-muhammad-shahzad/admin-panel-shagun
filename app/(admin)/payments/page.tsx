@@ -192,6 +192,12 @@ const Page = () => {
 
   const handlePriceInput = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/[^0-9.]/g, "").replace(/(\..*?)\..*/g, "$1")
+    if (field === "cardPrice" || field === "videoPrice") {
+      if (value !== "" && Number(value) > 500) return
+    }
+    if (field === "platformFee") {
+      if (value !== "" && Number(value) > 100) return
+    }
     setFormFields(prev => ({ ...prev, [field]: value }))
     setFormErrors(prev => ({ ...prev, [field]: "" }))
   }
@@ -199,9 +205,9 @@ const Page = () => {
   const validateForm = (): boolean => {
     const errs: Record<string, string> = {}
     if (!formFields.cardPrice) errs.cardPrice = "Card price is required"
-    else if (isNaN(Number(formFields.cardPrice)) || Number(formFields.cardPrice) <= 0) errs.cardPrice = "Enter a valid positive price"
+    else if (isNaN(Number(formFields.cardPrice)) || Number(formFields.cardPrice) < 100 || Number(formFields.cardPrice) > 500) errs.cardPrice = "Price must be between 100 and 500"
     if (!formFields.videoPrice) errs.videoPrice = "Video price is required"
-    else if (isNaN(Number(formFields.videoPrice)) || Number(formFields.videoPrice) <= 0) errs.videoPrice = "Enter a valid positive price"
+    else if (isNaN(Number(formFields.videoPrice)) || Number(formFields.videoPrice) < 100 || Number(formFields.videoPrice) > 500) errs.videoPrice = "Price must be between 100 and 500"
     if (formFields.platformFee === "") errs.platformFee = "Platform fee is required"
     else if (isNaN(Number(formFields.platformFee)) || Number(formFields.platformFee) < 0 || Number(formFields.platformFee) > 100) errs.platformFee = "Enter a value between 0 and 100"
     setFormErrors(errs)
@@ -213,17 +219,19 @@ const Page = () => {
 
   useEffect(() => { setCurrentPage(1) }, [searchTerm, appliedStart, appliedEnd])
 
-  const { data: rawTransactions, isLoading } = useGetTransactions({
+  const offset = (currentPage - 1) * PAGE_SIZE
+
+  const { data: transactionData, isLoading } = useGetTransactions({
     ...(searchTerm ? { search: searchTerm } : {}),
     ...(appliedStart ? { startDate: new Date(appliedStart).toISOString() } : {}),
     ...(appliedEnd ? { endDate: new Date(appliedEnd).toISOString() } : {}),
+    offset,
+    length: PAGE_SIZE,
   })
 
-  const allTransactions = Array.isArray(rawTransactions) ? rawTransactions : []
-  const totalOverall = allTransactions.length
+  const transactions = transactionData?.items ?? []
+  const totalOverall = transactionData?.totalOverall ?? 0
   const totalPages = Math.ceil(totalOverall / PAGE_SIZE)
-  const offset = (currentPage - 1) * PAGE_SIZE
-  const transactions = allTransactions.slice(offset, offset + PAGE_SIZE)
 
   const handleImageSelect = (index: number, file: File) => {
     const newImages = [...images]
@@ -510,7 +518,7 @@ const Page = () => {
                   type="text"
                   label="Card Price (in £)"
                   labelColor="ms-5 mb-1"
-                  placeholder="Enter"
+                  placeholder="100 – 500"
                   value={formFields.cardPrice}
                   onChange={handlePriceInput("cardPrice")}
                   className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text"
@@ -523,7 +531,7 @@ const Page = () => {
                   type="text"
                   label="Video Price (in £)"
                   labelColor="ms-5 mb-1"
-                  placeholder="Enter"
+                  placeholder="100 – 500"
                   value={formFields.videoPrice}
                   onChange={handlePriceInput("videoPrice")}
                   className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text"

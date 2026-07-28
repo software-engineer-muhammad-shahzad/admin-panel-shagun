@@ -47,18 +47,27 @@ const page = () => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false)
   const [selectedAnnouncement, setSelectedAnnouncement] = useState<Announcement | null>(null)
 
-  const { data: announcements, isLoading, refetch } = useGetAnnouncements()
+  const [debouncedSearch, setDebouncedSearch] = useState("")
 
-  useEffect(() => { setCurrentPage(1) }, [searchTerm])
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTerm)
+      setCurrentPage(1)
+    }, 400)
+    return () => clearTimeout(timer)
+  }, [searchTerm])
 
-  const filtered = (announcements ?? []).filter((a) =>
-    a.content.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-
-  const totalOverall = filtered.length
-  const totalPages = Math.ceil(totalOverall / PAGE_SIZE)
   const offset = (currentPage - 1) * PAGE_SIZE
-  const paginated = filtered.slice(offset, offset + PAGE_SIZE)
+
+  const { data, isLoading, refetch } = useGetAnnouncements({
+    offset,
+    length: PAGE_SIZE,
+    ...(debouncedSearch ? { search: debouncedSearch } : {}),
+  })
+
+  const paginated = data?.items ?? []
+  const totalOverall = data?.totalOverall ?? 0
+  const totalPages = Math.ceil(totalOverall / PAGE_SIZE)
 
   return (
     <>

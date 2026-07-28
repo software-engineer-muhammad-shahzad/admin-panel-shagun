@@ -5,9 +5,15 @@ export const announcementQueryKeys = {
   all: ["announcements"] as const,
 }
 
-export const useGetAnnouncements = () => {
+interface AnnouncementParams {
+  offset?: number
+  length?: number
+  search?: string
+}
+
+export const useGetAnnouncements = (params: AnnouncementParams = {}) => {
   return useQuery({
-    queryKey: announcementQueryKeys.all,
-    queryFn: () => announcementService.getAnnouncements(),
+    queryKey: [...announcementQueryKeys.all, params],
+    queryFn: () => announcementService.getAnnouncements(params),
   })
 }
