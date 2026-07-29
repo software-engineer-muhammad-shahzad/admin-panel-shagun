@@ -11,6 +11,7 @@ import Button from "@/app/shared/components/elements/Button"
 import { useUpdatePricing } from "@/app/features/payments/hooks/useUpdatePricing"
 import { useGetTransactions } from "@/app/features/payments/hooks/useGetTransactions"
 import { paymentService } from "@/app/features/payments/services/paymentService"
+import { formatDateTime } from "@/app/shared/Common"
 
 const MAX_IMAGES = 4
 
@@ -90,12 +91,6 @@ const transactionColumns = [
       value === "Image" ? "Card" : value === "Video" ? "Video" : "—",
   },
   {
-    key: "attach",
-    label: "Attach",
-    width: "80px",
-    render: (_value: any, row: any) => row?.greetingMediaType ? "Yes" : "No",
-  },
-  {
     key: "attachFee",
     label: "Attach Fee",
     width: "105px",
@@ -159,6 +154,22 @@ const transactionColumns = [
     },
   },
   {
+    key: "paymentDate",
+    label: "Payment Date",
+    width: "125px",
+    render: (_value: any, row: any) => {      
+      return row.paymentDate ? `${formatDateTime(row.paymentDate)}` : "N/A"
+    },
+  },
+  {
+    key: "transactionDate",
+    label: "Transaction Date",
+    width: "125px",
+    render: (_value: any, row: any) => {      
+      return row.transactionDate ? `${formatDateTime(row.transactionDate)}` : "N/A"
+    },
+  },
+  {
     key: "status",
     label: "Status",
     width: "120px",
@@ -171,7 +182,7 @@ const transactionColumns = [
         </span>
       )
     },
-  },
+  }, 
 ]
 
 const PAGE_SIZE = 10
