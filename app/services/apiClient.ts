@@ -4,13 +4,12 @@ interface AxiosRequestConfigWithSkipAuth extends InternalAxiosRequestConfig {
   skipAuth?: boolean
 }
 
-const PRODUCTION_API_URL = "https://adminapis.shagundirect.com/api"
+/** Real backend API — never use the FE portal host */
+export const PRODUCTION_API_URL = "https://adminapis.shagundirect.com/api"
 
-/** Frontend hosts that must never be used as the API base */
 const FRONTEND_HOSTS = [
   "portal.shagundirect.com",
-  "localhost:3000",
-  "127.0.0.1:3000",
+  "www.portal.shagundirect.com",
 ]
 
 const normalizeApiBaseUrl = (url?: string | null): string => {
@@ -20,17 +19,27 @@ const normalizeApiBaseUrl = (url?: string | null): string => {
   return `${trimmed}/api`
 }
 
-const isFrontendUrl = (url: string): boolean => {
+const getHostname = (url: string): string => {
   try {
-    const host = new URL(url).host.toLowerCase()
-    return FRONTEND_HOSTS.some(
-      (fe) => host === fe.toLowerCase() || host.endsWith(`.${fe.toLowerCase()}`)
-    )
+    return new URL(url).hostname.toLowerCase()
   } catch {
-    return false
+    return ""
   }
 }
 
+const isFrontendHost = (hostname: string): boolean =>
+  FRONTEND_HOSTS.some((h) => hostname === h || hostname.endsWith(`.${h}`))
+
+const isLocalApiUrl = (url: string): boolean => {
+  const host = getHostname(url)
+  return host === "localhost" || host === "127.0.0.1"
+}
+
+/**
+ * Resolve API base URL.
+ * Never return empty — empty baseURL makes Axios call the FE origin
+ * (e.g. https://portal.shagundirect.com/Auth/login).
+ */
 const resolveApiBaseUrl = (): string => {
   const raw =
     process.env.NEXT_PUBLIC_API_URL?.trim() ||
@@ -39,34 +48,23 @@ const resolveApiBaseUrl = (): string => {
 
   const normalized = normalizeApiBaseUrl(raw)
 
-  // Misconfigured env pointing at the FE portal → ignore and use real API
-  if (normalized && isFrontendUrl(normalized)) {
-    // eslint-disable-next-line no-console
-    console.warn(
-      `NEXT_PUBLIC_API_URL points at frontend (${raw}). Using ${PRODUCTION_API_URL} instead.`
-    )
-    return PRODUCTION_API_URL
+  if (normalized) {
+    // Portal FE URL misconfigured as API
+    if (isFrontendHost(getHostname(normalized))) {
+      return PRODUCTION_API_URL
+    }
+    return normalized
   }
 
-  if (normalized) return normalized
-
-  // Empty env: local stays empty (dev must set .env.local); production uses API host
-  if (process.env.NODE_ENV === "production") {
-    // eslint-disable-next-line no-console
-    console.warn(
-      `NEXT_PUBLIC_API_URL is missing. Falling back to ${PRODUCTION_API_URL}`
-    )
-    return PRODUCTION_API_URL
+  // Prefer local API only during next dev
+  if (process.env.NODE_ENV !== "production") {
+    return "https://localhost:44382/api"
   }
 
-  // eslint-disable-next-line no-console
-  console.warn(
-    "Missing NEXT_PUBLIC_API_URL. Set it in .env.local (e.g. https://localhost:44382/api)"
-  )
-  return ""
+  return PRODUCTION_API_URL
 }
 
-const baseURL = resolveApiBaseUrl()
+let baseURL = resolveApiBaseUrl()
 
 export { baseURL }
 
@@ -78,9 +76,22 @@ apiClient.interceptors.request.use(
   (config) => {
     const requestConfig = config as AxiosRequestConfigWithSkipAuth
 
-    // Safety: never allow relative calls against the FE origin in the browser
-    if (!requestConfig.baseURL && typeof window !== "undefined") {
-      requestConfig.baseURL = PRODUCTION_API_URL
+    // Runtime guard: if the app is served from the portal FE, always hit the real API
+    if (typeof window !== "undefined") {
+      const pageHost = window.location.hostname.toLowerCase()
+      const currentBase = String(requestConfig.baseURL || apiClient.defaults.baseURL || "")
+
+      if (
+        isFrontendHost(pageHost) ||
+        !currentBase ||
+        isFrontendHost(getHostname(currentBase))
+      ) {
+        requestConfig.baseURL = PRODUCTION_API_URL
+        apiClient.defaults.baseURL = PRODUCTION_API_URL
+      } else if (isLocalApiUrl(currentBase) && isFrontendHost(pageHost)) {
+        requestConfig.baseURL = PRODUCTION_API_URL
+        apiClient.defaults.baseURL = PRODUCTION_API_URL
+      }
     }
 
     if (typeof window !== "undefined") {
