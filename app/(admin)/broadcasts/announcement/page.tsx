@@ -17,17 +17,19 @@ const announcementColumns = [
     render: (value: any) => value ? `#${value}` : "N/A",
   },
   {
-    key: "createdBy",
+    key: "adminFullName",
     label: "Admin Full Name",
     width: "180px",
     render: (value: any) => value ?? "N/A",
   },
   {
-    key: "createdOnUtc",
+    key: "createdOn",
     label: "Date",
     width: "140px",
-    render: (value: any) =>
-      value ? new Date(value).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "N/A",
+    render: (_value: any, row: Announcement) =>
+      row.resourceMetadata?.createdOn
+        ? `${new Date(row.resourceMetadata.createdOn).toLocaleDateString("en-GB", { day: "2-digit" })}, ${new Date(row.resourceMetadata.createdOn).toLocaleDateString("en-GB", { month: "long", year: "numeric" })}`
+        : "N/A",
   },
   {
     key: "content",

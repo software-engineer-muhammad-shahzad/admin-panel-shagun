@@ -2,17 +2,33 @@ import Button from "@/app/shared/components/elements/Button"
 import Input from "@/app/shared/components/elements/Input"
 import ModalLayer from "@/app/shared/components/modal/ModalLayer"
 import { X } from "lucide-react"
+import { ResourceMetadata } from "./types/adminUser"
 
 interface ViewUserProps {
     onClose: () => void
     userData: {
-        id: string
+        id: number
         fullName: string
         email: string
         contactNo: string
-        moduleAccess: string
-        status: string
+        resourceMetadata: ResourceMetadata
     }
+}
+
+const formatDateTime = (dateString?: string | null) => {
+    if (!dateString) return "N/A"
+    const date = new Date(dateString)
+    if (Number.isNaN(date.getTime())) return "N/A"
+
+    const day = date.toLocaleDateString("en-GB", { day: "numeric" })
+    const monthYear = date.toLocaleDateString("en-GB", { month: "long", year: "numeric" })
+    const time = date.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+    })
+
+    return `${day}, ${monthYear} ${time}`
 }
 
 const ViewUser = ({ onClose, userData }: ViewUserProps) => {
@@ -44,7 +60,7 @@ const ViewUser = ({ onClose, userData }: ViewUserProps) => {
                         label="ID"
                         labelColor="ms-5 mb-1"
                         placeholder="Enter ID"
-                        value={userData.id}
+                        value={userData.id.toString()}
                         disabled={true}
                         className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
                         containerClassName="border-none bg-transparent"
@@ -95,23 +111,10 @@ const ViewUser = ({ onClose, userData }: ViewUserProps) => {
                         type="text"
                         label="Date & Time"
                         labelColor="ms-5 mb-1"
-                        placeholder="Enter Date & Time"
-                        value={userData.moduleAccess}
+                        placeholder=""
+                        value={formatDateTime(userData.resourceMetadata?.createdOn)}
                         disabled={true}
                         className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
-                        containerClassName="border-none bg-transparent"
-                    />
-                </div>
-
-                <div className="w-full px-5 mt-3">
-                    <Input
-                        type="text"
-                        label="Module Access"
-                        labelColor="ms-5 mb-1"
-                        placeholder="Module Access"
-                        value={userData.status}
-                        disabled={true}
-                        className="text-sm outline-0 px-5 py-4 border  border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
                         containerClassName="border-none bg-transparent"
                     />
                 </div>

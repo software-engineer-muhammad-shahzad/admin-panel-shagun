@@ -11,6 +11,7 @@ import EditRole from "@/app/features/roles/EditRole"
 import Input from "@/app/shared/components/elements/Input"
 import Table from "@/app/shared/components/elements/Table"
 import Dropdown from "@/app/shared/components/elements/Dropdown"
+import { showToast } from "@/app/lib/toast"
 
 const STATUS_OPTIONS = [
     { label: "All", value: "" },
@@ -116,7 +117,10 @@ const page = () => {
                     </span>
                     <span
                         className="w-8 h-8 flex items-center justify-center border border-white/10 rounded-full glass-border cursor-pointer hover:bg-red-500/20"
-                        onClick={(e) => { e.stopPropagation(); setSelectedUser(row); setIsDeleteRoleModalOpen(true) }}
+                        onClick={(e) => {
+                            if (row.resourceMetadata?.recordStatus === 'Deleted') { showToast.error('Admin is already deleted'); return; }
+                            
+                            e.stopPropagation(); setSelectedUser(row); setIsDeleteRoleModalOpen(true) }}
                     >
                         <Trash2 size={14} />
                     </span>

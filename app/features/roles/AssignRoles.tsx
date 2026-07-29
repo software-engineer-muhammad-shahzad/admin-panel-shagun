@@ -17,27 +17,35 @@ const AssignRoles = ({ onClose }: AssignRolesProps) => {
   const [search, setSearch] = useState("")
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null)
 
-  const { data, isLoading } = useAdminUsers(search ? { search } : undefined)
+  let parm= {
+    search: search,
+    userRole: 'Admin',
+  }
+  const { data, isLoading } = useAdminUsers(parm)
   const users = data?.items ?? []
 
-  const filtered = search
-    ? users.filter((u) =>
-      u.fullName.toLowerCase().includes(search.toLowerCase()) ||
-      u.email.toLowerCase().includes(search.toLowerCase())
+  const filtered = users.filter((u) => {
+    const hasNoModuleAccess = !u.moduleAccess?.trim()
+    if (!hasNoModuleAccess) return false
+    if (!search) return true
+    const q = search.toLowerCase()
+    return (
+      u.fullName.toLowerCase().includes(q) ||
+      u.email.toLowerCase().includes(q)
     )
-    : users
+  })
 
   return (
     <ModalLayer
       onClose={onClose}
       modalWidth="min(95%, 700px)"
       modalHeight="80vh"
-      className="glass-card border border-[#5FDA78] p-4 sm:p-6"
+      className="glass-card border border-[#5FDA78] p-4 sm:p-6 flex flex-col"
       overlayColor="bg-[#330065CC] backdrop-blur-[34px]"
       position="center"
     >
       {/* Header */}
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-4 shrink-0">
         <div className="flex items-center gap-2">
           <MoveLeft size={18} className="text-white shrink-0" />
           <h2 className="text-white text-lg sm:text-xl font-semibold">Assign Roles</h2>
@@ -51,7 +59,7 @@ const AssignRoles = ({ onClose }: AssignRolesProps) => {
       </div>
 
       {/* Search */}
-      <div className="mb-4">
+      <div className="mb-4 shrink-0">
         <Input
           type="text"
           placeholder="Search by name or email..."
@@ -63,7 +71,7 @@ const AssignRoles = ({ onClose }: AssignRolesProps) => {
       </div>
 
       {/* User List */}
-      <div className="flex flex-col gap-2 sm:gap-3 overflow-y-auto max-h-[55vh] scrollbar-hide pr-1">
+      <div className="flex flex-col gap-2 sm:gap-3 overflow-y-auto flex-1 min-h-0 scrollbar-hide pr-1">
         {isLoading ? (
           <p className="text-white/60 text-sm text-center py-8">Loading users...</p>
         ) : filtered.length === 0 ? (
@@ -95,7 +103,7 @@ const AssignRoles = ({ onClose }: AssignRolesProps) => {
       </div>
 
       {/* Footer */}
-      <div className="flex justify-end mt-4">
+      <div className="flex justify-end mt-4 shrink-0">
         <Button
           onClick={onClose}
           className="text-white font-light w-full sm:w-fit! px-8! py-2! hover:bg-[#4FB860]"

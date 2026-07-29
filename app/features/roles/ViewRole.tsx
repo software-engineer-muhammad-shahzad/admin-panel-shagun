@@ -3,6 +3,7 @@ import Input from "@/app/shared/components/elements/Input"
 import ModalLayer from "@/app/shared/components/modal/ModalLayer"
 import { MoveLeft, X } from "lucide-react"
 import { AdminUser } from "@/app/features/user/types/adminUser"
+import { ADMIN_MODULES, canonicalizeModules, parseModuleAccess } from "@/app/shared/adminModules"
 
 interface ViewRoleProps {
     onClose: () => void
@@ -11,6 +12,9 @@ interface ViewRoleProps {
 
 const ViewRole = ({ onClose, roleData }: ViewRoleProps) => {
     if (!roleData) return null
+
+    const checkedModules = canonicalizeModules(parseModuleAccess(roleData.moduleAccess))
+
     return (
         <ModalLayer
             onClose={onClose}
@@ -33,13 +37,13 @@ const ViewRole = ({ onClose, roleData }: ViewRoleProps) => {
                 </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> 
                 <div className="w-full">
                     <Input
                         type="text"
-                        label="Admin ID"
+                        label="Email"
                         labelColor="ms-5 mb-1"
-                        value={roleData.displayId}
+                        value={roleData.email}
                         disabled={true}
                         className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
                         containerClassName="border-none bg-transparent"
@@ -58,52 +62,22 @@ const ViewRole = ({ onClose, roleData }: ViewRoleProps) => {
                     />
                 </div>
 
-                <div className="w-full">
-                    <Input
-                        type="text"
-                        label="Email"
-                        labelColor="ms-5 mb-1"
-                        value={roleData.email}
-                        disabled={true}
-                        className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
-                        containerClassName="border-none bg-transparent"
-                    />
-                </div>
-
-                <div className="w-full">
-                    <Input
-                        type="text"
-                        label="Module Access"
-                        labelColor="ms-5 mb-1"
-                        value={roleData.moduleAccess ?? "—"}
-                        disabled={true}
-                        className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
-                        containerClassName="border-none bg-transparent"
-                    />
-                </div>
-
-                <div className="w-full">
-                    <Input
-                        type="text"
-                        label="Status"
-                        labelColor="ms-5 mb-1"
-                        value={roleData.resourceMetadata?.recordStatus ?? "Inactive"}
-                        disabled={true}
-                        className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
-                        containerClassName="border-none bg-transparent"
-                    />
-                </div>
-
-                <div className="w-full">
-                    <Input
-                        type="text"
-                        label="Contact Number"
-                        labelColor="ms-5 mb-1"
-                        value={roleData.contactNumber}
-                        disabled={true}
-                        className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
-                        containerClassName="border-none bg-transparent"
-                    />
+                <div className="w-full md:col-span-2 px-5 mt-1">
+                    <p className="text-white text-sm mb-2">Module Access</p>
+                    <div className="flex flex-wrap gap-3 sm:gap-5 px-1 py-2">
+                        {ADMIN_MODULES.map((module) => (
+                            <label key={module} className="flex items-center gap-2 cursor-default">
+                                <input
+                                    type="checkbox"
+                                    checked={checkedModules.includes(module)}
+                                    disabled
+                                    readOnly
+                                    className="w-4 h-4 shrink-0 appearance-none rounded border-2 border-[#5FDA78] bg-transparent checked:bg-[#5FDA78] checked:border-[#5FDA78] disabled:opacity-100 relative checked:after:content-[''] checked:after:absolute checked:after:left-[4px] checked:after:top-[1px] checked:after:w-[4px] checked:after:h-[8px] checked:after:border-r-2 checked:after:border-b-2 checked:after:border-[#360567] checked:after:rotate-45"
+                                />
+                                <span className="text-white text-xs sm:text-sm whitespace-nowrap">{module}</span>
+                            </label>
+                        ))}
+                    </div>
                 </div>
             </div>
 

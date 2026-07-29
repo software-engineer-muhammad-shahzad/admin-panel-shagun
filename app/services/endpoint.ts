@@ -27,7 +27,7 @@ const endpoints = {
     getNotification: "/notifications/getannouncements",
   },
   payments: {
-    addGift: "/payments/pricing",
+    updatePricing: "/payments/pricing",
     showGift: "/payments/pricing",
     getTransactions: "/payments/getpaymentslist",
   },
@@ -40,7 +40,7 @@ const endpoints = {
   },
   notification: {
     getNotificationList: "/notifications/notificationslist",
-    createNotification: "/notifications/createnotification",
+    createNotification: "/notifications/createbyadmin",
   },
 };
 

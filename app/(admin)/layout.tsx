@@ -6,6 +6,7 @@ import Sidebar from "../features/layout/Sidebar"
 import Navbar from "../features/layout/Navbar"
 import AuthGuard from "../features/auth/AuthGuard"
 import { Menu, X } from "lucide-react"
+import { hasModuleAccess, parseModuleAccess } from "../shared/adminModules"
 
 
 const ROUTE_MODULE_MAP: { prefix: string; module: string }[] = [
@@ -26,10 +27,9 @@ const layout = ({ children }: { children: React.ReactNode }) => {
             if (!raw) return
             const auth = JSON.parse(raw)
             if (auth?.role === "SuperAdmin") return
-            const moduleAccess: string = auth?.adminModuleAccess ?? ""
-            const allowed = moduleAccess.split(",").map((m: string) => m.trim()).filter(Boolean)
+            const allowed = parseModuleAccess(auth?.adminModuleAccess)
             const matched = ROUTE_MODULE_MAP.find(({ prefix }) => pathname?.startsWith(prefix))
-            if (matched && !allowed.includes(matched.module)) {
+            if (matched && !hasModuleAccess(allowed, matched.module)) {
                 router.replace("/dashboard")
             }
         } catch {

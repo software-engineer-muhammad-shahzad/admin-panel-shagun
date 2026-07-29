@@ -5,13 +5,13 @@ import { CirclePlus, Eye } from "lucide-react"
 import { useNotificationList } from "@/app/features/notifications/hooks/useNotificationList"
 import { NotificationItem } from "@/app/features/notifications/types/notificationList"
 import ViewNotificationItem from "@/app/features/notifications/ViewNotificationItem"
-import NotificationModal from "@/app/features/notifications/NotificationModal"
+import AddNewNotification from "@/app/features/notifications/AddNewNotification"
 import Input from "@/app/shared/components/elements/Input"
 import Table from "@/app/shared/components/elements/Table"
 
 const notificationColumns = [
   {
-    key: "id",
+    key: "senderUserId",
     label: "Admin ID",
     width: "100px",
     render: (value: any) => value ? `#${value}` : "N/A",
@@ -35,11 +35,19 @@ const notificationColumns = [
     render: (value: any) => value || "N/A",
   },
   {
-    key: "notificationDate",
+    key: "resourceMetadata.createdOn",
     label: "Date",
     width: "140px",
-    render: (value: any) =>
-      value ? new Date(value).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "N/A",
+    render: (_value: any, row: NotificationItem) =>
+      row.resourceMetadata?.createdOn
+        ? `${new Date(row.resourceMetadata.createdOn).toLocaleDateString("en-GB", { day: "2-digit" })}, ${new Date(row.resourceMetadata.createdOn).toLocaleDateString("en-GB", { month: "long", year: "numeric" })}`
+        : "N/A",
+  },
+  {
+    key: "subject",
+    label: "Subject",
+    width: "280px",
+    render: (value: any) => value || "N/A",
   },
   {
     key: "message",
@@ -57,7 +65,7 @@ const page = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedItem, setSelectedItem] = useState<NotificationItem | null>(null)
   const [viewModalOpen, setViewModalOpen] = useState(false)
-  const [addModalOpen, setAddModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -69,7 +77,7 @@ const page = () => {
 
   const offset = (currentPage - 1) * PAGE_SIZE
 
-  const { data, isLoading, isError } = useNotificationList({
+  const { data, isLoading, isError, refetch } = useNotificationList({
     ...(debouncedSearch ? { search: debouncedSearch } : {}),
     offset,
     length: PAGE_SIZE,
@@ -92,12 +100,14 @@ const page = () => {
             containerClassName="border border-[#C9C9C9] w-full! rounded-lg glass-border bg-transparent"
           />
         </div>
-        <div
-          className="flex gap-2 bg-[#5FDA78] rounded-[56px] py-2.5 px-3 cursor-pointer items-center w-full sm:w-auto justify-center"
-          onClick={() => setAddModalOpen(true)}
-        >
-          <CirclePlus size={15} />
-          <p className="text-[#360567] text-md font-semibold text-nowrap">Add New</p>
+        <div className="flex flex-col sm:flex-row gap-3 lg:gap-4 items-center">
+          <div
+            className="flex gap-2 bg-[#5FDA78] rounded-[56px] py-[10px] px-3 cursor-pointer items-center w-full sm:w-auto justify-center"
+            onClick={() => setIsModalOpen(true)}
+          >
+            <CirclePlus size={15} />
+            <p className="text-[#360567] text-md font-semibold text-nowrap">Add New</p>
+          </div>
         </div>
       </div>
 
@@ -198,8 +208,13 @@ const page = () => {
         />
       )}
 
-      {addModalOpen && (
-        <NotificationModal onClose={() => setAddModalOpen(false)} />
+      {isModalOpen && (
+        <AddNewNotification
+          onClose={() => {
+            setIsModalOpen(false)
+            refetch()
+          }}
+        />
       )}
     </div>
   )

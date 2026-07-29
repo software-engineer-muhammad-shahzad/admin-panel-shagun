@@ -1,24 +1,16 @@
+import { ResourceMetadata } from "../../broadcasts/types/broadcastUser"
+
 export interface NotificationItem {
   id: number
   senderUserId: number | null
   adminFullName: string | null
   recieverUserId: number | null
   coupleName: string | null
-  notificationDate: string | null
+  email: string | null
   message: string | null
   subject: string | null
-  notificationPurpose: string | null
-  amount: number | null
   isRead: boolean
-  resourceMetadata?: {
-    createdOn: string
-    createdBy: number
-    updatedOn: string | null
-    updatedBy: number | null
-    deletedOn: string | null
-    deletedBy: number | null
-    recordStatus: string
-  }
+  resourceMetadata: ResourceMetadata
 }
 
 export interface NotificationListParams {

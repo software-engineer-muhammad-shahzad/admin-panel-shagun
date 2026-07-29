@@ -7,6 +7,7 @@ import { useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { DashboardTab, UserManagement, BroadcastTab, PaymentTab } from "../icons/Icons";
 import { sidebarLinks } from "../data/MockData";
+import { hasModuleAccess, parseModuleAccess } from "@/app/shared/adminModules";
 
 // Icon components with proper typing
 type IconComponent = React.FC<{ color?: string }>;
@@ -24,11 +25,10 @@ const getVisibleLinks = () => {
         if (!raw) return sidebarLinks
         const auth = JSON.parse(raw)
         const role: string = auth?.role ?? ""
-        const moduleAccess: string = auth?.adminModuleAccess ?? ""
         if (role === "SuperAdmin") return sidebarLinks
-        const allowed = moduleAccess.split(",").map((m: string) => m.trim()).filter(Boolean)
+        const allowed = parseModuleAccess(auth?.adminModuleAccess)
         return sidebarLinks.filter(
-            (item) => item.name === "Dashboard" || allowed.includes(item.name)
+            (item) => item.name === "Dashboard" || hasModuleAccess(allowed, item.name)
         )
     } catch {
         return sidebarLinks

@@ -6,9 +6,11 @@ import { MoveLeft, X } from "lucide-react"
 import Button from "@/app/shared/components/elements/Button"
 import Input from "@/app/shared/components/elements/Input"
 import Dropdown from "@/app/shared/components/elements/Dropdown"
-import { AdminUser, RecordStatus } from "@/app/features/user/types/adminUser"
+import { AdminUser } from "@/app/features/user/types/adminUser"
+import { RecordStatus } from "@/app/shared/enums"
 import { useAdminUsers } from "@/app/features/user/hooks/useAdminUsers"
 import { useUpdateAdmin } from "@/app/features/user/hooks/useUpdateAdmin"
+import { ADMIN_MODULES, canonicalizeModules, parseModuleAccess } from "@/app/shared/adminModules"
 
 interface EditRoleProps {
     onClose: () => void
@@ -27,13 +29,14 @@ const EditRole = ({ onClose, editData, mode = "edit" }: EditRoleProps) => {
         id: editData?.displayId || "",
         adminName: editData?.fullName || "",
         email: editData?.email || "",
-        modules: editData?.moduleAccess || "",
         status: editData?.resourceMetadata?.recordStatus ?? "Inactive",
     })
-
-    const [showSuccessModal, setShowSuccessModal] = useState(false)
+    const [checkedModules, setCheckedModules] = useState<string[]>(
+        () => canonicalizeModules(parseModuleAccess(editData?.moduleAccess))
+    )
 
     const { mutate: updateAdmin, isPending } = useUpdateAdmin()
+
 
     const { data: freshData } = useAdminUsers(
         editData?.userId
@@ -48,9 +51,9 @@ const EditRole = ({ onClose, editData, mode = "edit" }: EditRoleProps) => {
             id: user.displayId || "",
             adminName: user.fullName || "",
             email: user.email || "",
-            modules: user.moduleAccess || "",
             status: user.resourceMetadata?.recordStatus ?? "Inactive",
         })
+        setCheckedModules(canonicalizeModules(parseModuleAccess(user.moduleAccess)))
     }, [freshData])
 
     const handleInputChange = (field: string, value: string) => {
@@ -58,6 +61,12 @@ const EditRole = ({ onClose, editData, mode = "edit" }: EditRoleProps) => {
             ...prev,
             [field]: value
         }))
+    }
+
+    const toggleModule = (module: string) => {
+        setCheckedModules((prev) =>
+            prev.includes(module) ? prev.filter((m) => m !== module) : [...prev, module]
+        )
     }
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -72,33 +81,27 @@ const EditRole = ({ onClose, editData, mode = "edit" }: EditRoleProps) => {
                     email: formData.email,
                     password: "",
                     userRole: "Admin",
-                    moduleAccess: formData.modules,
+                    moduleAccess: checkedModules.join(","),
                     isActive: formData.status === "Active",
                     recordStatus: STATUS_LABEL_MAP[formData.status] ?? RecordStatus.Inactive,
                     eventDate: new Date().toISOString(),
                 },
             },
             {
-                onSuccess: () => setShowSuccessModal(true),
+                onSuccess: () => onClose(),
             }
         )
     }
 
-    const handleCloseSuccessModal = () => {
-        setShowSuccessModal(false)
-        onClose()
-    }
-
     return (
-        <>
-            <ModalLayer
-                onClose={onClose}
-                modalWidth="80%"
-                modalHeight="80vh"
-                className="glass-card border border-[#5FDA78] p-4 md:p-6 overflow-y-auto scrollbar-hide"
-                overlayColor="bg-[#330065CC] backdrop-blur-[34px]"
-                position="center"
-            >
+        <ModalLayer
+            onClose={onClose}
+            modalWidth="80%"
+            modalHeight="80vh"
+            className="glass-card border border-[#5FDA78] p-4 md:p-6 overflow-y-auto scrollbar-hide"
+            overlayColor="bg-[#330065CC] backdrop-blur-[34px]"
+            position="center"
+        >
                 <div className="flex justify-between items-center mb-6">
                     <div className="flex items-center gap-2">
                         <MoveLeft className="text-white" />
@@ -116,16 +119,17 @@ const EditRole = ({ onClose, editData, mode = "edit" }: EditRoleProps) => {
 
                 <form onSubmit={handleSubmit}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="w-full">
+                    <div className="w-full">
                             <Input
                                 type="text"
-                                label="Admin ID"
+                                label="Email"
                                 labelColor="ms-5 mb-1"
-                                placeholder="Enter Admin ID"
-                                value={formData.id}
-                                onChange={(e) => handleInputChange("id", e.target.value)}
+                                placeholder="Enter Email"
+                                value={formData.email}
+                                onChange={(e) => handleInputChange("email", e.target.value)}
                                 className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
                                 containerClassName="border-none bg-transparent"
+                                disabled={true}
                             />
                         </div>
 
@@ -139,48 +143,25 @@ const EditRole = ({ onClose, editData, mode = "edit" }: EditRoleProps) => {
                                 onChange={(e) => handleInputChange("adminName", e.target.value)}
                                 className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
                                 containerClassName="border-none bg-transparent"
+                                disabled={true}
                             />
-                        </div>
+                        </div>                        
 
-                        <div className="w-full">
-                            <Input
-                                type="text"
-                                label="Email"
-                                labelColor="ms-5 mb-1"
-                                placeholder="Enter Email"
-                                value={formData.email}
-                                onChange={(e) => handleInputChange("email", e.target.value)}
-                                className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
-                                containerClassName="border-none bg-transparent"
-                            />
-                        </div>
-
-                        <div className="w-full">
-                            <Input
-                                type="text"
-                                label="Module Access"
-                                labelColor="ms-5 mb-1"
-                                placeholder="Enter Module Access"
-                                value={formData.modules}
-                                onChange={(e) => handleInputChange("modules", e.target.value)}
-                                className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
-                                containerClassName="border-none bg-transparent"
-                            />
-                        </div>
-
-                        <div className="w-full px-5 mt-3">
-                            <Dropdown
-                                label="Status"
-                                options={["Active", "Inactive", "Deleted"]}
-                                value={formData.status}
-                                onChange={(value) => handleInputChange("status", value)}
-                                placeholder="Select status"
-                                containerClassName="w-full"
-                                labelClassName="text-white text-sm ms-5 mb-2 block"
-                                triggerClassName="text-sm outline-0 max-w-[700px]! px-5 glass-card py-5! border border-text-green rounded-[70px] glass-card text-white placeholder:text-light-text w-full bg-[#350564]/50"
-                                dropdownClassName="bg-[#350564] z-999 ml-[-10px]! md:ml-[-51px]"
-                                optionClassName="text-white border hover:bg-[#5FDA78]/20"
-                            />
+                        <div className="w-full px-5 mt-1">
+                            <p className="text-white text-sm ms-0 mb-2">Module Access</p>
+                            <div className="flex flex-wrap gap-3 sm:gap-5 px-1 py-2">
+                                {ADMIN_MODULES.map((module) => (
+                                    <label key={module} className="flex items-center gap-2 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            checked={checkedModules.includes(module)}
+                                            onChange={() => toggleModule(module)}
+                                            className="w-4 h-4 accent-[#5FDA78] shrink-0"
+                                        />
+                                        <span className="text-white text-xs sm:text-sm whitespace-nowrap">{module}</span>
+                                    </label>
+                                ))}
+                            </div>
                         </div>
                     </div>
 
@@ -202,36 +183,7 @@ const EditRole = ({ onClose, editData, mode = "edit" }: EditRoleProps) => {
                         </Button>
                     </div>
                 </form>
-            </ModalLayer>
-
-            {showSuccessModal && (
-                <ModalLayer
-                    onClose={handleCloseSuccessModal}
-                    modalWidth="30%"
-                    modalHeight="auto"
-                    className="glass-card border border-[#5FDA78] p-6"
-                    overlayColor="bg-[#330065CC] backdrop-blur-[34px]"
-                    position="center"
-                >
-                    <div >
-                        <h2 className="text-white text-xl font-semibold mb-2">
-                            {mode === "edit" ? "Updated" : "Added"}
-                        </h2>
-                        <p className="text-white/70 text-sm mb-6">
-                            Your role successfully {mode === "edit" ? "updated" : "added"}.
-                        </p>
-                        <div className="flex justify-end">
-                            <Button
-                                onClick={handleCloseSuccessModal}
-                                className="bg-[#5FDA78] font-inter text-[#360567] max-w-[130px] font-semibold px-8! py-2! hover:bg-[#4FB860]"
-                            >
-                                Ok
-                            </Button>
-                        </div>
-                    </div>
-                </ModalLayer>
-            )}
-        </>
+        </ModalLayer>
     )
 }
 

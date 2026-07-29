@@ -1,8 +1,11 @@
+import { ResourceMetadata } from "./broadcastUser"
+
 export interface Announcement {
   id: number
+  announcedBy: number
   content: string
-  createdOnUtc: string
-  createdBy: string | null
+  adminFullName: string
+  resourceMetadata: ResourceMetadata
 }
 
 export interface PaginatedData<T> {

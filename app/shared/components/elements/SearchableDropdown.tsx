@@ -22,6 +22,7 @@ interface SearchableDropdownProps {
   dropdownClassName?: string
   optionClassName?: string
   labelClassName?: string
+  openUpward?: boolean
 }
 
 const SearchableDropdown = ({
@@ -38,6 +39,7 @@ const SearchableDropdown = ({
   dropdownClassName = "",
   optionClassName = "",
   labelClassName = "",
+  openUpward = false,
 }: SearchableDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const [search, setSearch] = useState("")
@@ -70,13 +72,13 @@ const SearchableDropdown = ({
   return (
     <div ref={containerRef} className={`relative w-full ${containerClassName}`}>
       {label && (
-        <label className={`block text-white text-sm mb-2 ${labelClassName}`}>{label}</label>
+        <label className={`block text-white text-[14px] mb-1 ${labelClassName}`}>{label}</label>
       )}
 
       <button
         type="button"
         onClick={() => setIsOpen((open) => !open)}
-        className={`flex gap-2 bg-transparent rounded-[56px] py-[10px] px-5 cursor-pointer items-center w-full border border-[#5FDA78] hover:bg-[#5FDA78]/10 transition-colors duration-300 ${triggerClassName}`}
+        className={`flex gap-2 bg-transparent rounded-[70px] py-4 px-5 cursor-pointer items-center w-full border border-[#5FDA78] hover:bg-[#5FDA78]/10 transition-colors duration-300 min-h-[52px] ${triggerClassName}`}
       >
         <p className="text-light-text text-sm flex-1 text-left truncate">
           {selectedOption?.label || placeholder}
@@ -85,7 +87,11 @@ const SearchableDropdown = ({
       </button>
 
       {isOpen && (
-        <div className={`absolute top-full mt-1 left-0 right-0 bg-[#350564] border border-[#5FDA78] rounded-2xl shadow-lg z-50 overflow-hidden ${dropdownClassName}`}>
+        <div
+          className={`absolute left-0 right-0 bg-[#350564] border border-[#5FDA78] rounded-2xl shadow-lg z-50 overflow-hidden ${
+            openUpward ? "bottom-full mb-1" : "top-full mt-1"
+          } ${dropdownClassName}`}
+        >
           <div className="p-2 border-b border-[#5FDA78]/30">
             <input
               type="text"

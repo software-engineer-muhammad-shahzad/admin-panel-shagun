@@ -13,6 +13,7 @@ import { useDeleteAdmin } from "@/app/features/user/hooks/useDeleteAdmin"
 import { useCreateAdmin } from "@/app/features/user/hooks/useCreateAdmin"
 import { useUpdateAdmin } from "@/app/features/user/hooks/useUpdateAdmin"
 import { AdminUser } from "@/app/features/user/types/adminUser"
+import { showToast } from "@/app/lib/toast"
 
 const recordStatusLabel = (status: string | null | undefined): string => {
     if (status === "Active") return "Active"
@@ -84,7 +85,7 @@ const page = () => {
         },
         {
             key: "contactNumber",
-            label: "Contact No.",
+            label: "Contact No",
             width: "140px",
             render: (value: any) => value || "N/A",
         },
@@ -95,7 +96,7 @@ const page = () => {
             render: (value: any) => value || "N/A",
         },
         {
-            key: "createdOn",
+            key: "resourceMetadata.createdOn",
             label: "Date & Time",
             width: "160px",
             render: (_value: any, row: any) =>
@@ -155,6 +156,8 @@ const page = () => {
                     <span
                         className="w-8 h-8 flex items-center justify-center border border-white/10 rounded-full glass-border cursor-pointer hover:bg-red-500/20"
                         onClick={(e) => {
+                            if (row.resourceMetadata?.recordStatus === 'Deleted') { showToast.error('Admin is already deleted'); return; }
+
                             e.stopPropagation()
                             setSelectedUser(row)
                             setDeleteModalOpen(true)
@@ -313,12 +316,11 @@ const page = () => {
                 <ViewUser
                     onClose={() => setViewModalOpen(false)}
                     userData={{
-                        id: selectedUser.displayId ?? "",
+                        id: selectedUser.userId ?? 0,
                         fullName: selectedUser.fullName,
                         email: selectedUser.email,
                         contactNo: selectedUser.contactNumber,
-                        moduleAccess: selectedUser.moduleAccess ?? "",
-                        status: recordStatusLabel(selectedUser.resourceMetadata?.recordStatus),
+                        resourceMetadata: selectedUser.resourceMetadata
                     }}
                 />
             )}

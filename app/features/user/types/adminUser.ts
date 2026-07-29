@@ -1,9 +1,3 @@
-export enum UserRole {
-  SuperAdmin = 1,
-  Admin = 2,
-  Couple = 3,
-}
-
 export interface AssignModulesPayload {
   userId: number
   fullName: string
@@ -14,12 +8,6 @@ export interface AssignModulesPayload {
   moduleAccess: string
   isActive: boolean
   eventDate: string
-}
-
-export enum RecordStatus {
-  Active = 1,
-  Inactive = 2,
-  Deleted = 3,
 }
 
 export interface CreateAdminPayload {

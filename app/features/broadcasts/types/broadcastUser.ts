@@ -5,14 +5,13 @@ export interface BroadcastCoupleParams {
 }
 
 export interface ResourceMetadata {
-  setCommonFlags: boolean
   createdOn: string
   createdBy: string | null
   updatedOn: string | null
   updatedBy: string | null
   deletedOn: string | null
   deletedBy: string | null
-  recordStatus: number
+  recordStatus: string
 }
 
 export interface BroadcastCouple {

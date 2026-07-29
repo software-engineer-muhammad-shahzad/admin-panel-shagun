@@ -10,15 +10,10 @@ import { AuthData } from "@/app/features/auth/types/auth"
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false })
 
-const ROLE_OPTIONS = ["Admin", "SuperAdmin", "Guest", "Couple"]
-
-const getInitialRole = (): string => {
-  const authData = getData<AuthData>("authData", "local")
-  return authData?.role ?? "Couple"
-}
+const ROLE_OPTIONS = ["Admin", "Couple"]
 
 const DashLineChart = () => {
-  const [selectedRole, setSelectedRole] = useState(getInitialRole)
+  const [selectedRole, setSelectedRole] = useState(ROLE_OPTIONS[0])
 
   const currentMonth = new Date().getMonth() + 1
 

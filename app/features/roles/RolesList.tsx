@@ -7,14 +7,13 @@ import Button from "@/app/shared/components/elements/Button"
 import Input from "@/app/shared/components/elements/Input"
 import { useAssignModules } from "@/app/features/user/hooks/useAssignModules"
 import { AdminUser } from "@/app/features/user/types/adminUser"
+import { ADMIN_MODULES } from "@/app/shared/adminModules"
 
 interface RolesListProps {
     onClose: () => void
     onParentClose: () => void
     user: AdminUser
 }
-
-const MODULES = ["Dashboard", "User Management", "Broadcasts", "Payments", "Roles and rights"]
 
 const RolesList = ({ onClose, onParentClose, user }: RolesListProps) => {
     const [checkedModules, setCheckedModules] = useState<string[]>([])
@@ -41,7 +40,7 @@ const RolesList = ({ onClose, onParentClose, user }: RolesListProps) => {
                     email: user.email,
                     password: "",
                     userRole: "Admin",
-                    moduleAccess: checkedModules.join(", "),
+                    moduleAccess: checkedModules.join(","),
                     isActive: user.resourceMetadata?.recordStatus === "Active",
                     eventDate: new Date().toISOString(),
                 },
@@ -65,7 +64,7 @@ const RolesList = ({ onClose, onParentClose, user }: RolesListProps) => {
             {/* Header */}
             <div className="flex justify-between items-center mb-5">
                 <h2 className="text-white text-lg sm:text-xl font-semibold">
-                    Assign Role{user.fullName ? <span className="text-[#5FDA78]"> — {user.fullName}</span> : ""}
+                    Assign Role{user.email ? <span className="text-[#5FDA78]"> — {user.email}</span> : ""}
                 </h2>
                 <Button
                     onClick={onClose}
@@ -77,17 +76,10 @@ const RolesList = ({ onClose, onParentClose, user }: RolesListProps) => {
 
             {/* Search + Module checkboxes */}
             <div className="flex flex-col gap-4">
-                <Input
-                    type="text"
-                    placeholder="Quick Search..."
-                    className="text-sm outline-0 w-full! placeholder:text-light-text text-light-text"
-                    containerClassName="border border-[#C9C9C9] w-full! rounded-lg glass-border bg-transparent"
-                />
-
                 <div>
                     <p className="text-white/70 text-xs mb-2 ms-1">Module Access</p>
                     <div className="flex flex-wrap gap-3 sm:gap-5">
-                        {MODULES.map((module) => (
+                        {ADMIN_MODULES.map((module) => (
                             <label key={module} className="flex items-center gap-2 cursor-pointer">
                                 <input
                                     type="checkbox"

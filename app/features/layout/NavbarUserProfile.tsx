@@ -6,6 +6,7 @@ import { ChevronDown, LogOut } from "lucide-react"
 import Image from "next/image"
 import { clearStorage, getData } from "@/app/utils/storage/storageHelper"
 import Button from "@/app/shared/components/elements/Button"
+import ModalLayer from "@/app/shared/components/modal/ModalLayer"
 import { useUserProfile } from "@/app/features/user/hooks/useUserProfile"
 import { AuthData } from "@/app/features/auth/types/auth"
 import { baseURL } from "@/app/services/apiClient"
@@ -17,6 +18,7 @@ interface NavbarUserProfileProps {
 
 const NavbarUserProfile = ({ sidebarOpen, setSidebarOpen }: NavbarUserProfileProps = {}) => {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
@@ -50,6 +52,11 @@ const NavbarUserProfile = ({ sidebarOpen, setSidebarOpen }: NavbarUserProfilePro
   const handleLogout = () => {
     clearStorage("local")
     router.replace("/login")
+  }
+
+  const openLogoutConfirm = () => {
+    setProfileDropdownOpen(false)
+    setShowLogoutConfirm(true)
   }
 
   return (
@@ -95,7 +102,7 @@ const NavbarUserProfile = ({ sidebarOpen, setSidebarOpen }: NavbarUserProfilePro
           </div>
           <div className="py-2">
             <Button
-              onClick={handleLogout}
+              onClick={openLogoutConfirm}
               className="w-[calc(100%-16px)]! mx-2 flex! items-center gap-2 sm:gap-3 px-3! py-2! bg-transparent! border-none! text-white! hover:bg-[#5FDA78]/20! rounded-lg! justify-start!"
             >
               <LogOut size={15} />
@@ -103,6 +110,36 @@ const NavbarUserProfile = ({ sidebarOpen, setSidebarOpen }: NavbarUserProfilePro
             </Button>
           </div>
         </div>
+      )}
+
+      {showLogoutConfirm && (
+        <ModalLayer
+          onClose={() => setShowLogoutConfirm(false)}
+          modalWidth="min(95%, 400px)"
+          modalHeight="auto"
+          className="glass-card border border-[#5FDA78] p-4 sm:p-6"
+          overlayColor="bg-[#330065CC] backdrop-blur-[34px]"
+          position="center"
+        >
+          <h3 className="font-semibold text-lg sm:text-xl text-white">Logout</h3>
+          <p className="text-white/80 mt-3 text-sm sm:text-base">
+            Are you sure you want to logout?
+          </p>
+          <div className="flex justify-end gap-3 mt-6">
+            <Button
+              onClick={() => setShowLogoutConfirm(false)}
+              className="border border-[#C9C9C9] font-semibold px-8! py-2! bg-transparent text-white hover:bg-white/5"
+            >
+              No
+            </Button>
+            <Button
+              onClick={handleLogout}
+              className="text-[#360567] font-semibold px-8! py-2! hover:bg-[#4FB860]"
+            >
+              Yes
+            </Button>
+          </div>
+        </ModalLayer>
       )}
     </div >
   )

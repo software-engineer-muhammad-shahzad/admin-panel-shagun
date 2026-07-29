@@ -2,6 +2,7 @@ import Button from "@/app/shared/components/elements/Button"
 import Input from "@/app/shared/components/elements/Input"
 import ModalLayer from "@/app/shared/components/modal/ModalLayer"
 import { MoveLeft, X } from "lucide-react"
+import { ResourceMetadata } from "../broadcasts/types/broadcastUser"
 
 interface ViewCoupleProps {
     onClose: () => void
@@ -11,9 +12,25 @@ interface ViewCoupleProps {
         partnerName: string
         email: string
         contactNo: string
-        dateTime: string
-        status: string
+        eventDate: string
+        resourceMetadata: ResourceMetadata | null
     }
+}
+
+const formatDateTime = (dateString?: string | null) => {
+    if (!dateString) return "N/A"
+    const date = new Date(dateString)
+    if (Number.isNaN(date.getTime())) return "N/A"
+
+    const day = date.toLocaleDateString("en-GB", { day: "numeric" })
+    const monthYear = date.toLocaleDateString("en-GB", { month: "long", year: "numeric" })
+    const time = date.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+    })
+
+    return `${day}, ${monthYear} ${time}`
 }
 
 const ViewCouple = ({ onClose, coupleData }: ViewCoupleProps) => {
@@ -111,25 +128,13 @@ const ViewCouple = ({ onClose, coupleData }: ViewCoupleProps) => {
                         label="Date & Time"
                         labelColor="ms-5 mb-1"
                         placeholder="Enter Date & Time"
-                        value={coupleData.dateTime}
+                        value={formatDateTime(coupleData.resourceMetadata?.createdOn)}
                         disabled={true}
                         className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
                         containerClassName="border-none bg-transparent"
                     />
                 </div>
 
-                <div className="w-full ">
-                    <Input
-                        type="text"
-                        label="Status"
-                        labelColor="ms-5 mb-1"
-                        placeholder="Status"
-                        value={coupleData.status}
-                        disabled={true}
-                        className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
-                        containerClassName="border-none bg-transparent"
-                    />
-                </div>
             </div>
 
             <div className="flex justify-center gap-4 mt-8">

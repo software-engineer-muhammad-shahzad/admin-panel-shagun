@@ -8,6 +8,7 @@ import Button from "@/app/shared/components/elements/Button"
 import Input from "@/app/shared/components/elements/Input"
 import { useBroadcastCouples } from "@/app/features/broadcasts/hooks/useBroadcastCouples"
 import { useCreateNotification } from "./hooks/useCreateNotification"
+import { NotificationPurpose } from "@/app/shared/enums"
 
 interface NotificationModalProps {
   onClose: () => void
@@ -52,7 +53,7 @@ const NotificationModal = ({ onClose }: NotificationModalProps) => {
   const handleSubmit = () => {
     if (!validate()) return
     createNotification(
-      { recieverUserId: selectedCouple!.userId, subject, message },
+      { recieverUserId: selectedCouple!.userId, subject, message, notificationPurpose: NotificationPurpose.ManualNotification },
       {
         onSuccess: () => setIsSuccessModalOpen(true),
       }

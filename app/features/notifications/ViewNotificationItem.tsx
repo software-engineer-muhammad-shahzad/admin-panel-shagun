@@ -38,36 +38,13 @@ const ViewNotificationItem = ({ onClose, data }: ViewNotificationItemProps) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="w-full">
-          <Input
-            type="text"
-            label="ID"
-            labelColor="ms-5 mb-1"
-            value={String(data.id)}
-            disabled
-            className={inputClass}
-            containerClassName={containerClass}
-          />
-        </div>
 
         <div className="w-full">
           <Input
             type="text"
             label="Full Name"
             labelColor="ms-5 mb-1"
-            value={data.fullName ?? "N/A"}
-            disabled
-            className={inputClass}
-            containerClassName={containerClass}
-          />
-        </div>
-
-        <div className="w-full">
-          <Input
-            type="text"
-            label="Email"
-            labelColor="ms-5 mb-1"
-            value={data.email ?? "N/A"}
+            value={data.adminFullName ?? "N/A"}
             disabled
             className={inputClass}
             containerClassName={containerClass}
@@ -79,19 +56,19 @@ const ViewNotificationItem = ({ onClose, data }: ViewNotificationItemProps) => {
             type="text"
             label="Sent At"
             labelColor="ms-5 mb-1"
-            value={data.sentAt ? new Date(data.sentAt).toLocaleString() : "N/A"}
+            value={data.resourceMetadata.createdOn ? new Date(data.resourceMetadata.createdOn).toLocaleString() : "N/A"}
             disabled
             className={inputClass}
             containerClassName={containerClass}
           />
         </div>
 
-        <div className="w-full">
+        <div className="w-full md:col-span-2">
           <Input
             type="text"
-            label="Status"
+            label="Subject"
             labelColor="ms-5 mb-1"
-            value={data.isRead ? "Read" : "Unread"}
+            value={data.subject ?? "N/A"}
             disabled
             className={inputClass}
             containerClassName={containerClass}

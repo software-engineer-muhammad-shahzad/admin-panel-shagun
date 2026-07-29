@@ -33,6 +33,7 @@ export interface CoupleUser {
   partnerName: string
   contactNumber: string
   email: string
+  eventDate: string
   profileImageUrl: string | null
   moduleAccess: string | null
   stripeCustomerId: string | null

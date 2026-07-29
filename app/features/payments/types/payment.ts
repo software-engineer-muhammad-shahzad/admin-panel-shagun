@@ -1,26 +1,10 @@
+import { ResourceMetadata } from "../../broadcasts/types/broadcastUser"
+
 export interface GreetingCard {
   id: number
-  cardImagePath: string
-  cardPrice: number
-  videoPrice: number
-  platformFeePercent: number
-  greetingMediaType: number
-  createdOn: string
-  createdBy: number
-  updatedOn: string | null
-  updatedBy: number | null
-  recordStatus: number
-}
-
-export interface PaymentConfigMetadata {
-  setCommonFlags: boolean
-  createdOn: string
-  createdBy: number
-  updatedOn: string | null
-  updatedBy: number | null
-  deletedOn: string | null
-  deletedBy: number | null
-  recordStatus: number
+  orderNo: number
+  imageUrl?: string | null
+  resourceMetadata?: ResourceMetadata
 }
 
 export interface PaymentConfig {
@@ -28,10 +12,8 @@ export interface PaymentConfig {
   cardPrice: number
   videoPrice: number
   platformFeePercent: number
-  greetingMediaType: number
-  greetingCards: GreetingCard[]
-  cardUrl: string | null
-  metadata: PaymentConfigMetadata
+  greetingCards: GreetingCard[] | null
+  resourceMetadata: ResourceMetadata
 }
 
 export interface TransactionResourceMetadata {
@@ -48,11 +30,12 @@ export interface Transaction {
   id: number
   greetingMediaType: "Image" | "Video" | null
   paymentIntentId: string | null
-  platformFee: number
-  stripeFee: number
+  platformFee: any
+  stripeFee: any
+  transferredToCoupleAmount: any
   status: string
-  wishingCardAmount: number
-  wishingVideoAmount: number
+  wishingCardAmount: any
+  wishingVideoAmount: any
   guestFullName: string
   guestUserId: number
   resourceMetadata: TransactionResourceMetadata
@@ -67,6 +50,20 @@ export interface TransactionListParams {
   isIncludeCoupleUser: true
   isIncludePayment: true
   isIncludePricing?: boolean
+}
+
+export interface GiftCardsRequest {
+  id?: number
+  orderNo?: number
+  imageFile?: File | null
+}
+
+export interface PricingUpdateRequest {
+  id: number
+  cardPrice: number
+  videoPrice: number
+  platformFeePercent: number
+  giftCards: GiftCardsRequest[] | null
 }
 
 export interface ApiResponse<T> {

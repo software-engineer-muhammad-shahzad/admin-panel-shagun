@@ -59,12 +59,6 @@ const LollipopBarChart = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 sm:mb-4 gap-3">
         <h2 className="text-white text-xs sm:text-sm font-medium">Total Payments</h2>
         <div className="flex flex-row gap-1 sm:gap-2 items-center w-full sm:w-auto">
-          <Input
-            type="date"
-            placeholder="Select Date"
-            className="border text-xs sm:text-sm rounded-2xl sm:rounded-3xl px-1 sm:px-3 py-1 outline-none text-white border-[#5FDA78] w-full max-w-[150px] xs:w-auto"
-            containerClassName="border-none!"
-          />
           <Dropdown
             options={pastMonths}
             value={selectedMonth}

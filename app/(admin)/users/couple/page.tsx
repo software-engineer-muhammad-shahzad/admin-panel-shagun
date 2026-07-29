@@ -12,6 +12,8 @@ import { useCoupleUsers } from "@/app/features/couple/hooks/useCoupleUsers"
 import { useDeleteCouple } from "@/app/features/couple/hooks/useDeleteCouple"
 import { useUpdateCouple } from "@/app/features/couple/hooks/useUpdateCouple"
 import { CoupleUser } from "@/app/features/couple/types/coupleUser"
+import { ResourceMetadata } from "@/app/features/broadcasts/types/broadcastUser"
+import { showToast } from "@/app/lib/toast"
 
 const STATUS_OPTIONS = ["All", "Active", "Inactive", "Deleted"]
 
@@ -24,8 +26,8 @@ const statusToRecordStatus = (status: string): number | undefined => {
 
 const recordStatusLabel = (status: string | null | undefined): string => {
   if (status === "Active") return "Active"
-  if (status === "Inactive") return "Inactive"
-  return "Deleted"
+  if (status === "Deleted") return "Deleted"
+  return "Inactive"
 }
 
 const PAGE_SIZE = 10
@@ -155,6 +157,9 @@ const page = () => {
           <span
             className="w-8 h-8 flex items-center justify-center border border-white/10 rounded-full glass-border cursor-pointer hover:bg-red-500/20"
             onClick={(e) => {
+              console.log(row.resourceMetadata?.recordStatus);
+              if (row.resourceMetadata?.recordStatus === 'Deleted') { showToast.error('Couple is already deleted'); return; }
+
               e.stopPropagation()
               setSelectedCouple(row)
               setDeleteModalOpen(true)
@@ -300,8 +305,8 @@ const page = () => {
             partnerName: selectedCouple.partnerName,
             email: selectedCouple.email,
             contactNo: selectedCouple.contactNumber,
-            dateTime: selectedCouple.resourceMetadata?.createdOn ?? "",
-            status: recordStatusLabel(selectedCouple.resourceMetadata?.recordStatus),
+            eventDate: selectedCouple.eventDate ?? "",
+            resourceMetadata: selectedCouple.resourceMetadata as unknown as ResourceMetadata,
           }}
         />
       )}

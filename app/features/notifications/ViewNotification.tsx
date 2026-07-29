@@ -15,7 +15,7 @@ const containerClass = "border-none bg-transparent"
 const ViewNotification = ({ onClose, notificationData }: ViewNotificationProps) => {
     if (!notificationData) return null
 
-    const status = notificationData.resourceMetadata?.recordStatus === 1 ? "Active" : "Inactive"
+    const status = notificationData.resourceMetadata?.recordStatus === "Active" ? "Active" : "Inactive"
     const updatedOn = notificationData.resourceMetadata?.updatedOn ?? "—"
 
     return (
