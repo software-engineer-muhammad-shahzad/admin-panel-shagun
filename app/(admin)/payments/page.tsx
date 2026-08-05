@@ -132,7 +132,7 @@ const transactionColumns = [
     label: "Platform Net",
     width: "115px",
     render: (_value: any, row: any) => {
-      const net = (row?.platformFee ?? 0);
+      const net = (row?.platformFee ?? 0) + (row?.wishingCardAmount ?? 0) + (row?.wishingVideoAmount ?? 0);
       return `${row?.currencySymbol ?? '£' }${net.toFixed(2)}`
     },
   },
@@ -154,16 +154,8 @@ const transactionColumns = [
     },
   },
   {
-    key: "paymentDate",
-    label: "Payment Date",
-    width: "125px",
-    render: (_value: any, row: any) => {      
-      return row.paymentDate ? `${formatDateTime(row.paymentDate)}` : "N/A"
-    },
-  },
-  {
     key: "transactionDate",
-    label: "Transaction Date",
+    label: "Transaction Date/Time",
     width: "125px",
     render: (_value: any, row: any) => {      
       return row.transactionDate ? `${formatDateTime(row.transactionDate)}` : "N/A"

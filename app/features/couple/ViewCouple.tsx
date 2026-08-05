@@ -3,6 +3,7 @@ import Input from "@/app/shared/components/elements/Input"
 import ModalLayer from "@/app/shared/components/modal/ModalLayer"
 import { MoveLeft, X } from "lucide-react"
 import { ResourceMetadata } from "../broadcasts/types/broadcastUser"
+import { formatDateTime } from "@/app/shared/Common"
 
 interface ViewCoupleProps {
     onClose: () => void

@@ -3,6 +3,7 @@ import Input from "@/app/shared/components/elements/Input"
 import ModalLayer from "@/app/shared/components/modal/ModalLayer"
 import { X } from "lucide-react"
 import { ResourceMetadata } from "./types/adminUser"
+import { formatDateTime } from "@/app/shared/Common"
 
 interface ViewUserProps {
     onClose: () => void
