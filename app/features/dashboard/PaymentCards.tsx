@@ -54,7 +54,7 @@ const PaymentCards = () => {
               </h2>
               <p className={`text-xs sm:text-sm 3xl:text-base 4xl:text-lg ${isPositive ? "text-green-text" : "text-red-400"}`}>
                 {isPositive ? "+" : ""}{card.changePercent}%
-                <span className="text-white ms-1">{card.changeLabel}</span>
+                <span className="text-white ms-1 hidden 2xl:inline">{card.changeLabel}</span>
               </p>
             </div>
           </div>
