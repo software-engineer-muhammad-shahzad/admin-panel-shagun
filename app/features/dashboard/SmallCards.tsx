@@ -71,7 +71,7 @@ console.log("cards", cards);
               <h2 className="text-white text-lg sm:text-xl lg:text-2xl">{card.value}</h2>
               <p className={`text-xs sm:text-sm ${isPositive ? "text-green-text" : "text-red-400"}`}>
                 {isPositive ? "+" : ""}{card.changePercent}%
-                <span className="text-white ms-1">{card.changeLabel}</span>
+                <span className="text-white ms-1 hidden 2xl:inline">{card.changeLabel}</span>
               </p>
             </div>
           </div>
