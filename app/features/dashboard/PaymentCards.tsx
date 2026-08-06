@@ -46,7 +46,7 @@ const PaymentCards = () => {
               <div className="w-[28px] h-[28px] sm:w-[34px] sm:h-[34px] 3xl:w-[48px] 3xl:h-[48px] rounded-full flex items-center justify-center bg-[#5FDA784D] shrink-0">
                 <Image src={icon} alt={card.title} width={17} height={17} />
               </div>
-              <p className="text-white text-xs sm:text-xs 3xl:text-lg 4xl:text-xl hidden 2xl:inline">{card.title}</p>
+              <p className="text-white text-xs sm:text-xs 3xl:text-lg 4xl:text-xl">{card.title}</p>
             </div>
             <div className="flex justify-between items-center">
               <h2 className="text-white text-lg sm:text-xl lg:text-2xl 3xl:text-3xl 4xl:text-5xl">
