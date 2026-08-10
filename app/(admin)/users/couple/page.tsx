@@ -77,48 +77,6 @@ const page = () => {
 
   const customCoupleColumns = [
     {
-      key: "profileImageUrl",
-      label: "Profile",
-      width: "80px",
-      render: (value: any, row: any) => {
-        const initials = (row?.fullName ?? "?").charAt(0).toUpperCase()
-        const imgSrc = value
-          ? value.startsWith("http")
-            ? value
-            : `${baseURL.replace(/\/$/, "")}/${value.replace(/^\//, "")}`
-          : null
-        return (
-          <div className="relative inline-block">
-            {/* Avatar */}
-            {imgSrc ? (
-              <img
-                src={imgSrc}
-                alt={row?.fullName ?? ""}
-                onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }}
-                className="w-9 h-9 rounded-full object-cover border border-[#5FDA78]/40"
-              />
-            ) : (
-              <div className="w-9 h-9 rounded-full bg-[#5FDA78]/20 border border-[#5FDA78]/40 flex items-center justify-center text-[#5FDA78] text-sm font-semibold">
-                {initials}
-              </div>
-            )}
-
-            {/* Delete icon pinned to top-right corner */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                setSelectedCouple(row as CoupleUser)
-                setProfileDeleteModalOpen(true)
-              }}
-              className="absolute -top-1 -right-1 w-4 h-4 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 transition-colors shadow cursor-pointer"
-            >
-              <Trash2 size={9} className="text-white" />
-            </button>
-          </div>
-        )
-      },
-    },
-    {
       key: "userId",
       label: "ID",
       width: "100px",
@@ -318,7 +276,9 @@ const page = () => {
             contactNo: selectedCouple.contactNumber,
             dateTime: selectedCouple.resourceMetadata?.createdOn ?? "",
             status: recordStatusLabel(selectedCouple.resourceMetadata?.recordStatus),
+            profileImageUrl: selectedCouple.profileImageUrl ?? "",
           }}
+          onDeleteProfile={() => setProfileDeleteModalOpen(true)}
           onSubmit={(payload) =>
             updateCouple(
               { userId: selectedCouple.userId, payload },

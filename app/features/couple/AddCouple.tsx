@@ -3,11 +3,12 @@ import ModalLayer from "@/app/shared/components/modal/ModalLayer"
 // import Button from "@/app/features/elements/Button"
 // import Input from "@/app/features/elements/Input"
 // import Dropdown from "@/app/features/elements/Dropdown"
-import { MoveLeft, X } from "lucide-react"
+import { MoveLeft, Trash2, X } from "lucide-react"
 import Button from "@/app/shared/components/elements/Button"
 import Input from "@/app/shared/components/elements/Input"
 import Dropdown from "@/app/shared/components/elements/Dropdown"
 import { UpdateCouplePayload } from "./types/coupleUser"
+import { baseURL } from "@/app/services/apiClient"
 
 interface AddCoupleProps {
     onClose: () => void
@@ -21,11 +22,13 @@ interface AddCoupleProps {
         contactNo: string;
         dateTime: string;
         status: string;
+        profileImageUrl?: string | null;
     }
     mode?: "add" | "edit"
+    onDeleteProfile?: () => void
 }
 
-const AddCouple = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }: AddCoupleProps) => {
+const AddCouple = ({ onClose, onSubmit, isSubmitting, editData, mode = "add", onDeleteProfile }: AddCoupleProps) => {
     const [formData, setFormData] = useState({
         id: editData?.id || "",
         fullName: editData?.fullName || "",
@@ -120,6 +123,42 @@ const AddCouple = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }: 
                 </div>
 
                 <form onSubmit={handleSubmit}>
+                    {mode === "edit" && (() => {
+                        const raw = editData?.profileImageUrl
+                        const imgSrc = raw
+                            ? raw.startsWith("http")
+                                ? raw
+                                : `${baseURL.replace(/\/$/, "")}/${raw.replace(/^\//, "")}`
+                            : null
+                        const initials = (editData?.fullName ?? "?").charAt(0).toUpperCase()
+                        return (
+                            <div className="flex justify-center mb-6">
+                                <div className="relative inline-block">
+                                    {imgSrc ? (
+                                        <img
+                                            src={imgSrc}
+                                            alt={editData?.fullName ?? ""}
+                                            onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }}
+                                            className="w-20 h-20 rounded-full object-cover border-2 border-[#5FDA78]"
+                                        />
+                                    ) : (
+                                        <div className="w-20 h-20 rounded-full bg-[#5FDA78]/20 border-2 border-[#5FDA78] flex items-center justify-center text-[#5FDA78] text-2xl font-bold">
+                                            {initials}
+                                        </div>
+                                    )}
+                                    {onDeleteProfile && (
+                                        <button
+                                            type="button"
+                                            onClick={onDeleteProfile}
+                                            className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 transition-colors shadow cursor-pointer"
+                                        >
+                                            <Trash2 size={11} className="text-white" />
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        )
+                    })()}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="w-full">
                             <Input
@@ -223,14 +262,14 @@ const AddCouple = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }: 
                         <Button
                             type="button"
                             onClick={onClose}
-                            className="border border-text-border max-w-[130px] font-semibold w-fit! px-8! py-2! bg-transparent text-white hover:bg-white/5"
+                            className="border border-text-border max-w-32.5 font-semibold w-fit! px-8! py-2! bg-transparent text-white hover:bg-white/5"
                         >
                             Cancel
                         </Button>
                         <Button
                             type="submit"
                             disabled={isSubmitting}
-                            className="bg-[#5FDA78] text-[#360567] max-w-[130px] w-full font-semibold px-8! py-2! hover:bg-[#4FB860] disabled:opacity-50"
+                            className="bg-[#5FDA78] text-[#360567] max-w-32.5 w-full font-semibold px-8! py-2! hover:bg-[#4FB860] disabled:opacity-50"
                         >
                             {isSubmitting ? "Saving..." : mode === "edit" ? "Update" : "Add"}
                         </Button>
@@ -256,7 +295,7 @@ const AddCouple = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }: 
                         </p>
                         <Button
                             onClick={handleCloseSuccessModal}
-                            className="bg-[#5FDA78] font-inter  text-[#360567] max-w-[130px] font-semibold px-8! py-2! hover:bg-[#4FB860]"
+                            className="bg-[#5FDA78] font-inter  text-[#360567] max-w-32.5 font-semibold px-8! py-2! hover:bg-[#4FB860]"
                         >
                             Ok
                         </Button>
