@@ -3,6 +3,7 @@ import Button from "@/app/shared/components/elements/Button"
 import Input from "@/app/shared/components/elements/Input"
 import ModalLayer from "@/app/shared/components/modal/ModalLayer"
 import { NotificationItem } from "./types/notificationList"
+import { formatDateTime } from "@/app/shared/Common"
 
 interface ViewNotificationItemProps {
   onClose: () => void
@@ -56,7 +57,7 @@ const ViewNotificationItem = ({ onClose, data }: ViewNotificationItemProps) => {
             type="text"
             label="Sent At"
             labelColor="ms-5 mb-1"
-            value={data.resourceMetadata.createdOn ? new Date(data.resourceMetadata.createdOn).toLocaleString() : "N/A"}
+            value={data.resourceMetadata.createdOn ? formatDateTime(data.resourceMetadata.createdOn) : "N/A"}
             disabled
             className={inputClass}
             containerClassName={containerClass}

@@ -13,6 +13,7 @@ export interface DashboardStats {
 }
 
 export interface ChartPoint {
+  day?: number
   month: number
   label: string
   active: number

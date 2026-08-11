@@ -48,7 +48,3 @@ export const deleteRequest = async <T = any>(
   const response = await apiClient.delete(url, config);
   return response.data;
 };
-
-// 
-
-

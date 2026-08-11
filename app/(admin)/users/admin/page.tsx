@@ -14,6 +14,7 @@ import { useCreateAdmin } from "@/app/features/user/hooks/useCreateAdmin"
 import { useUpdateAdmin } from "@/app/features/user/hooks/useUpdateAdmin"
 import { AdminUser } from "@/app/features/user/types/adminUser"
 import { showToast } from "@/app/lib/toast"
+import { formatDateTime } from "@/app/shared/Common"
 
 const recordStatusLabel = (status: string | null | undefined): string => {
     if (status === "Active") return "Active"
@@ -100,9 +101,7 @@ const page = () => {
             label: "Date & Time",
             width: "160px",
             render: (_value: any, row: any) =>
-                row?.resourceMetadata?.createdOn
-                    ? new Date(row.resourceMetadata.createdOn).toLocaleString()
-                    : "N/A",
+                formatDateTime(row?.resourceMetadata?.createdOn),
         },
         {
             key: "moduleAccess",

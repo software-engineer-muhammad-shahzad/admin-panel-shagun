@@ -21,7 +21,7 @@ const endpoints = {
     deleteCouple: (userId: number) => `/usermanagement/users/${userId}`,
     updateCouple: (userId: number) => `/usermanagement/users/${userId}`,
 
-    deleteCoupleProfile: "/usermanagement/users/profile/photo",
+    deleteUserProfilePhoto: (userId: number) => `/usermanagement/users/${userId}/profile/photo`,
   },
   BroadDast: {
     getCouples: "/usermanagement/users/couples",

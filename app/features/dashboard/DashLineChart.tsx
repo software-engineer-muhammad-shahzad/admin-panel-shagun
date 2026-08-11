@@ -12,30 +12,96 @@ const Chart = dynamic(() => import("react-apexcharts"), { ssr: false })
 
 const ROLE_OPTIONS = ["Admin", "Couple"]
 
+const MONTH_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+const parseDayFromLabel = (label?: string) => {
+  const text = String(label ?? "").trim()
+  const iso = text.match(/(\d{4})-(\d{2})-(\d{2})/)
+  if (iso) return Number(iso[3])
+
+  const startsWithDay = text.match(/^(\d{1,2})\b/)
+  if (startsWithDay) {
+    const day = Number(startsWithDay[1])
+    if (day >= 1 && day <= 31) return day
+  }
+
+  return null
+}
+
 const DashLineChart = () => {
   const [selectedRole, setSelectedRole] = useState(ROLE_OPTIONS[0])
 
-  const currentMonth = new Date().getMonth() + 1
+  const now = new Date()
+  const today = now.getDate()
+  const currentMonth = now.getMonth() + 1
+  const monthShort = MONTH_SHORT[now.getMonth()]
 
   const { data, isLoading } = useTotalUsersChart(selectedRole)
 
-  // Only show months up to the current month
-  const points = (data?.points ?? []).filter((p) => p.month <= currentMonth)
+  const points = data?.points ?? []
+  const uniqueMonths = new Set(points.map((point) => point.month))
+  const isMonthlySeries =
+    points.length > 0 &&
+    points.length <= 12 &&
+    uniqueMonths.size === points.length &&
+    points.every((point) => point.day == null)
 
-  const categories = points.map((p) => p.label)
-  const activeSeries = points.map((p) => p.active)
-  const inactiveSeries = points.map((p) => p.inactive)
+  const pointsByDay = new Map<number, { active: number; inactive: number }>()
+  for (const [index, point] of points.entries()) {
+    const fromLabel = parseDayFromLabel(point.label)
+    const day = isMonthlySeries
+      ? (point.month === currentMonth ? today : null)
+      : (point.day ?? fromLabel ?? index + 1)
+
+    if (day != null && day >= 1 && day <= today) {
+      pointsByDay.set(day, { active: point.active, inactive: point.inactive })
+    }
+  }
+
+  const categories = Array.from({ length: today }, (_, i) => `${i + 1} ${monthShort}`)
+  const activeSeries: number[] = []
+  const inactiveSeries: number[] = []
+  let runningActive = 0
+  let runningInactive = 0
+  for (let day = 1; day <= today; day++) {
+    const point = pointsByDay.get(day)
+    if (point) {
+      runningActive = point.active
+      runningInactive = point.inactive
+    }
+    activeSeries.push(runningActive)
+    inactiveSeries.push(runningInactive)
+  }
 
   const series = [
     { name: "Active", data: activeSeries },
     { name: "Inactive", data: inactiveSeries },
   ]
 
+  const yMax = Math.max(5, Math.ceil(Math.max(0, ...activeSeries, ...inactiveSeries) / 5) * 5)
+
   const options = {
     ...dashLineChartOptions,
+    stroke: {
+      ...dashLineChartOptions.stroke,
+      curve: "stepline" as const,
+    },
     xaxis: {
       ...dashLineChartOptions.xaxis,
       categories,
+      labels: {
+        ...dashLineChartOptions.xaxis.labels,
+        rotate: -45,
+        hideOverlappingLabels: true,
+      },
+    },
+    yaxis: {
+      ...dashLineChartOptions.yaxis,
+      min: 0,
+      max: yMax,
+      tickAmount: yMax / 5,
+      stepSize: 5,
+      forceNiceScale: false,
     },
   }
 

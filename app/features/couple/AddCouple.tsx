@@ -9,6 +9,7 @@ import Input from "@/app/shared/components/elements/Input"
 import Dropdown from "@/app/shared/components/elements/Dropdown"
 import { UpdateCouplePayload } from "./types/coupleUser"
 import { baseURL } from "@/app/services/apiClient"
+import { useDeleteUserProfilePhoto } from "./hooks/useDeleteUserProfilePhoto"
 
 interface AddCoupleProps {
     onClose: () => void
@@ -25,10 +26,9 @@ interface AddCoupleProps {
         profileImageUrl?: string | null;
     }
     mode?: "add" | "edit"
-    onDeleteProfile?: () => void
 }
 
-const AddCouple = ({ onClose, onSubmit, isSubmitting, editData, mode = "add", onDeleteProfile }: AddCoupleProps) => {
+const AddCouple = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }: AddCoupleProps) => {
     const [formData, setFormData] = useState({
         id: editData?.id || "",
         fullName: editData?.fullName || "",
@@ -40,7 +40,11 @@ const AddCouple = ({ onClose, onSubmit, isSubmitting, editData, mode = "add", on
     })
 
     const [showSuccessModal, setShowSuccessModal] = useState(false)
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+    const [profileRemoved, setProfileRemoved] = useState(false)
     const [errors, setErrors] = useState<Record<string, string>>({})
+    const { mutate: deleteUserProfilePhoto, isPending: isDeletingUserProfilePhoto } = useDeleteUserProfilePhoto()
+    const selectedUserId = Number(editData?.id)
 
     const handleInputChange = (field: string, value: string) => {
         setFormData(prev => ({ ...prev, [field]: value }))
@@ -124,7 +128,7 @@ const AddCouple = ({ onClose, onSubmit, isSubmitting, editData, mode = "add", on
 
                 <form onSubmit={handleSubmit}>
                     {mode === "edit" && (() => {
-                        const raw = editData?.profileImageUrl
+                        const raw = profileRemoved ? null : editData?.profileImageUrl
                         const imgSrc = raw
                             ? raw.startsWith("http")
                                 ? raw
@@ -139,20 +143,20 @@ const AddCouple = ({ onClose, onSubmit, isSubmitting, editData, mode = "add", on
                                             src={imgSrc}
                                             alt={editData?.fullName ?? ""}
                                             onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }}
-                                            className="w-20 h-20 rounded-full object-cover border-2 border-[#5FDA78]"
+                                            className="w-28 h-28 rounded-full object-cover border-2 border-[#5FDA78]"
                                         />
                                     ) : (
-                                        <div className="w-20 h-20 rounded-full bg-[#5FDA78]/20 border-2 border-[#5FDA78] flex items-center justify-center text-[#5FDA78] text-2xl font-bold">
+                                        <div className="w-28 h-28 rounded-full bg-[#5FDA78]/20 border-2 border-[#5FDA78] flex items-center justify-center text-[#5FDA78] text-3xl font-bold">
                                             {initials}
                                         </div>
                                     )}
-                                    {onDeleteProfile && (
+                                    {imgSrc && selectedUserId > 0 && (
                                         <button
                                             type="button"
-                                            onClick={onDeleteProfile}
-                                            className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 transition-colors shadow cursor-pointer"
+                                            onClick={() => setShowDeleteConfirm(true)}
+                                            className="absolute -top-1 -right-1 w-6 h-6 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 transition-colors shadow cursor-pointer"
                                         >
-                                            <Trash2 size={11} className="text-white" />
+                                            <Trash2 size={12} className="text-white" />
                                         </button>
                                     )}
                                 </div>
@@ -298,6 +302,47 @@ const AddCouple = ({ onClose, onSubmit, isSubmitting, editData, mode = "add", on
                             className="bg-[#5FDA78] font-inter  text-[#360567] max-w-32.5 font-semibold px-8! py-2! hover:bg-[#4FB860]"
                         >
                             Ok
+                        </Button>
+                    </div>
+                </ModalLayer>
+            )}
+
+            {showDeleteConfirm && (
+                <ModalLayer
+                    onClose={() => setShowDeleteConfirm(false)}
+                    modalWidth="min(95%, 400px)"
+                    modalHeight="auto"
+                    className="glass-card border border-[#5FDA78] p-4 sm:p-6"
+                    overlayColor="bg-[#330065CC] backdrop-blur-[34px]"
+                    position="center"
+                >
+                    <h3 className="font-semibold text-lg sm:text-xl text-white">Delete Profile Picture</h3>
+                    <p className="text-white/80 mt-3 text-sm sm:text-base">
+                        Are you sure you want to delete this profile picture?
+                    </p>
+                    <div className="flex justify-end gap-3 mt-6">
+                        <Button
+                            type="button"
+                            onClick={() => setShowDeleteConfirm(false)}
+                            className="border border-[#C9C9C9] font-semibold px-8! py-2! bg-transparent text-white hover:bg-white/5"
+                        >
+                            No
+                        </Button>
+                        <Button
+                            type="button"
+                            disabled={isDeletingUserProfilePhoto}
+                            onClick={() => {
+                                if (!selectedUserId) return
+                                deleteUserProfilePhoto(selectedUserId, {
+                                    onSuccess: () => {
+                                        setProfileRemoved(true)
+                                        setShowDeleteConfirm(false)
+                                    },
+                                })
+                            }}
+                            className="text-[#360567] font-semibold px-8! py-2! hover:bg-[#4FB860] disabled:opacity-50"
+                        >
+                            {isDeletingUserProfilePhoto ? "Deleting..." : "Yes"}
                         </Button>
                     </div>
                 </ModalLayer>

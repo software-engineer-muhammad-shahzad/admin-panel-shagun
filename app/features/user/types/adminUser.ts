@@ -45,6 +45,7 @@ export interface AdminUser {
   partnerName: string
   contactNumber: string
   email: string
+  userRole?: string | number
   moduleAccess: string | null
   resourceMetadata: ResourceMetadata
 }

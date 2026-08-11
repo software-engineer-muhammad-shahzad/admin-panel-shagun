@@ -8,6 +8,7 @@ import AddNewAnnouncement from "@/app/features/announcementModal/AddNewAnnouncem
 import ViewAnnouncement from "@/app/features/announcementModal/ViewAnnouncement"
 import Table from "@/app/shared/components/elements/Table"
 import Input from "@/app/shared/components/elements/Input"
+import { formatDateTime } from "@/app/shared/Common"
 
 const announcementColumns = [
   {
@@ -24,12 +25,10 @@ const announcementColumns = [
   },
   {
     key: "createdOn",
-    label: "Date",
-    width: "140px",
+    label: "Date & Time",
+    width: "200px",
     render: (_value: any, row: Announcement) =>
-      row.resourceMetadata?.createdOn
-        ? `${new Date(row.resourceMetadata.createdOn).toLocaleDateString("en-GB", { day: "2-digit" })}, ${new Date(row.resourceMetadata.createdOn).toLocaleDateString("en-GB", { month: "long", year: "numeric" })}`
-        : "N/A",
+      formatDateTime(row.resourceMetadata?.createdOn),
   },
   {
     key: "content",

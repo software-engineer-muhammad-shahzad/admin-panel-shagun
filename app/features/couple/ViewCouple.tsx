@@ -1,24 +1,37 @@
+import { useState } from "react"
 import Button from "@/app/shared/components/elements/Button"
 import Input from "@/app/shared/components/elements/Input"
 import ModalLayer from "@/app/shared/components/modal/ModalLayer"
 import { MoveLeft, X } from "lucide-react"
 import { ResourceMetadata } from "../broadcasts/types/broadcastUser"
 import { formatDateTime } from "@/app/shared/Common"
+import { baseURL } from "@/app/services/apiClient"
 
 interface ViewCoupleProps {
     onClose: () => void
     coupleData: {
-        id: string
+        userId: number
+        displayId: string
         fullName: string
         partnerName: string
         email: string
         contactNo: string
         eventDate: string
         resourceMetadata: ResourceMetadata | null
+        profileImageUrl?: string | null
     }
 }
 
 const ViewCouple = ({ onClose, coupleData }: ViewCoupleProps) => {
+    const [imgFailed, setImgFailed] = useState(false)
+    const raw = coupleData.profileImageUrl
+    const imgSrc = raw && !imgFailed
+        ? raw.startsWith("http")
+            ? raw
+            : `${baseURL.replace(/\/$/, "")}/${raw.replace(/^\//, "")}`
+        : null
+    const initials = (coupleData.fullName ?? "?").charAt(0).toUpperCase()
+
     return (
         <ModalLayer
             onClose={onClose}
@@ -41,6 +54,21 @@ const ViewCouple = ({ onClose, coupleData }: ViewCoupleProps) => {
                 </Button>
             </div>
 
+            <div className="flex justify-center mb-6">
+                {imgSrc ? (
+                    <img
+                        src={imgSrc}
+                        alt={coupleData.fullName}
+                        onError={() => setImgFailed(true)}
+                        className="w-28 h-28 rounded-full object-cover border-2 border-[#5FDA78]"
+                    />
+                ) : (
+                    <div className="w-28 h-28 rounded-full bg-[#5FDA78]/20 border-2 border-[#5FDA78] flex items-center justify-center text-[#5FDA78] text-3xl font-bold">
+                        {initials}
+                    </div>
+                )}
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="w-full">
                     <Input
@@ -48,7 +76,7 @@ const ViewCouple = ({ onClose, coupleData }: ViewCoupleProps) => {
                         label="ID"
                         labelColor="ms-5 mb-1"
                         placeholder="Enter ID"
-                        value={coupleData.id}
+                        value={coupleData.userId.toString()}
                         disabled={true}
                         className="text-sm outline-0 px-5 py-4 border border-[#5FDA78] rounded-[70px] glass-card placeholder:text-light-text text-light-text bg-[#350564]/50"
                         containerClassName="border-none bg-transparent"

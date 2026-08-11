@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Edit, Eye, Trash2, X } from "lucide-react"
+import { Edit, Eye, Trash2 } from "lucide-react"
 import DeleteCouple from "@/app/features/couple/DeleteCouple"
 import AddCouple from "@/app/features/couple/AddCouple"
 import ViewCouple from "@/app/features/couple/ViewCouple"
@@ -10,12 +10,11 @@ import Table from "@/app/shared/components/elements/Table"
 import Dropdown from "@/app/shared/components/elements/Dropdown"
 import { useCoupleUsers } from "@/app/features/couple/hooks/useCoupleUsers"
 import { useDeleteCouple } from "@/app/features/couple/hooks/useDeleteCouple"
-import { useDeleteCoupleProfile } from "@/app/features/couple/hooks/useDeleteCoupleProfile"
 import { useUpdateCouple } from "@/app/features/couple/hooks/useUpdateCouple"
 import { CoupleUser } from "@/app/features/couple/types/coupleUser"
 import { ResourceMetadata } from "@/app/features/broadcasts/types/broadcastUser"
-import { baseURL } from "@/app/services/apiClient"
 import { showToast } from "@/app/lib/toast"
+import { formatDateTime } from "@/app/shared/Common"
 
 const STATUS_OPTIONS = ["All", "Active", "Inactive", "Deleted"]
 
@@ -40,7 +39,6 @@ const page = () => {
   const [statusFilter, setStatusFilter] = useState("All")
   const [currentPage, setCurrentPage] = useState(1)
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
-  const [profileDeleteModalOpen, setProfileDeleteModalOpen] = useState(false)
   const [editModalOpen, setEditModalOpen] = useState(false)
   const [viewModalOpen, setViewModalOpen] = useState(false)
   const [selectedCouple, setSelectedCouple] = useState<CoupleUser | null>(null)
@@ -72,7 +70,6 @@ const page = () => {
   const totalPages = Math.ceil(totalOverall / PAGE_SIZE)
 
   const { mutate: deleteCouple, isPending: isDeleting } = useDeleteCouple()
-  const { mutate: deleteProfile, isPending: isDeletingProfile } = useDeleteCoupleProfile()
   const { mutate: updateCouple, isPending: isUpdating } = useUpdateCouple()
 
   const customCoupleColumns = [
@@ -111,9 +108,7 @@ const page = () => {
       label: "Date & Time",
       width: "160px",
       render: (_value: any, row: any) =>
-        row?.resourceMetadata?.createdOn
-          ? new Date(row.resourceMetadata.createdOn).toLocaleString()
-          : "N/A",
+        formatDateTime(row?.resourceMetadata?.createdOn),
     },
     {
       key: "resourceMetadata",
@@ -278,7 +273,6 @@ const page = () => {
             status: recordStatusLabel(selectedCouple.resourceMetadata?.recordStatus),
             profileImageUrl: selectedCouple.profileImageUrl ?? "",
           }}
-          onDeleteProfile={() => setProfileDeleteModalOpen(true)}
           onSubmit={(payload) =>
             updateCouple(
               { userId: selectedCouple.userId, payload },
@@ -304,89 +298,18 @@ const page = () => {
         <ViewCouple
           onClose={() => setViewModalOpen(false)}
           coupleData={{
-            id: selectedCouple.displayId ?? "",
+            userId: selectedCouple.userId,
+            displayId: selectedCouple.displayId ?? "",
             fullName: selectedCouple.fullName,
             partnerName: selectedCouple.partnerName,
             email: selectedCouple.email,
             contactNo: selectedCouple.contactNumber,
             eventDate: selectedCouple.eventDate ?? "",
             resourceMetadata: selectedCouple.resourceMetadata as unknown as ResourceMetadata,
+            profileImageUrl: selectedCouple.profileImageUrl ?? "",
           }}
         />
       )}
-
-      {/* Profile Delete Confirmation Modal */}
-      {profileDeleteModalOpen && selectedCouple && (() => {
-        const val = selectedCouple.profileImageUrl
-        const imgSrc = val
-          ? val.startsWith("http")
-            ? val
-            : `${baseURL.replace(/\/$/, "")}/${val.replace(/^\//, "")}`
-          : null
-        const initials = (selectedCouple.fullName ?? "?").charAt(0).toUpperCase()
-        return (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#330065CC] backdrop-blur-[34px]">
-            <div className="glass-card border border-[#5FDA78] rounded-3xl p-6 w-[90%] max-w-sm flex flex-col items-center gap-5">
-              {/* Close */}
-              <div className="w-full flex justify-end">
-                <button
-                  onClick={() => setProfileDeleteModalOpen(false)}
-                  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors"
-                >
-                  <X size={18} className="text-white" />
-                </button>
-              </div>
-
-              {/* Profile picture */}
-              {imgSrc ? (
-                <img
-                  src={imgSrc}
-                  alt={selectedCouple.fullName}
-                  className="w-24 h-24 rounded-full object-cover border-2 border-[#5FDA78]"
-                />
-              ) : (
-                <div className="w-24 h-24 rounded-full bg-[#5FDA78]/20 border-2 border-[#5FDA78] flex items-center justify-center text-[#5FDA78] text-3xl font-bold">
-                  {initials}
-                </div>
-              )}
-
-              {/* Name */}
-              <div className="text-center">
-                <p className="text-white font-semibold text-lg">{selectedCouple.fullName}</p>
-                {selectedCouple.partnerName && (
-                  <p className="text-white/50 text-sm">& {selectedCouple.partnerName}</p>
-                )}
-              </div>
-
-              {/* Message */}
-              <p className="text-white/70 text-sm text-center">
-                Are you sure you want to delete this couple? This action cannot be undone.
-              </p>
-
-              {/* Buttons */}
-              <div className="flex gap-3 w-full">
-                <button
-                  onClick={() => setProfileDeleteModalOpen(false)}
-                  className="flex-1 py-2.5 rounded-full border border-white/30 text-white text-sm font-semibold hover:bg-white/5 transition-colors cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  disabled={isDeletingProfile}
-                  onClick={() =>
-                    deleteProfile(selectedCouple.userId, {
-                      onSuccess: () => setProfileDeleteModalOpen(false),
-                    })
-                  }
-                  className="flex-1 py-2.5 rounded-full bg-red-500 text-white text-sm font-semibold hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
-                >
-                  {isDeletingProfile ? "Deleting..." : "Delete"}
-                </button>
-              </div>
-            </div>
-          </div>
-        )
-      })()}
     </div>
   )
 }

@@ -8,6 +8,7 @@ import Button from "@/app/shared/components/elements/Button"
 import Input from "@/app/shared/components/elements/Input"
 import { useAdminUsers } from "@/app/features/user/hooks/useAdminUsers"
 import { AdminUser } from "@/app/features/user/types/adminUser"
+import { UserRole } from "@/app/shared/enums"
 
 interface AssignRolesProps {
   onClose: () => void
@@ -17,16 +18,21 @@ const AssignRoles = ({ onClose }: AssignRolesProps) => {
   const [search, setSearch] = useState("")
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null)
 
-  let parm= {
-    search: search,
-    userRole: 'Admin',
-  }
-  const { data, isLoading } = useAdminUsers(parm)
+  const { data, isLoading } = useAdminUsers({
+    search: search || undefined,
+    userRole: UserRole.Admin,
+  })
   const users = data?.items ?? []
 
+  const isAdminRole = (role?: string | number) => {
+    if (role == null) return false
+    if (typeof role === "number") return role === UserRole.Admin
+    return role.trim().toLowerCase() === "admin"
+  }
+
   const filtered = users.filter((u) => {
-    const hasNoModuleAccess = !u.moduleAccess?.trim()
-    if (!hasNoModuleAccess) return false
+    if (!isAdminRole(u.userRole)) return false
+    if (u.moduleAccess?.trim()) return false
     if (!search) return true
     const q = search.toLowerCase()
     return (

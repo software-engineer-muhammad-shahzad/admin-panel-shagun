@@ -8,6 +8,7 @@ import ViewNotificationItem from "@/app/features/notifications/ViewNotificationI
 import AddNewNotification from "@/app/features/notifications/AddNewNotification"
 import Input from "@/app/shared/components/elements/Input"
 import Table from "@/app/shared/components/elements/Table"
+import { formatDateTime } from "@/app/shared/Common"
 
 const notificationColumns = [
   {
@@ -36,12 +37,10 @@ const notificationColumns = [
   },
   {
     key: "resourceMetadata.createdOn",
-    label: "Date",
-    width: "140px",
+    label: "Date & Time",
+    width: "200px",
     render: (_value: any, row: NotificationItem) =>
-      row.resourceMetadata?.createdOn
-        ? `${new Date(row.resourceMetadata.createdOn).toLocaleDateString("en-GB", { day: "2-digit" })}, ${new Date(row.resourceMetadata.createdOn).toLocaleDateString("en-GB", { month: "long", year: "numeric" })}`
-        : "N/A",
+      formatDateTime(row.resourceMetadata?.createdOn),
   },
   {
     key: "subject",

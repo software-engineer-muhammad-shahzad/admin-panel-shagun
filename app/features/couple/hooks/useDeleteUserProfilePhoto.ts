@@ -2,15 +2,14 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { deleteRequest } from "@/app/services/http"
 import endpoints from "@/app/services/endpoint"
 import { showToast } from "@/app/lib/toast"
+import { ApiResponse } from "../types/coupleUser"
 
-export const useDeleteCoupleProfile = () => {
+export const useDeleteUserProfilePhoto = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: (userId: number) =>
-      deleteRequest(endpoints.couple.deleteCoupleProfile, {
-        params: { userId },
-      }),
+      deleteRequest<ApiResponse<null>>(endpoints.couple.deleteUserProfilePhoto(userId)),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["coupleUsers"] })
       showToast.success("Profile photo removed", "The profile picture has been deleted.")
