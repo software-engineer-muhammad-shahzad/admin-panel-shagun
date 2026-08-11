@@ -24,10 +24,9 @@ const AssignRoles = ({ onClose }: AssignRolesProps) => {
   })
   const users = data?.items ?? []
 
-  const isAdminRole = (role?: string | number) => {
+  const isAdminRole = (role?: string) => {
     if (role == null) return false
-    if (typeof role === "number") return role === UserRole.Admin
-    return role.trim().toLowerCase() === "admin"
+    return role.trim().toLowerCase() === 'admin'
   }
 
   const filtered = users.filter((u) => {
