@@ -58,7 +58,7 @@ const resolveApiBaseUrl = (): string => {
 
   // Prefer local API only during next dev
   if (process.env.NODE_ENV !== "production") {
-    return "https://localhost:44382/api"
+    return "https://adminapis.shagundirect.com/api"
   }
 
   return PRODUCTION_API_URL

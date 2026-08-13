@@ -8,7 +8,8 @@ import LeftBannerText from "@/app/features/auth/LeftBannerText";
 import Input from "@/app/shared/components/elements/Input";
 import Checkbox from "@/app/shared/components/elements/Checkbox";
 import Button from "@/app/shared/components/elements/Button";
-import { useSignIn } from "@/app/features/auth/hooks/useSignIn";
+import { NoRoleAssignedError, useSignIn } from "@/app/features/auth/hooks/useSignIn";
+import { NO_ROLE_ASSIGNED_MESSAGE } from "@/app/features/auth/canAccessAdminPanel";
 import { showToast } from "@/app/lib/toast";
 
 export default function SignIn() {
@@ -29,7 +30,15 @@ export default function SignIn() {
           showToast.success("Logged in successfully", "Welcome back!")
           router.push("/dashboard")
         },
-        onError: () => {
+        onError: (err) => {
+          const noRole =
+            err instanceof NoRoleAssignedError ||
+            (err as Error)?.name === "NoRoleAssignedError" ||
+            (err as Error)?.message === NO_ROLE_ASSIGNED_MESSAGE
+          if (noRole) {
+            showToast.error(NO_ROLE_ASSIGNED_MESSAGE)
+            return
+          }
           setError("Invalid email or password. Please try again.")
           showToast.error("Login failed", "Invalid email or password.")
         },
