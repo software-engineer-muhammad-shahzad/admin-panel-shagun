@@ -14,7 +14,7 @@ interface AssignRolesProps {
   onClose: () => void
 }
 
-?? => {
+const AssignRoles = ({ onClose }: AssignRolesProps) => {
   const [search, setSearch] = useState("")
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null)
 
