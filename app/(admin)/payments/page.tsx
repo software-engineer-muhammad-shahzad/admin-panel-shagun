@@ -84,6 +84,12 @@ const transactionColumns = [
     render: (value: any) => value || "N/A",
   },
   {
+    key: "coupleFullName",
+    label: "Couple",
+    width: "150px",
+    render: (value: any) => value || "N/A",
+  },
+  {
     key: "greetingMediaType",
     label: "Gift",
     width: "80px",

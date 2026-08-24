@@ -10,6 +10,7 @@ import Checkbox from "@/app/shared/components/elements/Checkbox";
 import Button from "@/app/shared/components/elements/Button";
 import { NoRoleAssignedError, useSignIn } from "@/app/features/auth/hooks/useSignIn";
 import { NO_ROLE_ASSIGNED_MESSAGE } from "@/app/features/auth/canAccessAdminPanel";
+import { getFirstAllowedPath, parseModuleAccess } from "@/app/shared/adminModules";
 import { showToast } from "@/app/lib/toast";
 
 export default function SignIn() {
@@ -26,9 +27,14 @@ export default function SignIn() {
     signIn(
       { email, password },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
           showToast.success("Logged in successfully", "Welcome back!")
-          router.push("/dashboard")
+          const role = String(data?.role ?? "").trim().toLowerCase()
+          const home =
+            role === "superadmin"
+              ? "/dashboard"
+              : getFirstAllowedPath(parseModuleAccess(data?.adminModuleAccess))
+          router.push(home)
         },
         onError: (err) => {
           const noRole =

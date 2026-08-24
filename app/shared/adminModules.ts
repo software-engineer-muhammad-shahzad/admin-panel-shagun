@@ -31,3 +31,16 @@ export const parseModuleAccess = (moduleAccess?: string | null) =>
 /** Map stored names (incl. legacy aliases) onto canonical ADMIN_MODULES labels */
 export const canonicalizeModules = (modules: string[]) =>
   ADMIN_MODULES.filter((canonical) => hasModuleAccess(modules, canonical))
+
+export const MODULE_HOME_PATH: Record<AdminModule, string> = {
+  Dashboard: "/dashboard",
+  "User Management": "/users/admin",
+  Broadcasts: "/broadcasts/notification",
+  Payments: "/payments",
+  "Role & Rights": "/roles",
+}
+
+export const getFirstAllowedPath = (allowed: string[]) => {
+  const first = ADMIN_MODULES.find((module) => hasModuleAccess(allowed, module))
+  return first ? MODULE_HOME_PATH[first] : "/dashboard"
+}

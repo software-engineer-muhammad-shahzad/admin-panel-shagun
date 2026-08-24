@@ -38,6 +38,8 @@ export interface Transaction {
   wishingVideoAmount: any
   guestFullName: string
   guestUserId: number
+  coupleFullName: string
+  coupleUserId: number
   resourceMetadata: TransactionResourceMetadata
 }
 

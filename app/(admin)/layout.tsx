@@ -6,10 +6,11 @@ import Sidebar from "../features/layout/Sidebar"
 import Navbar from "../features/layout/Navbar"
 import AuthGuard from "../features/auth/AuthGuard"
 import { Menu, X } from "lucide-react"
-import { hasModuleAccess, parseModuleAccess } from "../shared/adminModules"
+import { getFirstAllowedPath, hasModuleAccess, parseModuleAccess } from "../shared/adminModules"
 
 
 const ROUTE_MODULE_MAP: { prefix: string; module: string }[] = [
+    { prefix: "/dashboard", module: "Dashboard" },
     { prefix: "/users", module: "User Management" },
     { prefix: "/roles", module: "Role & Rights" },
     { prefix: "/broadcasts", module: "Broadcasts" },
@@ -30,7 +31,7 @@ const layout = ({ children }: { children: React.ReactNode }) => {
             const allowed = parseModuleAccess(auth?.adminModuleAccess)
             const matched = ROUTE_MODULE_MAP.find(({ prefix }) => pathname?.startsWith(prefix))
             if (matched && !hasModuleAccess(allowed, matched.module)) {
-                router.replace("/dashboard")
+                router.replace(getFirstAllowedPath(allowed))
             }
         } catch {
             // ignore

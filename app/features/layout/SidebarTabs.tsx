@@ -27,9 +27,7 @@ const getVisibleLinks = () => {
         const role: string = auth?.role ?? ""
         if (role === "SuperAdmin") return sidebarLinks
         const allowed = parseModuleAccess(auth?.adminModuleAccess)
-        return sidebarLinks.filter(
-            (item) => item.name === "Dashboard" || hasModuleAccess(allowed, item.name)
-        )
+        return sidebarLinks.filter((item) => hasModuleAccess(allowed, item.name))
     } catch {
         return sidebarLinks
     }
