@@ -147,7 +147,7 @@ const transactionColumns = [
     label: "Total Amount",
     width: "125px",
     render: (_value: any, row: any) => {
-      let total = (row?.wishingCardAmount ?? 0) + (row?.wishingVideoAmount ?? 0) + (row?.giftedAmount ?? 0) + (row?.platformFee ?? 0)
+      let total = (row?.wishingCardAmount ?? 0) + (row?.wishingVideoAmount ?? 0) + (row?.giftedAmount ?? 0) + (row?.platformFee ?? 0) + (row?.stripeFee ?? 0)
       return `${row?.currencySymbol ?? '£' }${total.toFixed(2)}`
     },
   },
