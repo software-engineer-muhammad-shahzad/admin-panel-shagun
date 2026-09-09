@@ -1,5 +1,6 @@
 import apiClient from "@/app/services/apiClient"
 import endpoints from "@/app/services/endpoint"
+import { withPaging } from "@/app/services/http"
 import {  PaymentConfig, PricingUpdateRequest, Transaction, TransactionListParams } from "../types/payment"
 import { ApiResponse } from "../../auth/types/auth"
 
@@ -50,14 +51,16 @@ export const paymentService = {
   },
 
   getTransactions: async (params: Omit<TransactionListParams, "isIncludeGuestUser" | "isIncludeCoupleUser" | "isIncludePayment">): Promise<{ items: Transaction[]; totalOverall: number }> => {
+    const { body, config } = withPaging(params)
     const response = await apiClient.post<ApiResponse<any>>(
       endpoints.payments.getTransactions,
       {
-        ...params,
+        ...body,
         isIncludeGuestUser: true,
         isIncludeCoupleUser: true,
         isIncludePayment: true,
-      }
+      },
+      config
     )
     const data = response.data.data
     if (data?.items && Array.isArray(data.items)) {

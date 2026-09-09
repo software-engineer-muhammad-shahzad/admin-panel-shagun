@@ -31,7 +31,7 @@ const recordStatusLabel = (status: string | null | undefined): string => {
   return "Inactive"
 }
 
-const PAGE_SIZE = 10
+const PAGE_SIZE = 20
 
 const page = () => {
   const [searchTerm, setSearchTerm] = useState("")
@@ -193,7 +193,7 @@ const page = () => {
       </div>
 
       {/* table */}
-      <div className="flex-1 overflow-auto scrollbar-hide">
+      <div className="flex-1 overflow-auto scrollbar-blue">
         {isLoading ? (
           <div className="flex items-center justify-center h-full text-white/60 text-sm">
             Loading couples...

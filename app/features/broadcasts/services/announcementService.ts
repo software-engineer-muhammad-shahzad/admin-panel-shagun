@@ -1,4 +1,4 @@
-import { postRequest } from "@/app/services/http"
+import { postRequest, withPaging } from "@/app/services/http"
 import endpoints from "@/app/services/endpoint"
 import { Announcement, ApiResponse, PaginatedData } from "../types/announcement"
 
@@ -8,9 +8,11 @@ export const announcementService = {
   },
 
   getAnnouncements: async (params: { offset?: number; length?: number; search?: string } = {}): Promise<PaginatedData<Announcement>> => {
+    const { body, config } = withPaging(params)
     const response = await postRequest<ApiResponse<PaginatedData<Announcement>>>(
       endpoints.BroadDast.getNotification,
-      params
+      body,
+      config
     )
     return response.data ?? { items: [], offset: 0, length: 0, totalReturned: 0, totalOverall: 0 }
   },

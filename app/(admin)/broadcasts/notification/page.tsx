@@ -56,7 +56,7 @@ const notificationColumns = [
   },
 ]
 
-const PAGE_SIZE = 10
+const PAGE_SIZE = 20
 
 const page = () => {
   const [searchInput, setSearchInput] = useState("")
@@ -110,7 +110,7 @@ const page = () => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto scrollbar-hide">
+      <div className="flex-1 overflow-auto scrollbar-blue">
         {isLoading ? (
           <div className="flex items-center justify-center h-full text-white/60 text-sm">
             Loading notifications...

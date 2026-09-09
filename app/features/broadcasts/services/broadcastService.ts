@@ -1,4 +1,4 @@
-import { postRequest } from "@/app/services/http"
+import { postRequest, withPaging } from "@/app/services/http"
 import endpoints from "@/app/services/endpoint"
 import {
   ApiResponse,
@@ -11,9 +11,11 @@ export const broadcastService = {
   getBroadcastCouples: async (
     params?: BroadcastCoupleParams
   ): Promise<PaginatedData<BroadcastCouple>> => {
+    const { body, config } = withPaging(params)
     const response = await postRequest<ApiResponse<PaginatedData<BroadcastCouple>>>(
       endpoints.BroadDast.getCouples,
-      params ?? {}
+      body,
+      config
     )
     return response.data
   },

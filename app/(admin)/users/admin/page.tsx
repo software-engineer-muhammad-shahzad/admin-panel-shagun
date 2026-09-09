@@ -17,9 +17,9 @@ import { showToast } from "@/app/lib/toast"
 import { formatDateTime } from "@/app/shared/Common"
 
 const recordStatusLabel = (status: string | null | undefined): string => {
-    if (status === "Active") return "Active"
-    if (status === "Inactive") return "Inactive"
-    return "Deleted"
+  if (status === "Active") return "Active"
+  if (status === "Deleted") return "Deleted"
+  return "Inactive"
 }
 
 const STATUS_OPTIONS = ["All", "Active", "Inactive", "Deleted"]
@@ -31,7 +31,7 @@ const statusToRecordStatus = (status: string): number | undefined => {
     return undefined
 }
 
-const PAGE_SIZE = 10
+const PAGE_SIZE = 20
 
 const page = () => {
     const [searchTerm, setSearchTerm] = useState("")
@@ -200,7 +200,7 @@ const page = () => {
                 </div>
             </div>
 
-            <div className="flex-1 overflow-auto scrollbar-hide">
+            <div className="flex-1 overflow-auto scrollbar-blue">
                 {isLoading ? (
                     <div className="flex items-center justify-center h-full text-white/60 text-sm">
                         Loading admins...

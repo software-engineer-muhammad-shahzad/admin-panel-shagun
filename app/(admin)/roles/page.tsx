@@ -20,7 +20,7 @@ const STATUS_OPTIONS = [
     { label: "Deleted", value: "3" },
 ]
 
-const PAGE_SIZE = 10
+const PAGE_SIZE = 20
 
 const page = () => {
     const [searchTerm, setSearchTerm] = useState("")
@@ -166,7 +166,7 @@ const page = () => {
                 </div>
 
                 {/* Table */}
-                <div className="flex-1 overflow-auto scrollbar-hide">
+                <div className="flex-1 overflow-auto scrollbar-blue">
                     <Table
                         data={admins}
                         columns={customRolesColumns}

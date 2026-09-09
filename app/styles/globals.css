@@ -71,6 +71,37 @@ body {
   display: none;             /* Safari and Chrome */
 }
 
+/* Blue scrollbar for data tables and scrollable lists */
+/* Chrome / Edge / Safari — must NOT also set scrollbar-color here, or these
+   pseudo-element rules get ignored and the bar falls back to default grey. */
+.scrollbar-blue::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.scrollbar-blue::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-blue::-webkit-scrollbar-thumb {
+  background-color: #2673ff;                       /* app blue */
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+.scrollbar-blue::-webkit-scrollbar-thumb:hover {
+  background-color: #4d8bff;
+}
+.scrollbar-blue::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox only (it has no ::-webkit-scrollbar support) */
+@supports not selector(::-webkit-scrollbar) {
+  .scrollbar-blue {
+    scrollbar-width: thin;
+    scrollbar-color: #2673ff transparent;          /* thumb track */
+  }
+}
+
 /* border-color */
 .glass-border{
   border: 1.2px solid rgba(255, 255, 255, 0.1);

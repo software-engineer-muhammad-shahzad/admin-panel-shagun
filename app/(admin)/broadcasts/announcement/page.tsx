@@ -39,7 +39,7 @@ const announcementColumns = [
   { key: "Action", label: "Action", width: "80px" },
 ]
 
-const PAGE_SIZE = 10
+const PAGE_SIZE = 20
 
 const page = () => {
   const [searchTerm, setSearchTerm] = useState("")
@@ -97,7 +97,7 @@ const page = () => {
         </div>
 
         {/* table - scrollable */}
-        <div className="flex-1 overflow-auto scrollbar-hide">
+        <div className="flex-1 overflow-auto scrollbar-blue">
           <Table
             data={paginated}
             columns={announcementColumns.map((col) =>

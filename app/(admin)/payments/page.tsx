@@ -183,7 +183,7 @@ const transactionColumns = [
   }, 
 ]
 
-const PAGE_SIZE = 10
+const PAGE_SIZE = 20
 
 const Page = () => {
   const [searchTerm, setSearchTerm] = useState("")
@@ -574,7 +574,7 @@ const Page = () => {
       </div>
 
       {/* table - scrollable */}
-      <div className="flex-1 overflow-auto scrollbar-hide">
+      <div className="flex-1 overflow-auto scrollbar-blue">
         <Table
           data={transactions}
           columns={transactionColumns}

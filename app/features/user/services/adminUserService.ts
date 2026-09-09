@@ -1,12 +1,14 @@
-import { deleteRequest, postRequest, putRequest } from "@/app/services/http"
+import { deleteRequest, postRequest, putRequest, withPaging } from "@/app/services/http"
 import endpoints from "@/app/services/endpoint"
 import { AdminUser, AdminUsersParams, ApiResponse, AssignModulesPayload, CreateAdminPayload, PaginatedData } from "../types/adminUser"
 
 export const adminUserService = {
   getAdmins: async (params?: AdminUsersParams): Promise<PaginatedData<AdminUser>> => {
+    const { body, config } = withPaging(params)
     const response = await postRequest<ApiResponse<PaginatedData<any>>>(
       endpoints.admin.getAdmin,
-      params ?? {}
+      body,
+      config
     )
     const data = response.data
     return {

@@ -37,7 +37,7 @@ const Table = <T extends Record<string, any>>({
   loading = false
 }: TableProps<T>) => {
   return (
-    <div className={`overflow-x-auto scrollbar-hide ${className}`}>
+    <div className={`overflow-x-auto scrollbar-blue ${className}`}>
       {loading ? (
         <div className="flex justify-center items-center py-8">
           <div className="text-white text-sm">Loading...</div>

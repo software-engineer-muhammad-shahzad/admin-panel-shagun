@@ -1,4 +1,4 @@
-import { postRequest } from "@/app/services/http"
+import { postRequest, withPaging } from "@/app/services/http"
 import endpoints from "@/app/services/endpoint"
 import { ApiResponse, NotificationItem, NotificationListParams, PaginatedData } from "../types/notificationList"
 
@@ -10,9 +10,11 @@ export interface CreateNotificationPayload {
 
 export const notificationListService = {
   getNotificationList: async (params?: NotificationListParams): Promise<PaginatedData<NotificationItem>> => {
+    const { body, config } = withPaging(params)
     const response = await postRequest<ApiResponse<PaginatedData<NotificationItem>>>(
       endpoints.notification.getNotificationList,
-      params ?? {}
+      body,
+      config
     )
     return response.data
   },
