@@ -200,7 +200,7 @@ const page = () => {
                 </div>
             </div>
 
-            <div className="flex-1 overflow-auto scrollbar-blue">
+            <div className="flex-1 min-h-0 overflow-hidden">
                 {isLoading ? (
                     <div className="flex items-center justify-center h-full text-white/60 text-sm">
                         Loading admins...

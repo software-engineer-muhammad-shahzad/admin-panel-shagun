@@ -50,7 +50,7 @@ const PaymentCards = () => {
             </div>
             <div className="flex justify-between items-center">
               <h2 className="text-white text-lg sm:text-xl lg:text-2xl 3xl:text-3xl 4xl:text-5xl">
-                {card.value}£
+                £{card.value}
               </h2>
               <p className={`text-xs sm:text-sm 3xl:text-base 4xl:text-lg ${isPositive ? "text-green-text" : "text-red-400"}`}>
                 {isPositive ? "+" : ""}{card.changePercent}%

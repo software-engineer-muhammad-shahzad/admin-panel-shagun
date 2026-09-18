@@ -166,7 +166,7 @@ const page = () => {
                 </div>
 
                 {/* Table */}
-                <div className="flex-1 overflow-auto scrollbar-blue">
+                <div className="flex-1 min-h-0 overflow-hidden">
                     <Table
                         data={admins}
                         columns={customRolesColumns}

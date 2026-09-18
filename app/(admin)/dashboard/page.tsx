@@ -5,7 +5,7 @@ import PaymentCards from "@/app/features/dashboard/PaymentCards"
 
 const page = () => {
   return (
-    <div className="h-full overflow-y-auto scrollbar-hide p-4">
+    <div className="h-full overflow-y-auto scrollbar-blue p-4">
       <SmallCards />
       <PaymentCards />
       <CompositeChart />

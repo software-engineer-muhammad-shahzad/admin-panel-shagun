@@ -76,7 +76,7 @@ const AssignRoles = ({ onClose }: AssignRolesProps) => {
       </div>
 
       {/* User List */}
-      <div className="flex flex-col gap-2 sm:gap-3 overflow-y-auto flex-1 min-h-0 scrollbar-hide pr-1">
+      <div className="flex flex-col gap-2 sm:gap-3 overflow-y-auto flex-1 min-h-0 scrollbar-blue pr-1">
         {isLoading ? (
           <p className="text-white/60 text-sm text-center py-8">Loading users...</p>
         ) : filtered.length === 0 ? (

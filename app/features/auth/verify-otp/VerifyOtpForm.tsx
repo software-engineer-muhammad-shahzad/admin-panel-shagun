@@ -1,12 +1,14 @@
 "use client"
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from "next/navigation"
 import { Delete } from "lucide-react"
 import Input from '@/app/shared/components/elements/Input'
 import Button from '@/app/shared/components/elements/Button'
 import { useVerifyOtp } from '../hooks/useVerifyOtp'
-import { getData } from '@/app/utils/storage/storageHelper'
-import { FORGOT_PASSWORD_EMAIL_KEY } from '../hooks/useForgotPassword'
+import { useForgotPassword } from '../hooks/useForgotPassword'
+import { getData, saveData } from '@/app/utils/storage/storageHelper'
+import { FORGOT_PASSWORD_EMAIL_KEY, OTP_EXPIRES_AT_KEY, OTP_DURATION_SECONDS } from '../hooks/useForgotPassword'
+import { showToast } from '@/app/lib/toast'
 
 interface VerifyOtpFormProps {
 
@@ -17,9 +19,14 @@ interface VerifyOtpFormProps {
 }
 const VerifyOtpForm = ({ source, showPaymentSuccess: _showPaymentSuccess, setShowPaymentSuccess }: VerifyOtpFormProps) => {
     const [otp, setOtp] = useState(['', '', '', '', '', ''])
-    const [timeLeft, setTimeLeft] = useState(58)
+    const [timeLeft, setTimeLeft] = useState(OTP_DURATION_SECONDS)
+    // Absolute wall-clock timestamp the OTP expires at — the source of truth for
+    // the countdown. `timeLeft` is always recomputed from this, never decremented
+    // on its own, so a background/throttled tab can't leave the display stale.
+    const expiresAtRef = useRef<number>(0)
     const router = useRouter()
     const { mutate: verifyOtp, isPending } = useVerifyOtp()
+    const { mutate: forgotPassword, isPending: isResending } = useForgotPassword()
 
     const handleVerifyOtp = () => {
         if (source === "payment") {
@@ -40,12 +47,75 @@ const VerifyOtpForm = ({ source, showPaymentSuccess: _showPaymentSuccess, setSho
 
         router.push("/dashboard")
     }
-    useEffect(() => {
-        if (timeLeft > 0) {
-            const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000)
-            return () => clearTimeout(timer)
+
+    // Resyncs the displayed countdown from the absolute expiry — call this on every
+    // tick and whenever the tab regains visibility, instead of trusting a running
+    // decrement (which drifts once a background tab gets throttled by the browser).
+    const syncTimeLeft = () => {
+        setTimeLeft(Math.max(0, Math.floor((expiresAtRef.current - Date.now()) / 1000)))
+    }
+
+    const setOtpExpiry = (expiresAt: number) => {
+        expiresAtRef.current = expiresAt
+        saveData(OTP_EXPIRES_AT_KEY, expiresAt, "local")
+        syncTimeLeft()
+    }
+
+    const restartTimer = () => {
+        setOtpExpiry(Date.now() + OTP_DURATION_SECONDS * 1000)
+        setOtp(['', '', '', '', '', ''])
+    }
+
+    const handleResendOtp = () => {
+        if (timeLeft > 0 || isResending) return
+
+        if (source === "forgot-password") {
+            const email = getData<string>(FORGOT_PASSWORD_EMAIL_KEY, "local")
+            if (!email) {
+                showToast.error("Session expired", "Please restart the forgot password flow.")
+                return
+            }
+
+            forgotPassword(email, {
+                onSuccess: () => {
+                    // useForgotPassword's onSuccess persisted a fresh expiry to storage —
+                    // re-read it here so our ref/countdown line up with the stored value.
+                    const freshExpiry = getData<number>(OTP_EXPIRES_AT_KEY, "local")
+                    setOtpExpiry(freshExpiry ?? Date.now() + OTP_DURATION_SECONDS * 1000)
+                    setOtp(['', '', '', '', '', ''])
+                },
+            })
+            return
         }
-    }, [timeLeft])
+
+        // No real resend endpoint for the demo flows (payment/default) — just restart the local countdown
+        restartTimer()
+    }
+
+    // Countdown is derived from a persisted expiry timestamp (set when the OTP was
+    // sent) instead of a fresh in-memory value, so refreshing this page doesn't
+    // restart the timer — it just resumes from however much time is actually left.
+    //
+    // Each tick recomputes timeLeft from that absolute timestamp rather than
+    // decrementing the previous value: browsers throttle (or pause) setInterval
+    // in a background tab, and this flow requires switching away to check email
+    // for the code, so a naive decrement can fall behind real elapsed time and
+    // still show a few seconds left after the backend has already expired the OTP.
+    // Resyncing on `visibilitychange` snaps the display to the truth the moment
+    // the tab is focused again, instead of waiting for a throttled tick.
+    useEffect(() => {
+        const stored = getData<number>(OTP_EXPIRES_AT_KEY, "local")
+        expiresAtRef.current = stored ?? Date.now() + OTP_DURATION_SECONDS * 1000
+        if (!stored) saveData(OTP_EXPIRES_AT_KEY, expiresAtRef.current, "local")
+        syncTimeLeft()
+
+        const interval = setInterval(syncTimeLeft, 1000)
+        document.addEventListener("visibilitychange", syncTimeLeft)
+        return () => {
+            clearInterval(interval)
+            document.removeEventListener("visibilitychange", syncTimeLeft)
+        }
+    }, [])
 
     useEffect(() => {
         if (otp.every(d => d !== '')) {
@@ -173,15 +243,25 @@ const VerifyOtpForm = ({ source, showPaymentSuccess: _showPaymentSuccess, setSho
                 <div className="flex justify-center mb-8">
                     <p className="w-fit text-[#DDDDDD]">
 
-                        <span className="border-b  text-[#DDDDDD] border-transparent hover:border-white transition-all duration-300">
-                            Resend OTP 
+                        <span
+                            onClick={handleResendOtp}
+                            className={`border-b border-transparent transition-all duration-300 ${
+                                timeLeft === 0 && !isResending
+                                    ? "text-[#5FDA78] hover:border-[#5FDA78] cursor-pointer"
+                                    : "text-[#DDDDDD] cursor-default"
+                            }`}
+                        >
+                            {isResending ? "Resending..." : "Resend OTP"}
                         </span>
-<span className="ms-1">in</span>
-                       
 
-                        <span className="text-white ms-1">
-                            {formatTime(timeLeft)}
-                        </span>
+                        {timeLeft > 0 && (
+                            <>
+                                <span className="ms-1">in</span>
+                                <span className="text-white ms-1">
+                                    {formatTime(timeLeft)}
+                                </span>
+                            </>
+                        )}
 
                     </p>
                 </div>

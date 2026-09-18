@@ -102,7 +102,7 @@ const SearchableDropdown = ({
             />
           </div>
 
-          <div className="max-h-[200px] overflow-y-auto scrollbar-hide">
+          <div className="max-h-[200px] overflow-y-auto scrollbar-blue">
             {isLoading ? (
               <p className="text-white/60 text-sm px-4 py-3">Loading...</p>
             ) : options.length === 0 ? (
