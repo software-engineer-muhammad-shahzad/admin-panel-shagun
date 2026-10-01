@@ -26,6 +26,8 @@ import {
 
     validateContactNumber,
 
+    validateConfirmPassword,
+
     validateEmail,
 
     validateFullName,
@@ -78,6 +80,8 @@ const AddNewForm = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }:
 
         password: "",
 
+        confirmPassword: "",
+
         userRole: 2,
 
         status: editData?.status || "Active",
@@ -86,6 +90,10 @@ const AddNewForm = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }:
 
     const [showSuccessModal, setShowSuccessModal] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    // Edit mode only: password fields stay hidden behind this toggle so editing
+    // an admin's other details never risks touching their password by accident.
+    const [changePassword, setChangePassword] = useState(false)
     const [errors, setErrors] = useState<Record<string, string>>({})
 
 
@@ -142,6 +150,39 @@ const AddNewForm = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }:
 
         setFieldError("password", value ? validatePassword(value) : "")
 
+        if (formData.confirmPassword) {
+            setFieldError("confirmPassword", validateConfirmPassword(value, formData.confirmPassword))
+        }
+
+    }
+
+
+
+    const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+        const value = e.target.value
+
+        setFormData(prev => ({ ...prev, confirmPassword: value }))
+
+        setFieldError("confirmPassword", value ? validateConfirmPassword(formData.password, value) : "")
+
+    }
+
+
+
+    const handleCancelChangePassword = () => {
+
+        setChangePassword(false)
+
+        setFormData(prev => ({ ...prev, password: "", confirmPassword: "" }))
+
+        setErrors(prev => {
+            const next = { ...prev }
+            delete next.password
+            delete next.confirmPassword
+            return next
+        })
+
     }
 
 
@@ -174,11 +215,15 @@ const AddNewForm = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }:
 
 
 
-        if (mode === "add") {
+        if (mode === "add" || changePassword) {
 
             const passwordError = validatePassword(formData.password)
 
+            const confirmPasswordError = validateConfirmPassword(formData.password, formData.confirmPassword)
+
             if (passwordError) newErrors.password = passwordError
+
+            if (confirmPasswordError) newErrors.confirmPassword = confirmPasswordError
 
         }
 
@@ -200,11 +245,17 @@ const AddNewForm = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }:
 
         if (validateContactNumber(formData.contactNumber)) return false
 
-        if (mode === "add" && validatePassword(formData.password)) return false
+        if (mode === "add" || changePassword) {
+
+            if (validatePassword(formData.password)) return false
+
+            if (validateConfirmPassword(formData.password, formData.confirmPassword)) return false
+
+        }
 
         return true
 
-    }, [formData, mode])
+    }, [formData, mode, changePassword])
 
 
 
@@ -228,7 +279,10 @@ const AddNewForm = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }:
 
                 email: formData.email.trim(),
 
-                password: formData.password,
+                // Edit mode: an empty password tells the backend to leave the
+                // current password untouched — only send one when the user
+                // explicitly opted into "Change Password".
+                password: mode === "add" || changePassword ? formData.password : "",
 
                 userRole: formData.userRole,
 
@@ -466,6 +520,170 @@ const AddNewForm = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }:
 
                         )}
 
+
+
+                        {mode === "edit" && !changePassword && (
+
+                            <div className="flex items-end px-5 mt-3">
+
+                                <button
+
+                                    type="button"
+
+                                    onClick={() => setChangePassword(true)}
+
+                                    className="text-[#5FDA78] text-sm font-medium hover:underline cursor-pointer"
+
+                                >
+
+                                    Change Password
+
+                                </button>
+
+                            </div>
+
+                        )}
+
+
+
+                        {mode === "edit" && changePassword && (
+
+                            <>
+
+                                <div>
+
+                                    <div className="border-none bg-transparent">
+
+                                        <div className="py-2 md:py-3 px-5 md:px-6 flex flex-col gap-1">
+
+                                            <label className="ms-5 mb-1 text-white text-[14px]">New Password</label>
+
+                                            <div
+
+                                                className={`flex items-center gap-2 text-sm outline-0 px-5 py-4 border ${getFieldBorderClass(errors.password)} rounded-[70px] glass-card`}
+
+                                            >
+
+                                                <input
+
+                                                    type={showPassword ? "text" : "password"}
+
+                                                    placeholder="Enter New Password"
+
+                                                    value={formData.password}
+
+                                                    onChange={handlePasswordChange}
+
+                                                    className="outline-0 w-full bg-transparent placeholder:text-light-text text-light-text"
+
+                                                />
+
+                                                <button
+
+                                                    type="button"
+
+                                                    onClick={() => setShowPassword((prev) => !prev)}
+
+                                                    className="text-light-text hover:text-white transition-colors shrink-0 cursor-pointer"
+
+                                                    aria-label={showPassword ? "Hide password" : "Show password"}
+
+                                                >
+
+                                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+
+                                                </button>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    {errors.password && <p className="text-red-400 text-xs mt-1 ms-5">{errors.password}</p>}
+
+                                </div>
+
+
+
+                                <div>
+
+                                    <div className="border-none bg-transparent">
+
+                                        <div className="py-2 md:py-3 px-5 md:px-6 flex flex-col gap-1">
+
+                                            <label className="ms-5 mb-1 text-white text-[14px]">Confirm Password</label>
+
+                                            <div
+
+                                                className={`flex items-center gap-2 text-sm outline-0 px-5 py-4 border ${getFieldBorderClass(errors.confirmPassword)} rounded-[70px] glass-card`}
+
+                                            >
+
+                                                <input
+
+                                                    type={showConfirmPassword ? "text" : "password"}
+
+                                                    placeholder="Confirm New Password"
+
+                                                    value={formData.confirmPassword}
+
+                                                    onChange={handleConfirmPasswordChange}
+
+                                                    className="outline-0 w-full bg-transparent placeholder:text-light-text text-light-text"
+
+                                                />
+
+                                                <button
+
+                                                    type="button"
+
+                                                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+
+                                                    className="text-light-text hover:text-white transition-colors shrink-0 cursor-pointer"
+
+                                                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+
+                                                >
+
+                                                    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+
+                                                </button>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    {errors.confirmPassword && <p className="text-red-400 text-xs mt-1 ms-5">{errors.confirmPassword}</p>}
+
+                                </div>
+
+
+
+                                <div className="md:col-span-2 -mt-2">
+
+                                    <button
+
+                                        type="button"
+
+                                        onClick={handleCancelChangePassword}
+
+                                        className="ms-5 text-xs text-light-text hover:text-white underline cursor-pointer"
+
+                                    >
+
+                                        Cancel password change
+
+                                    </button>
+
+                                </div>
+
+                            </>
+
+                        )}
+
                     </div>
 
 
@@ -490,7 +708,7 @@ const AddNewForm = ({ onClose, onSubmit, isSubmitting, editData, mode = "add" }:
 
                             type="submit"
 
-                            disabled={isSubmitting || (mode === "add" && !isFormValid)}
+                            disabled={isSubmitting || !isFormValid}
 
                             className="bg-[#5FDA78] text-[#360567] max-w-[130px] w-full font-semibold px-8! py-2! hover:bg-[#4FB860] disabled:opacity-50"
 

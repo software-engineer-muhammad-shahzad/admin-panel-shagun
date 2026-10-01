@@ -121,3 +121,33 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 cursor: pointer;
 
 }
+
+/* Stop the browser's own autofill highlight (yellow/blue) from overriding the
+   dark field background — e.g. login email/password once the browser recognizes
+   a saved credential. The box-shadow approximates the glass-card panel color
+   underneath the input; the huge transition delay stops Chrome's internal
+   background-color animation from ever visibly applying its default fill. */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0px 1000px #2a0252 inset;
+  box-shadow: 0 0 0px 1000px #2a0252 inset;
+  -webkit-text-fill-color: #989898;
+  caret-color: #989898;
+  transition: background-color 600000s ease-in-out 0s;
+}
+
+/* Separate rule (not combined with the -webkit- selectors above): the browser's
+   "previously typed value" hint dropdown — picking an entry from it, as opposed
+   to a saved-password style autofill — is matched by the standard unprefixed
+   :autofill pseudo-class, which Firefox relies on exclusively. A browser that
+   doesn't recognize :autofill would drop this whole rule if it shared a selector
+   list with the -webkit- one above, so it's kept isolated. */
+input:autofill {
+  background-color: #2a0252;
+  box-shadow: 0 0 0px 1000px #2a0252 inset;
+  -webkit-text-fill-color: #989898;
+  color: #989898;
+  caret-color: #989898;
+}

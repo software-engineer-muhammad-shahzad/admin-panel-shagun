@@ -91,8 +91,16 @@ const DashLineChart = () => {
       categories,
       labels: {
         ...dashLineChartOptions.xaxis.labels,
-        rotate: -45,
+        rotate: 0,
         hideOverlappingLabels: true,
+        // Keep one data point per day (accurate line + tooltip), but only label
+        // the axis every 5 days — 1, 5, 10, 15, 20, 25, 30 — plus today's date,
+        // so it doesn't get cluttered with a tick for every single day.
+        formatter: (value: string) => {
+          const day = parseDayFromLabel(value)
+          if (day == null) return value
+          return day === 1 || day === today || day % 5 === 0 ? value : ""
+        },
       },
     },
     yaxis: {

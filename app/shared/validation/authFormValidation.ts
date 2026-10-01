@@ -45,5 +45,11 @@ export const validatePassword = (value: string): string => {
   return ""
 }
 
+export const validateConfirmPassword = (password: string, confirmPassword: string): string => {
+  if (!confirmPassword) return "Confirm password is required"
+  if (confirmPassword !== password) return "Passwords do not match"
+  return ""
+}
+
 export const getFieldBorderClass = (error?: string) =>
   error ? "border-red-400" : "border-[#5FDA78]"
